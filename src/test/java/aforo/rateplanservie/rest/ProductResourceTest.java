@@ -52,7 +52,7 @@ public class ProductResourceTest extends BaseIT {
                     .get("/api/products/1000")
                 .then()
                     .statusCode(HttpStatus.OK.value())
-                    .body("producerId", Matchers.equalTo(49))
+                    .body("productName", Matchers.equalTo("Sed diam nonumy."))
                     .body("_links.self.href", Matchers.endsWith("/api/products/1000"));
     }
 
@@ -94,7 +94,7 @@ public class ProductResourceTest extends BaseIT {
                 .then()
                     .statusCode(HttpStatus.BAD_REQUEST.value())
                     .body("code", Matchers.equalTo("VALIDATION_FAILED"))
-                    .body("fieldErrors.get(0).property", Matchers.equalTo("producerId"))
+                    .body("fieldErrors.get(0).property", Matchers.equalTo("productName"))
                     .body("fieldErrors.get(0).code", Matchers.equalTo("REQUIRED_NOT_NULL"));
     }
 
@@ -111,7 +111,7 @@ public class ProductResourceTest extends BaseIT {
                 .then()
                     .statusCode(HttpStatus.OK.value())
                     .body("_links.self.href", Matchers.endsWith("/api/products/1000"));
-        assertEquals(64, productRepository.findById(1000).orElseThrow().getProducerId());
+        assertEquals("Lorem ipsum dolor.", productRepository.findById(1000).orElseThrow().getProductName());
         assertEquals(2, productRepository.count());
     }
 

@@ -2,41 +2,35 @@ package aforo.rateplanservie.model;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import java.time.LocalDate;
 import lombok.Getter;
 import lombok.Setter;
 
 
 @Getter
 @Setter
-public class RatePlanDTO {
+public class RatePlanUsageBasedDTO {
 
-    private Integer ratePlanId;
+    private Integer ratePlanUsageRateId;
 
     @NotNull
     @Size(max = 100)
-    private String ratePlanName;
+    private String ratePlanUsageDescription;
 
     private String description;
 
     @NotNull
     @Size(max = 255)
-    private String ratePlanType;
-
-    @NotNull
-    private LocalDate startDate;
-
-    @NotNull
-    private LocalDate endDate;
+    private String unitType;
 
     @NotNull
     @Size(max = 255)
-    private String status;
+    private String unitMeasurement;
 
     @NotNull
-    private Integer product;
+    @Size(max = 255)
+    private String unitCalculation;
 
     @NotNull
-    private Integer currency;
+    private Integer ratePlan;
 
 }

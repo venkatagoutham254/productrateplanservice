@@ -3,9 +3,12 @@ package aforo.rateplanservie.domain;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import lombok.Getter;
@@ -28,6 +31,10 @@ public class RatePlanUsageBasedRates {
 
     @Column(nullable = false, precision = 12, scale = 2)
     private BigDecimal unitRate;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "rate_plan_usage_rate_id", nullable = false)
+    private RatePlanUsageBased ratePlanUsageRate;
 
     @CreatedDate
     @Column(nullable = false, updatable = false)

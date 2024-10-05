@@ -1,5 +1,7 @@
 DELETE FROM aforo_rate_plan_usage_based_rates;
 
+DELETE FROM aforo_rate_plan_usage_based;
+
 DELETE FROM aforo_rate_plan_tiered_rate_details;
 
 DELETE FROM aforo_rate_plan_tiered_rate;

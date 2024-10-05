@@ -34,11 +34,7 @@ public class RatePlan {
     @Column(nullable = false, length = 100)
     private String ratePlanName;
 
-    @Column(
-            nullable = false,
-            name = "\"description\"",
-            columnDefinition = "longtext"
-    )
+    @Column(name = "\"description\"", columnDefinition = "longtext")
     private String description;
 
     @Column(nullable = false)
@@ -60,6 +56,9 @@ public class RatePlan {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "currency_id", nullable = false)
     private Currencies currency;
+
+    @OneToMany(mappedBy = "ratePlan")
+    private Set<RatePlanUsageBased> ratePlanRatePlanUsageBaseds;
 
     @OneToMany(mappedBy = "ratePlan")
     private Set<RatePlanTieredRate> ratePlanRatePlanTieredRates;

@@ -27,19 +27,10 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer productId;
 
-    @Column(nullable = false)
-    private Integer producerId;
-
-    @Column(nullable = false)
-    private Integer organizationId;
-
-    @Column
-    private Integer divisionId;
-
     @Column(nullable = false, length = 100)
     private String productName;
 
-    @Column(nullable = false, columnDefinition = "longtext")
+    @Column(columnDefinition = "longtext")
     private String productDescription;
 
     @Column(nullable = false)

@@ -5,6 +5,7 @@ import aforo.rateplanservie.domain.RatePlanFlatRate;
 import aforo.rateplanservie.domain.RatePlanFreemiumRate;
 import aforo.rateplanservie.domain.RatePlanSubscriptionRate;
 import aforo.rateplanservie.domain.RatePlanTieredRate;
+import aforo.rateplanservie.domain.RatePlanUsageBased;
 import aforo.rateplanservie.model.RatePlanDTO;
 import aforo.rateplanservie.repos.CurrenciesRepository;
 import aforo.rateplanservie.repos.ProductRepository;
@@ -13,6 +14,7 @@ import aforo.rateplanservie.repos.RatePlanFreemiumRateRepository;
 import aforo.rateplanservie.repos.RatePlanRepository;
 import aforo.rateplanservie.repos.RatePlanSubscriptionRateRepository;
 import aforo.rateplanservie.repos.RatePlanTieredRateRepository;
+import aforo.rateplanservie.repos.RatePlanUsageBasedRepository;
 import aforo.rateplanservie.util.NotFoundException;
 import aforo.rateplanservie.util.ReferencedWarning;
 import org.springframework.data.domain.Page;
@@ -28,6 +30,7 @@ public class RatePlanServiceImpl implements RatePlanService {
     private final ProductRepository productRepository;
     private final CurrenciesRepository currenciesRepository;
     private final RatePlanMapper ratePlanMapper;
+    private final RatePlanUsageBasedRepository ratePlanUsageBasedRepository;
     private final RatePlanTieredRateRepository ratePlanTieredRateRepository;
     private final RatePlanFlatRateRepository ratePlanFlatRateRepository;
     private final RatePlanSubscriptionRateRepository ratePlanSubscriptionRateRepository;
@@ -36,6 +39,7 @@ public class RatePlanServiceImpl implements RatePlanService {
     public RatePlanServiceImpl(final RatePlanRepository ratePlanRepository,
             final ProductRepository productRepository,
             final CurrenciesRepository currenciesRepository, final RatePlanMapper ratePlanMapper,
+            final RatePlanUsageBasedRepository ratePlanUsageBasedRepository,
             final RatePlanTieredRateRepository ratePlanTieredRateRepository,
             final RatePlanFlatRateRepository ratePlanFlatRateRepository,
             final RatePlanSubscriptionRateRepository ratePlanSubscriptionRateRepository,
@@ -44,6 +48,7 @@ public class RatePlanServiceImpl implements RatePlanService {
         this.productRepository = productRepository;
         this.currenciesRepository = currenciesRepository;
         this.ratePlanMapper = ratePlanMapper;
+        this.ratePlanUsageBasedRepository = ratePlanUsageBasedRepository;
         this.ratePlanTieredRateRepository = ratePlanTieredRateRepository;
         this.ratePlanFlatRateRepository = ratePlanFlatRateRepository;
         this.ratePlanSubscriptionRateRepository = ratePlanSubscriptionRateRepository;
@@ -103,6 +108,12 @@ public class RatePlanServiceImpl implements RatePlanService {
         final ReferencedWarning referencedWarning = new ReferencedWarning();
         final RatePlan ratePlan = ratePlanRepository.findById(ratePlanId)
                 .orElseThrow(NotFoundException::new);
+        final RatePlanUsageBased ratePlanRatePlanUsageBased = ratePlanUsageBasedRepository.findFirstByRatePlan(ratePlan);
+        if (ratePlanRatePlanUsageBased != null) {
+            referencedWarning.setKey("ratePlan.ratePlanUsageBased.ratePlan.referenced");
+            referencedWarning.addParam(ratePlanRatePlanUsageBased.getRatePlanUsageRateId());
+            return referencedWarning;
+        }
         final RatePlanTieredRate ratePlanRatePlanTieredRate = ratePlanTieredRateRepository.findFirstByRatePlan(ratePlan);
         if (ratePlanRatePlanTieredRate != null) {
             referencedWarning.setKey("ratePlan.ratePlanTieredRate.ratePlan.referenced");

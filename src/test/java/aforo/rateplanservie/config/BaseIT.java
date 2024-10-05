@@ -13,6 +13,7 @@ import aforo.rateplanservie.repos.RatePlanSubscriptionRateRepository;
 import aforo.rateplanservie.repos.RatePlanTieredRateDetailsRepository;
 import aforo.rateplanservie.repos.RatePlanTieredRateRepository;
 import aforo.rateplanservie.repos.RatePlanUsageBasedRatesRepository;
+import aforo.rateplanservie.repos.RatePlanUsageBasedRepository;
 import io.restassured.RestAssured;
 import jakarta.annotation.PostConstruct;
 import java.nio.charset.StandardCharsets;
@@ -56,6 +57,9 @@ public abstract class BaseIT {
 
     @Autowired
     public RatePlanUsageBasedRatesRepository ratePlanUsageBasedRatesRepository;
+
+    @Autowired
+    public RatePlanUsageBasedRepository ratePlanUsageBasedRepository;
 
     @Autowired
     public RatePlanTieredRateDetailsRepository ratePlanTieredRateDetailsRepository;
