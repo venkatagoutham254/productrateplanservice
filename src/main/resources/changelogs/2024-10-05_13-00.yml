@@ -1,6 +1,6 @@
 databaseChangeLog:
   - changeSet:
-      id: rateplanservie-initial
+      id: productrateplanservie-initial
       author: bootify.io
       changes:
         - createTable:
