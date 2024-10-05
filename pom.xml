@@ -9,9 +9,9 @@
         <relativePath /><!-- lookup parent from repository -->
     </parent>
     <groupId>aforo</groupId>
-    <artifactId>rateplanservie</artifactId>
+    <artifactId>productrateplanservie</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>rateplanservie</name>
+    <name>productrateplanservie</name>
 
     <properties>
         <java.version>21</java.version>
