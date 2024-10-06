@@ -82,6 +82,7 @@ public class RatePlanServiceImpl implements RatePlanService {
 
     @Override
     public Long create(final RatePlanDTO ratePlanDTO) {
+    	//invoke prodId and validate for ACTIVE status
         final RatePlan ratePlan = new RatePlan();
         ratePlanMapper.updateRatePlan(ratePlanDTO, ratePlan, productRepository, currenciesRepository);
         return (Long) ratePlanRepository.save(ratePlan).getRatePlanId();
@@ -89,6 +90,7 @@ public class RatePlanServiceImpl implements RatePlanService {
 
     @Override
     public void update(final Long ratePlanId, final RatePlanDTO ratePlanDTO) {
+    	//invoke prodId and validate for ACTIVE status
         final RatePlan ratePlan = ratePlanRepository.findById(ratePlanId)
                 .orElseThrow(NotFoundException::new);
         ratePlanMapper.updateRatePlan(ratePlanDTO, ratePlan, productRepository, currenciesRepository);
@@ -97,6 +99,12 @@ public class RatePlanServiceImpl implements RatePlanService {
 
     @Override
     public void delete(final Long ratePlanId) {
+    	//List all the rate plan types for this rate plan
+    	//List child entities for each rate plan type
+    	//Delete child entities for each rate plan type
+    	//Delete all the rate plan types for this rate plan
+    	
+    	//Delete rate plan
         ratePlanRepository.deleteById(ratePlanId);
     }
 

@@ -54,6 +54,12 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Long create(final ProductDTO productDTO) {
+    	//validate ids exists
+    	// producerId not null, invoke producerId and validate for ACTIVE status
+    	// organizationId  or divisionId
+    	// invoke organization and validate for ACTIVE status
+    	// invoke division and validate for ACTIVE status
+
         final Product product = new Product();
         productMapper.updateProduct(productDTO, product);
         return productRepository.save(product).getProductId();
@@ -63,12 +69,26 @@ public class ProductServiceImpl implements ProductService {
     public void update(final Long productId, final ProductDTO productDTO) {
         final Product product = productRepository.findById(productId)
                 .orElseThrow(NotFoundException::new);
+      //validate ids exists
+    	// producerId not null, invoke producerId and validate
+    	// organizationId  or divisionId
+    	// invoke organization and validate
+    	// invoke division and validate
         productMapper.updateProduct(productDTO, product);
         productRepository.save(product);
     }
 
     @Override
     public void delete(final Long productId) {
+    	// productId
+    	//List rate plans for this prodctId
+    	//List all the rate plan types for this rate plan
+    	//List child entities for each rate plan type
+    	//Delete child entities for each rate plan type
+    	//Delete all the rate plan types for this rate plan
+    	//Delete rate plans related to prodId
+    	
+    	//Finally Delete prodId
         productRepository.deleteById(productId);
     }
 
