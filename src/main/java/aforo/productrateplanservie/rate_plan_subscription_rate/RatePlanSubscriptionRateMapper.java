@@ -27,7 +27,7 @@ public interface RatePlanSubscriptionRateMapper {
     default void afterUpdateRatePlanSubscriptionRateDTO(
             RatePlanSubscriptionRate ratePlanSubscriptionRate,
             @MappingTarget RatePlanSubscriptionRateDTO ratePlanSubscriptionRateDTO) {
-        ratePlanSubscriptionRateDTO.setRatePlan(ratePlanSubscriptionRate.getRatePlan() == null ? null : ratePlanSubscriptionRate.getRatePlan().getRatePlanId());
+        ratePlanSubscriptionRateDTO.setRatePlan(ratePlanSubscriptionRate.getRatePlan() == null ? null : (Long) ((RatePlan) ratePlanSubscriptionRate.getRatePlan()).getRatePlanId());
     }
 
     @Mapping(target = "ratePlanSubscriptionRateId", ignore = true)

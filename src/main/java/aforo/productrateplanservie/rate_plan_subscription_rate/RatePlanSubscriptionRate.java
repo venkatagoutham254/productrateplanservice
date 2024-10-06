@@ -14,6 +14,8 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import java.time.OffsetDateTime;
 import java.util.Set;
+
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
@@ -23,8 +25,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-@Getter
-@Setter
+@Data
 public class RatePlanSubscriptionRate {
 
     @Id
@@ -65,9 +66,95 @@ public class RatePlanSubscriptionRate {
     @Column(nullable = false)
     private OffsetDateTime lastUpdated;
 
-	public Object getRatePlanSubscriptionRateId() {
-		// TODO Auto-generated method stub
-		return null;
+	public Long getRatePlanSubscriptionRateId() {
+		return ratePlanSubscriptionRateId;
 	}
+
+	public void setRatePlanSubscriptionRateId(Long ratePlanSubscriptionRateId) {
+		this.ratePlanSubscriptionRateId = ratePlanSubscriptionRateId;
+	}
+
+	public String getRatePlanSubscriptionDescription() {
+		return ratePlanSubscriptionDescription;
+	}
+
+	public void setRatePlanSubscriptionDescription(String ratePlanSubscriptionDescription) {
+		this.ratePlanSubscriptionDescription = ratePlanSubscriptionDescription;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public String getUnitType() {
+		return unitType;
+	}
+
+	public void setUnitType(String unitType) {
+		this.unitType = unitType;
+	}
+
+	public String getUnitMeasurement() {
+		return unitMeasurement;
+	}
+
+	public void setUnitMeasurement(String unitMeasurement) {
+		this.unitMeasurement = unitMeasurement;
+	}
+
+	public String getUnitBillingFrequency() {
+		return unitBillingFrequency;
+	}
+
+	public void setUnitBillingFrequency(String unitBillingFrequency) {
+		this.unitBillingFrequency = unitBillingFrequency;
+	}
+
+	public String getUnitPriceFixedFrequency() {
+		return unitPriceFixedFrequency;
+	}
+
+	public void setUnitPriceFixedFrequency(String unitPriceFixedFrequency) {
+		this.unitPriceFixedFrequency = unitPriceFixedFrequency;
+	}
+
+	public RatePlan getRatePlan() {
+		return ratePlan;
+	}
+
+	public void setRatePlan(RatePlan ratePlan) {
+		this.ratePlan = ratePlan;
+	}
+
+	public Set<RatePlanSubscriptionRateDetails> getRatePlanSubscriptionRateRatePlanSubscriptionRateDetailses() {
+		return ratePlanSubscriptionRateRatePlanSubscriptionRateDetailses;
+	}
+
+	public void setRatePlanSubscriptionRateRatePlanSubscriptionRateDetailses(
+			Set<RatePlanSubscriptionRateDetails> ratePlanSubscriptionRateRatePlanSubscriptionRateDetailses) {
+		this.ratePlanSubscriptionRateRatePlanSubscriptionRateDetailses = ratePlanSubscriptionRateRatePlanSubscriptionRateDetailses;
+	}
+
+	public OffsetDateTime getDateCreated() {
+		return dateCreated;
+	}
+
+	public void setDateCreated(OffsetDateTime dateCreated) {
+		this.dateCreated = dateCreated;
+	}
+
+	public OffsetDateTime getLastUpdated() {
+		return lastUpdated;
+	}
+
+	public void setLastUpdated(OffsetDateTime lastUpdated) {
+		this.lastUpdated = lastUpdated;
+	}
+
+
 
 }

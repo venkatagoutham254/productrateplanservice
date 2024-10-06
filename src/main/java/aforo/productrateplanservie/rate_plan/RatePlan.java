@@ -87,7 +87,7 @@ public class RatePlan {
     @Column(nullable = false)
     private OffsetDateTime lastUpdated;
 
-	public Object getRatePlanId() {
+	public Long getRatePlanId() {
 		// TODO Auto-generated method stub
 		return null;
 	}

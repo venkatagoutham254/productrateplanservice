@@ -70,4 +70,91 @@ public class RatePlanFreemiumRate {
 		return null;
 	}
 
+	public String getRatePlanFreemiumDescription() {
+		return ratePlanFreemiumDescription;
+	}
+
+	public void setRatePlanFreemiumDescription(String ratePlanFreemiumDescription) {
+		this.ratePlanFreemiumDescription = ratePlanFreemiumDescription;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public String getUnitType() {
+		return unitType;
+	}
+
+	public void setUnitType(String unitType) {
+		this.unitType = unitType;
+	}
+
+	public String getUnitMeasurement() {
+		return unitMeasurement;
+	}
+
+	public void setUnitMeasurement(String unitMeasurement) {
+		this.unitMeasurement = unitMeasurement;
+	}
+
+	public String getUnitBillingFrequency() {
+		return unitBillingFrequency;
+	}
+
+	public void setUnitBillingFrequency(String unitBillingFrequency) {
+		this.unitBillingFrequency = unitBillingFrequency;
+	}
+
+	public String getUnitFreePriceFixedFrequency() {
+		return unitFreePriceFixedFrequency;
+	}
+
+	public void setUnitFreePriceFixedFrequency(String unitFreePriceFixedFrequency) {
+		this.unitFreePriceFixedFrequency = unitFreePriceFixedFrequency;
+	}
+
+	public RatePlan getRatePlan() {
+		return ratePlan;
+	}
+
+	public void setRatePlan(RatePlan ratePlan) {
+		this.ratePlan = ratePlan;
+	}
+
+	public Set<RatePlanFreemiumRateDetails> getRatePlanFreemiumRateRatePlanFreemiumRateDetailses() {
+		return ratePlanFreemiumRateRatePlanFreemiumRateDetailses;
+	}
+
+	public void setRatePlanFreemiumRateRatePlanFreemiumRateDetailses(
+			Set<RatePlanFreemiumRateDetails> ratePlanFreemiumRateRatePlanFreemiumRateDetailses) {
+		this.ratePlanFreemiumRateRatePlanFreemiumRateDetailses = ratePlanFreemiumRateRatePlanFreemiumRateDetailses;
+	}
+
+	public OffsetDateTime getDateCreated() {
+		return dateCreated;
+	}
+
+	public void setDateCreated(OffsetDateTime dateCreated) {
+		this.dateCreated = dateCreated;
+	}
+
+	public OffsetDateTime getLastUpdated() {
+		return lastUpdated;
+	}
+
+	public void setLastUpdated(OffsetDateTime lastUpdated) {
+		this.lastUpdated = lastUpdated;
+	}
+
+	public void setRatePlanFreemiumRateId(Long ratePlanFreemiumRateId) {
+		this.ratePlanFreemiumRateId = ratePlanFreemiumRateId;
+	}
+	
+	
+
 }

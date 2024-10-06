@@ -62,7 +62,7 @@ public class RatePlanUsageBasedServiceImpl implements RatePlanUsageBasedService 
     public Long create(final RatePlanUsageBasedDTO ratePlanUsageBasedDTO) {
         final RatePlanUsageBased ratePlanUsageBased = new RatePlanUsageBased();
         ratePlanUsageBasedMapper.updateRatePlanUsageBased(ratePlanUsageBasedDTO, ratePlanUsageBased, ratePlanRepository);
-        return ratePlanUsageBasedRepository.save(ratePlanUsageBased).getRatePlanUsageRateId();
+        return (Long) ratePlanUsageBasedRepository.save(ratePlanUsageBased).getRatePlanUsageRateId();
     }
 
     @Override

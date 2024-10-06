@@ -2,6 +2,8 @@ package aforo.productrateplanservie.product;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.io.IOException;
+
 import aforo.productrateplanservie.config.BaseIT;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
@@ -69,7 +71,7 @@ public class ProductResourceTest extends BaseIT {
     }
 
     @Test
-    void createProduct_success() {
+    void createProduct_success() throws IOException {
         RestAssured
                 .given()
                     .accept(ContentType.JSON)
@@ -83,7 +85,7 @@ public class ProductResourceTest extends BaseIT {
     }
 
     @Test
-    void createProduct_missingField() {
+    void createProduct_missingField() throws IOException {
         RestAssured
                 .given()
                     .accept(ContentType.JSON)
@@ -100,7 +102,7 @@ public class ProductResourceTest extends BaseIT {
 
     @Test
     @Sql("/data/productData.sql")
-    void updateProduct_success() {
+    void updateProduct_success() throws IOException {
         RestAssured
                 .given()
                     .accept(ContentType.JSON)

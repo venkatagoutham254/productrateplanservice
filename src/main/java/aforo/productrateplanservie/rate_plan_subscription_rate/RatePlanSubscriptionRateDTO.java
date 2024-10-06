@@ -117,4 +117,8 @@ public class RatePlanSubscriptionRateDTO {
 		this.ratePlan = ratePlan;
 	}
 
+	public RatePlanSubscriptionRateDTO() {
+		// TODO Auto-generated constructor stub
+	}
+
 }

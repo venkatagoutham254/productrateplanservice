@@ -2,6 +2,8 @@ package aforo.productrateplanservie.rate_plan_flat_rate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.io.IOException;
+
 import aforo.productrateplanservie.config.BaseIT;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
@@ -70,7 +72,7 @@ public class RatePlanFlatRateResourceTest extends BaseIT {
 
     @Test
     @Sql({"/data/productData.sql", "/data/currenciesData.sql", "/data/ratePlanData.sql"})
-    void createRatePlanFlatRate_success() {
+    void createRatePlanFlatRate_success() throws IOException {
         RestAssured
                 .given()
                     .accept(ContentType.JSON)
@@ -84,7 +86,7 @@ public class RatePlanFlatRateResourceTest extends BaseIT {
     }
 
     @Test
-    void createRatePlanFlatRate_missingField() {
+    void createRatePlanFlatRate_missingField() throws IOException {
         RestAssured
                 .given()
                     .accept(ContentType.JSON)
@@ -101,7 +103,7 @@ public class RatePlanFlatRateResourceTest extends BaseIT {
 
     @Test
     @Sql({"/data/productData.sql", "/data/currenciesData.sql", "/data/ratePlanData.sql", "/data/ratePlanFlatRateData.sql"})
-    void updateRatePlanFlatRate_success() {
+    void updateRatePlanFlatRate_success() throws IOException {
         RestAssured
                 .given()
                     .accept(ContentType.JSON)
@@ -112,7 +114,7 @@ public class RatePlanFlatRateResourceTest extends BaseIT {
                 .then()
                     .statusCode(HttpStatus.OK.value())
                     .body("_links.self.href", Matchers.endsWith("/api/ratePlanFlatRates/1700"));
-        assertEquals("Stet clita kasd.", ratePlanFlatRateRepository.findById(((long)1700)).orElseThrow().getRatePlanFlatDescription());
+        assertEquals("Stet clita kasd.", ratePlanFlatRateRepository.findById(((long)1700)).orElseThrow().getRatePlanFlatRateId());
         assertEquals(2, ratePlanFlatRateRepository.count());
     }
 

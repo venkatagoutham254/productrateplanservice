@@ -2,6 +2,8 @@ package aforo.productrateplanservie.currencies;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.io.IOException;
+
 import aforo.productrateplanservie.config.BaseIT;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
@@ -69,7 +71,7 @@ public class CurrenciesResourceTest extends BaseIT {
     }
 
     @Test
-    void createCurrencies_success() {
+    void createCurrencies_success() throws IOException {
         RestAssured
                 .given()
                     .accept(ContentType.JSON)
@@ -83,7 +85,7 @@ public class CurrenciesResourceTest extends BaseIT {
     }
 
     @Test
-    void createCurrencies_missingField() {
+    void createCurrencies_missingField() throws IOException {
         RestAssured
                 .given()
                     .accept(ContentType.JSON)
@@ -100,7 +102,7 @@ public class CurrenciesResourceTest extends BaseIT {
 
     @Test
     @Sql("/data/currenciesData.sql")
-    void updateCurrencies_success() {
+    void updateCurrencies_success() throws IOException {
         RestAssured
                 .given()
                     .accept(ContentType.JSON)
@@ -111,7 +113,7 @@ public class CurrenciesResourceTest extends BaseIT {
                 .then()
                     .statusCode(HttpStatus.OK.value())
                     .body("_links.self.href", Matchers.endsWith("/api/currenciess/1100"));
-        assertEquals("Con", currenciesRepository.findById(((long)1100)).orElseThrow().getCurrencyCode());
+        assertEquals("Con", currenciesRepository.findById(((long)1100)).orElseThrow().getCurrencyId());
         assertEquals(2, currenciesRepository.count());
     }
 

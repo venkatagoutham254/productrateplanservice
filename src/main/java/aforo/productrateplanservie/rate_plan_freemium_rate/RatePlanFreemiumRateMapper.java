@@ -25,7 +25,7 @@ public interface RatePlanFreemiumRateMapper {
     @AfterMapping
     default void afterUpdateRatePlanFreemiumRateDTO(RatePlanFreemiumRate ratePlanFreemiumRate,
             @MappingTarget RatePlanFreemiumRateDTO ratePlanFreemiumRateDTO) {
-        ratePlanFreemiumRateDTO.setRatePlan(ratePlanFreemiumRate.getRatePlan() == null ? null : ratePlanFreemiumRate.getRatePlan().getRatePlanId());
+        ratePlanFreemiumRateDTO.setRatePlan(ratePlanFreemiumRate.getRatePlan() == null ? null : (Long) ratePlanFreemiumRate.getRatePlan().getRatePlanId());
     }
 
     @Mapping(target = "ratePlanFreemiumRateId", ignore = true)

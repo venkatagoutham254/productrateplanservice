@@ -62,7 +62,7 @@ public class RatePlanTieredRateServiceImpl implements RatePlanTieredRateService 
     public Long create(final RatePlanTieredRateDTO ratePlanTieredRateDTO) {
         final RatePlanTieredRate ratePlanTieredRate = new RatePlanTieredRate();
         ratePlanTieredRateMapper.updateRatePlanTieredRate(ratePlanTieredRateDTO, ratePlanTieredRate, ratePlanRepository);
-        return ratePlanTieredRateRepository.save(ratePlanTieredRate).getRatePlanTieredRateId();
+        return (Long) ratePlanTieredRateRepository.save(ratePlanTieredRate).getRatePlanTieredRateId();
     }
 
     @Override

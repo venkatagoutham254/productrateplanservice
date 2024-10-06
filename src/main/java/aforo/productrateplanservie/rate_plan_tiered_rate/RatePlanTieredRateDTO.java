@@ -47,6 +47,10 @@ public class RatePlanTieredRateDTO {
 		this.ratePlan = ratePlan;
 	}
 
+	public RatePlanTieredRateDTO() {
+		// TODO Auto-generated constructor stub
+	}
+
 	public Long getRatePlanTieredRateId() {
 		return ratePlanTieredRateId;
 	}

@@ -2,12 +2,12 @@ package aforo.productrateplanservie.rate_plan_usage_based;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
 
-@Getter
-@Setter
+@Data
 public class RatePlanUsageBasedDTO {
 
     private Long ratePlanUsageRateId;
@@ -101,6 +101,10 @@ public class RatePlanUsageBasedDTO {
 		this.unitMeasurement = unitMeasurement;
 		this.unitCalculation = unitCalculation;
 		this.ratePlan = ratePlan;
+	}
+
+	public RatePlanUsageBasedDTO() {
+		// TODO Auto-generated constructor stub
 	}
 
     

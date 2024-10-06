@@ -53,4 +53,9 @@ public class Product {
 		return null;
 	}
 
+	public Object getProductName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

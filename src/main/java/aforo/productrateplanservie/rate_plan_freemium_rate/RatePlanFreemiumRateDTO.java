@@ -2,12 +2,9 @@ package aforo.productrateplanservie.rate_plan_freemium_rate;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
-
-@Getter
-@Setter
+@Data
 public class RatePlanFreemiumRateDTO {
 
     private Long ratePlanFreemiumRateId;
@@ -115,6 +112,10 @@ public class RatePlanFreemiumRateDTO {
 		this.unitBillingFrequency = unitBillingFrequency;
 		this.unitFreePriceFixedFrequency = unitFreePriceFixedFrequency;
 		this.ratePlan = ratePlan;
+	}
+
+	public RatePlanFreemiumRateDTO() {
+		// TODO Auto-generated constructor stub
 	}
 
     
