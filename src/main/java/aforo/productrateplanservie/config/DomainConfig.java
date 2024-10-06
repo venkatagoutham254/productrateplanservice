@@ -12,8 +12,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 
 @Configuration
-@EntityScan("aforo.productrateplanservie.domain")
-@EnableJpaRepositories("aforo.productrateplanservie.repos")
+@EntityScan("aforo.productrateplanservie")
+@EnableJpaRepositories("aforo.productrateplanservie")
 @EnableTransactionManagement
 @EnableJpaAuditing(dateTimeProviderRef = "auditingDateTimeProvider")
 public class DomainConfig {
