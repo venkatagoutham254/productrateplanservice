@@ -65,4 +65,9 @@ public class RatePlanFreemiumRate {
     @Column(nullable = false)
     private OffsetDateTime lastUpdated;
 
+	public Object getRatePlanFreemiumRateId() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

@@ -25,7 +25,7 @@ public interface RatePlanFlatRateMapper {
     @AfterMapping
     default void afterUpdateRatePlanFlatRateDTO(RatePlanFlatRate ratePlanFlatRate,
             @MappingTarget RatePlanFlatRateDTO ratePlanFlatRateDTO) {
-        ratePlanFlatRateDTO.setRatePlan(ratePlanFlatRate.getRatePlan() == null ? null : ratePlanFlatRate.getRatePlan().getRatePlanId());
+        ratePlanFlatRateDTO.setRatePlan(ratePlanFlatRate.getRatePlan() == null ? null : ((RatePlan) ratePlanFlatRate.getRatePlan()).getRatePlanId());
     }
 
     @Mapping(target = "ratePlanFlatRateId", ignore = true)

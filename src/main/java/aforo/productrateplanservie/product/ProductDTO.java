@@ -62,6 +62,10 @@ public class ProductDTO {
 		this.productDescription = productDescription;
 		this.status = status;
 	}
+
+	public ProductDTO() {
+		// TODO Auto-generated constructor stub
+	}
     
 
 }

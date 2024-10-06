@@ -65,4 +65,9 @@ public class RatePlanSubscriptionRate {
     @Column(nullable = false)
     private OffsetDateTime lastUpdated;
 
+	public Object getRatePlanSubscriptionRateId() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

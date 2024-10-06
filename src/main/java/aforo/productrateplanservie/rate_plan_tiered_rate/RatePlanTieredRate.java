@@ -62,4 +62,9 @@ public class RatePlanTieredRate {
     @Column(nullable = false)
     private OffsetDateTime lastUpdated;
 
+	public Object getRatePlanTieredRateId() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

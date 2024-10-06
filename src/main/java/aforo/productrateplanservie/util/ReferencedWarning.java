@@ -27,4 +27,11 @@ public class ReferencedWarning {
         return message;
     }
 
+	public void setKey(String string) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
 }

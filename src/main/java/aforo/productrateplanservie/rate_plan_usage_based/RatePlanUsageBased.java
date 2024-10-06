@@ -62,4 +62,9 @@ public class RatePlanUsageBased {
     @Column(nullable = false)
     private OffsetDateTime lastUpdated;
 
+	public Object getRatePlanUsageRateId() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

@@ -61,7 +61,7 @@ public class RatePlanFlatRateServiceImpl implements RatePlanFlatRateService {
     public Long create(final RatePlanFlatRateDTO ratePlanFlatRateDTO) {
         final RatePlanFlatRate ratePlanFlatRate = new RatePlanFlatRate();
         ratePlanFlatRateMapper.updateRatePlanFlatRate(ratePlanFlatRateDTO, ratePlanFlatRate, ratePlanRepository);
-        return ratePlanFlatRateRepository.save(ratePlanFlatRate).getRatePlanFlatRateId();
+        return (Long) ratePlanFlatRateRepository.save(ratePlanFlatRate).getRatePlanFlatRateId();
     }
 
     @Override

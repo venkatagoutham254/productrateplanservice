@@ -87,4 +87,29 @@ public class RatePlan {
     @Column(nullable = false)
     private OffsetDateTime lastUpdated;
 
+	public Object getRatePlanId() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public void setCurrency(Currencies currency2) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void setProduct(Product product2) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public Currencies getCurrency() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public Product getProduct() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
