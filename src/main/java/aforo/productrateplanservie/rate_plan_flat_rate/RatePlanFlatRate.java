@@ -65,4 +65,19 @@ public class RatePlanFlatRate {
     @Column(nullable = false)
     private OffsetDateTime lastUpdated;
 
+	public Object getRatePlanFlatRateId() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public void setRatePlan(RatePlan ratePlan2) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public Object getRatePlan() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

@@ -46,7 +46,7 @@ public class RatePlanFreemiumRateServiceImpl implements RatePlanFreemiumRateServ
         }
         return new PageImpl<>(page.getContent()
                 .stream()
-                .map(ratePlanFreemiumRate -> ratePlanFreemiumRateMapper.updateRatePlanFreemiumRateDTO(ratePlanFreemiumRate, new RatePlanFreemiumRateDTO()))
+                .map(ratePlanFreemiumRate -> ratePlanFreemiumRateMapper.updateRatePlanFreemiumRateDTO(ratePlanFreemiumRate, new RatePlanFreemiumRateDTO(null, filter, filter, filter, filter, filter, filter, null)))
                 .toList(),
                 pageable, page.getTotalElements());
     }
@@ -62,7 +62,7 @@ public class RatePlanFreemiumRateServiceImpl implements RatePlanFreemiumRateServ
     public Long create(final RatePlanFreemiumRateDTO ratePlanFreemiumRateDTO) {
         final RatePlanFreemiumRate ratePlanFreemiumRate = new RatePlanFreemiumRate();
         ratePlanFreemiumRateMapper.updateRatePlanFreemiumRate(ratePlanFreemiumRateDTO, ratePlanFreemiumRate, ratePlanRepository);
-        return ratePlanFreemiumRateRepository.save(ratePlanFreemiumRate).getRatePlanFreemiumRateId();
+        return (Long) ratePlanFreemiumRateRepository.save(ratePlanFreemiumRate).getRatePlanFreemiumRateId();
     }
 
     @Override
@@ -87,7 +87,7 @@ public class RatePlanFreemiumRateServiceImpl implements RatePlanFreemiumRateServ
         final RatePlanFreemiumRateDetails ratePlanFreemiumRateRatePlanFreemiumRateDetails = ratePlanFreemiumRateDetailsRepository.findFirstByRatePlanFreemiumRate(ratePlanFreemiumRate);
         if (ratePlanFreemiumRateRatePlanFreemiumRateDetails != null) {
             referencedWarning.setKey("ratePlanFreemiumRate.ratePlanFreemiumRateDetails.ratePlanFreemiumRate.referenced");
-            referencedWarning.addParam(ratePlanFreemiumRateRatePlanFreemiumRateDetails.getId());
+            referencedWarning.addParam((ratePlanFreemiumRateRatePlanFreemiumRateDetails).getId());
             return referencedWarning;
         }
         return null;

@@ -84,7 +84,7 @@ public class RatePlanServiceImpl implements RatePlanService {
     public Long create(final RatePlanDTO ratePlanDTO) {
         final RatePlan ratePlan = new RatePlan();
         ratePlanMapper.updateRatePlan(ratePlanDTO, ratePlan, productRepository, currenciesRepository);
-        return ratePlanRepository.save(ratePlan).getRatePlanId();
+        return (Long) ratePlanRepository.save(ratePlan).getRatePlanId();
     }
 
     @Override

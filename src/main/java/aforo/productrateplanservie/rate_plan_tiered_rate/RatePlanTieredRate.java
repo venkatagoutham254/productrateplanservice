@@ -62,4 +62,88 @@ public class RatePlanTieredRate {
     @Column(nullable = false)
     private OffsetDateTime lastUpdated;
 
+	public Object getRatePlanTieredRateId() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public String getRatePlanTieredDescription() {
+		return ratePlanTieredDescription;
+	}
+
+	public void setRatePlanTieredDescription(String ratePlanTieredDescription) {
+		this.ratePlanTieredDescription = ratePlanTieredDescription;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public String getUnitType() {
+		return unitType;
+	}
+
+	public void setUnitType(String unitType) {
+		this.unitType = unitType;
+	}
+
+	public String getUnitMeasurement() {
+		return unitMeasurement;
+	}
+
+	public void setUnitMeasurement(String unitMeasurement) {
+		this.unitMeasurement = unitMeasurement;
+	}
+
+	public String getUnitCalculation() {
+		return unitCalculation;
+	}
+
+	public void setUnitCalculation(String unitCalculation) {
+		this.unitCalculation = unitCalculation;
+	}
+
+	public RatePlan getRatePlan() {
+		return ratePlan;
+	}
+
+	public void setRatePlan(RatePlan ratePlan) {
+		this.ratePlan = ratePlan;
+	}
+
+	public Set<RatePlanTieredRateDetails> getRatePlanTieredRateRatePlanTieredRateDetailses() {
+		return ratePlanTieredRateRatePlanTieredRateDetailses;
+	}
+
+	public void setRatePlanTieredRateRatePlanTieredRateDetailses(
+			Set<RatePlanTieredRateDetails> ratePlanTieredRateRatePlanTieredRateDetailses) {
+		this.ratePlanTieredRateRatePlanTieredRateDetailses = ratePlanTieredRateRatePlanTieredRateDetailses;
+	}
+
+	public OffsetDateTime getDateCreated() {
+		return dateCreated;
+	}
+
+	public void setDateCreated(OffsetDateTime dateCreated) {
+		this.dateCreated = dateCreated;
+	}
+
+	public OffsetDateTime getLastUpdated() {
+		return lastUpdated;
+	}
+
+	public void setLastUpdated(OffsetDateTime lastUpdated) {
+		this.lastUpdated = lastUpdated;
+	}
+
+	public void setRatePlanTieredRateId(Long ratePlanTieredRateId) {
+		this.ratePlanTieredRateId = ratePlanTieredRateId;
+	}
+	
+	
+
 }

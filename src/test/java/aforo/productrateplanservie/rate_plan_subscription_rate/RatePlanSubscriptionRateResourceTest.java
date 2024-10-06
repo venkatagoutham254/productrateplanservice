@@ -2,6 +2,8 @@ package aforo.productrateplanservie.rate_plan_subscription_rate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.io.IOException;
+
 import aforo.productrateplanservie.config.BaseIT;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
@@ -70,7 +72,7 @@ public class RatePlanSubscriptionRateResourceTest extends BaseIT {
 
     @Test
     @Sql({"/data/productData.sql", "/data/currenciesData.sql", "/data/ratePlanData.sql"})
-    void createRatePlanSubscriptionRate_success() {
+    void createRatePlanSubscriptionRate_success() throws IOException {
         RestAssured
                 .given()
                     .accept(ContentType.JSON)
@@ -84,7 +86,7 @@ public class RatePlanSubscriptionRateResourceTest extends BaseIT {
     }
 
     @Test
-    void createRatePlanSubscriptionRate_missingField() {
+    void createRatePlanSubscriptionRate_missingField() throws IOException {
         RestAssured
                 .given()
                     .accept(ContentType.JSON)
@@ -101,7 +103,7 @@ public class RatePlanSubscriptionRateResourceTest extends BaseIT {
 
     @Test
     @Sql({"/data/productData.sql", "/data/currenciesData.sql", "/data/ratePlanData.sql", "/data/ratePlanSubscriptionRateData.sql"})
-    void updateRatePlanSubscriptionRate_success() {
+    void updateRatePlanSubscriptionRate_success() throws IOException {
         RestAssured
                 .given()
                     .accept(ContentType.JSON)

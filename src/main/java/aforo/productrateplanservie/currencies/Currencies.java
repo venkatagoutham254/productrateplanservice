@@ -48,4 +48,10 @@ public class Currencies {
     @Column(nullable = false)
     private OffsetDateTime lastUpdated;
 
+	public Long getCurrencyId() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+    
+
 }

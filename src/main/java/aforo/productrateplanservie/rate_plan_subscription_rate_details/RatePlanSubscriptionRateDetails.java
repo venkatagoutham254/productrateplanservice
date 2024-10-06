@@ -48,4 +48,9 @@ public class RatePlanSubscriptionRateDetails {
     @Column(nullable = false)
     private OffsetDateTime lastUpdated;
 
+	public Object getId() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

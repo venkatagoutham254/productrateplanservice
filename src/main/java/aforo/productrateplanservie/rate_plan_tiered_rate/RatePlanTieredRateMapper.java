@@ -25,7 +25,7 @@ public interface RatePlanTieredRateMapper {
     @AfterMapping
     default void afterUpdateRatePlanTieredRateDTO(RatePlanTieredRate ratePlanTieredRate,
             @MappingTarget RatePlanTieredRateDTO ratePlanTieredRateDTO) {
-        ratePlanTieredRateDTO.setRatePlan(ratePlanTieredRate.getRatePlan() == null ? null : ratePlanTieredRate.getRatePlan().getRatePlanId());
+        ratePlanTieredRateDTO.setRatePlan(ratePlanTieredRate.getRatePlan() == null ? null : (Long) ratePlanTieredRate.getRatePlan().getRatePlanId());
     }
 
     @Mapping(target = "ratePlanTieredRateId", ignore = true)

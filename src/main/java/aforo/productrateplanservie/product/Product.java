@@ -48,4 +48,14 @@ public class Product {
     @Column(nullable = false)
     private OffsetDateTime lastUpdated;
 
+	public Long getProductId() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public Object getProductName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

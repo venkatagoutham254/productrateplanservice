@@ -2,6 +2,8 @@ package aforo.productrateplanservie.rate_plan;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.io.IOException;
+
 import aforo.productrateplanservie.config.BaseIT;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
@@ -70,7 +72,7 @@ public class RatePlanResourceTest extends BaseIT {
 
     @Test
     @Sql({"/data/productData.sql", "/data/currenciesData.sql"})
-    void createRatePlan_success() {
+    void createRatePlan_success() throws IOException {
         RestAssured
                 .given()
                     .accept(ContentType.JSON)
@@ -84,7 +86,7 @@ public class RatePlanResourceTest extends BaseIT {
     }
 
     @Test
-    void createRatePlan_missingField() {
+    void createRatePlan_missingField() throws IOException {
         RestAssured
                 .given()
                     .accept(ContentType.JSON)
@@ -101,7 +103,7 @@ public class RatePlanResourceTest extends BaseIT {
 
     @Test
     @Sql({"/data/productData.sql", "/data/currenciesData.sql", "/data/ratePlanData.sql"})
-    void updateRatePlan_success() {
+    void updateRatePlan_success() throws IOException {
         RestAssured
                 .given()
                     .accept(ContentType.JSON)
@@ -112,7 +114,7 @@ public class RatePlanResourceTest extends BaseIT {
                 .then()
                     .statusCode(HttpStatus.OK.value())
                     .body("_links.self.href", Matchers.endsWith("/api/ratePlans/1200"));
-        assertEquals("Nulla facilisis.", ratePlanRepository.findById(((long)1200)).orElseThrow().getRatePlanName());
+        assertEquals("Nulla facilisis.", ratePlanRepository.findById(((long)1200)).orElseThrow().getRatePlanId());
         assertEquals(2, ratePlanRepository.count());
     }
 

@@ -16,6 +16,8 @@ import aforo.productrateplanservie.rate_plan_usage_based.RatePlanUsageBasedRepos
 import aforo.productrateplanservie.rate_plan_usage_based_rates.RatePlanUsageBasedRatesRepository;
 import io.restassured.RestAssured;
 import jakarta.annotation.PostConstruct;
+
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -102,7 +104,7 @@ public abstract class BaseIT {
     }
 
     @SneakyThrows
-    public String readResource(final String resourceName) {
+    public String readResource(final String resourceName) throws IOException {
         return StreamUtils.copyToString(getClass().getResourceAsStream(resourceName), StandardCharsets.UTF_8);
     }
 
