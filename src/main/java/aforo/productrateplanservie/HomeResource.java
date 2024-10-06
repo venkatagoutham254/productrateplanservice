@@ -1,13 +1,13 @@
 package aforo.productrateplanservie;
 
-import aforo.productrateplanservie.currencies.rest.CurrenciesResource;
-import aforo.productrateplanservie.product.rest.ProductResource;
-import aforo.productrateplanservie.rate_plan.rest.RatePlanResource;
-import aforo.productrateplanservie.rate_plan_flat_rate.rest.RatePlanFlatRateResource;
-import aforo.productrateplanservie.rate_plan_freemium_rate.rest.RatePlanFreemiumRateResource;
-import aforo.productrateplanservie.rate_plan_subscription_rate.rest.RatePlanSubscriptionRateResource;
-import aforo.productrateplanservie.rate_plan_tiered_rate.rest.RatePlanTieredRateResource;
-import aforo.productrateplanservie.rate_plan_usage_based.rest.RatePlanUsageBasedResource;
+import aforo.productrateplanservie.currencies.CurrenciesResource;
+import aforo.productrateplanservie.product.ProductResource;
+import aforo.productrateplanservie.rate_plan.RatePlanResource;
+import aforo.productrateplanservie.rate_plan_flat_rate.RatePlanFlatRateResource;
+import aforo.productrateplanservie.rate_plan_freemium_rate.RatePlanFreemiumRateResource;
+import aforo.productrateplanservie.rate_plan_subscription_rate.RatePlanSubscriptionRateResource;
+import aforo.productrateplanservie.rate_plan_tiered_rate.RatePlanTieredRateResource;
+import aforo.productrateplanservie.rate_plan_usage_based.RatePlanUsageBasedResource;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.web.bind.annotation.GetMapping;

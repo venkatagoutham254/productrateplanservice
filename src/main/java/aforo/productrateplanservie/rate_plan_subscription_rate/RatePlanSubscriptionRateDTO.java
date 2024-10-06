@@ -1,0 +1,40 @@
+package aforo.productrateplanservie.rate_plan_subscription_rate;
+
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import lombok.Getter;
+import lombok.Setter;
+
+
+@Getter
+@Setter
+public class RatePlanSubscriptionRateDTO {
+
+    private Long ratePlanSubscriptionRateId;
+
+    @NotNull
+    @Size(max = 100)
+    private String ratePlanSubscriptionDescription;
+
+    private String description;
+
+    @NotNull
+    @Size(max = 255)
+    private String unitType;
+
+    @NotNull
+    @Size(max = 255)
+    private String unitMeasurement;
+
+    @NotNull
+    @Size(max = 255)
+    private String unitBillingFrequency;
+
+    @NotNull
+    @Size(max = 255)
+    private String unitPriceFixedFrequency;
+
+    @NotNull
+    private Long ratePlan;
+
+}
