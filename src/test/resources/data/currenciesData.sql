@@ -6,7 +6,7 @@ INSERT INTO aforo_currencies (
     date_created,
     last_updated
 ) VALUES (
-    1100,
+    'a96e0a04-d20f-3096-bc64-dac2d639a577',
     'false',
     'Et ea rebum.',
     1,
@@ -22,7 +22,7 @@ INSERT INTO aforo_currencies (
     date_created,
     last_updated
 ) VALUES (
-    1101,
+    'b8bff625-bdb0-3939-92c9-d4db0c6bbe45',
     'Vel',
     'Eget est lorem.',
     0,

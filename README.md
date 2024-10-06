@@ -9,7 +9,7 @@ When starting the application `docker compose up` is called and the app will con
 
 During development it is recommended to use the profile `local`. In IntelliJ `-Dspring.profiles.active=local` can be
 added in the VM options of the Run Configuration after enabling this property in "Modify options". Create your own
-`application-local.properties` file to override settings for development.
+`application-local.yml` file to override settings for development.
 
 Lombok must be supported by your IDE. For IntelliJ install the Lombok plugin and enable annotation processing -
 [learn more](https://bootify.io/next-steps/spring-boot-with-lombok.html).
