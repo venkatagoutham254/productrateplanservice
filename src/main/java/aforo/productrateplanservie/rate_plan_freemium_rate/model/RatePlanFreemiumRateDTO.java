@@ -2,7 +2,6 @@ package aforo.productrateplanservie.rate_plan_freemium_rate.model;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import java.util.UUID;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,7 +10,7 @@ import lombok.Setter;
 @Setter
 public class RatePlanFreemiumRateDTO {
 
-    private UUID ratePlanFreemiumRateId;
+    private Long ratePlanFreemiumRateId;
 
     @NotNull
     @Size(max = 100)
@@ -36,6 +35,6 @@ public class RatePlanFreemiumRateDTO {
     private String unitFreePriceFixedFrequency;
 
     @NotNull
-    private UUID ratePlan;
+    private Long ratePlan;
 
 }

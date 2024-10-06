@@ -2,7 +2,6 @@ package aforo.productrateplanservie.rate_plan_freemium_rate.service;
 
 import aforo.productrateplanservie.rate_plan_freemium_rate.model.RatePlanFreemiumRateDTO;
 import aforo.productrateplanservie.util.ReferencedWarning;
-import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -11,14 +10,14 @@ public interface RatePlanFreemiumRateService {
 
     Page<RatePlanFreemiumRateDTO> findAll(String filter, Pageable pageable);
 
-    RatePlanFreemiumRateDTO get(UUID ratePlanFreemiumRateId);
+    RatePlanFreemiumRateDTO get(Long ratePlanFreemiumRateId);
 
-    UUID create(RatePlanFreemiumRateDTO ratePlanFreemiumRateDTO);
+    Long create(RatePlanFreemiumRateDTO ratePlanFreemiumRateDTO);
 
-    void update(UUID ratePlanFreemiumRateId, RatePlanFreemiumRateDTO ratePlanFreemiumRateDTO);
+    void update(Long ratePlanFreemiumRateId, RatePlanFreemiumRateDTO ratePlanFreemiumRateDTO);
 
-    void delete(UUID ratePlanFreemiumRateId);
+    void delete(Long ratePlanFreemiumRateId);
 
-    ReferencedWarning getReferencedWarning(UUID ratePlanFreemiumRateId);
+    ReferencedWarning getReferencedWarning(Long ratePlanFreemiumRateId);
 
 }

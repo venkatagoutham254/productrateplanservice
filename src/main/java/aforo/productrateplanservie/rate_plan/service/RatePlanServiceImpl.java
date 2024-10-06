@@ -17,7 +17,6 @@ import aforo.productrateplanservie.rate_plan_usage_based.domain.RatePlanUsageBas
 import aforo.productrateplanservie.rate_plan_usage_based.repos.RatePlanUsageBasedRepository;
 import aforo.productrateplanservie.util.NotFoundException;
 import aforo.productrateplanservie.util.ReferencedWarning;
-import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -60,13 +59,13 @@ public class RatePlanServiceImpl implements RatePlanService {
     public Page<RatePlanDTO> findAll(final String filter, final Pageable pageable) {
         Page<RatePlan> page;
         if (filter != null) {
-            UUID uuidFilter = null;
+            Long longFilter = null;
             try {
-                uuidFilter = UUID.fromString(filter);
-            } catch (final IllegalArgumentException illegalArgumentException) {
+                longFilter = Long.parseLong(filter);
+            } catch (final NumberFormatException numberFormatException) {
                 // keep null - no parseable input
             }
-            page = ratePlanRepository.findAllByRatePlanId(uuidFilter, pageable);
+            page = ratePlanRepository.findAllByRatePlanId(longFilter, pageable);
         } else {
             page = ratePlanRepository.findAll(pageable);
         }
@@ -78,21 +77,21 @@ public class RatePlanServiceImpl implements RatePlanService {
     }
 
     @Override
-    public RatePlanDTO get(final UUID ratePlanId) {
+    public RatePlanDTO get(final Long ratePlanId) {
         return ratePlanRepository.findById(ratePlanId)
                 .map(ratePlan -> ratePlanMapper.updateRatePlanDTO(ratePlan, new RatePlanDTO()))
                 .orElseThrow(NotFoundException::new);
     }
 
     @Override
-    public UUID create(final RatePlanDTO ratePlanDTO) {
+    public Long create(final RatePlanDTO ratePlanDTO) {
         final RatePlan ratePlan = new RatePlan();
         ratePlanMapper.updateRatePlan(ratePlanDTO, ratePlan, productRepository, currenciesRepository);
         return ratePlanRepository.save(ratePlan).getRatePlanId();
     }
 
     @Override
-    public void update(final UUID ratePlanId, final RatePlanDTO ratePlanDTO) {
+    public void update(final Long ratePlanId, final RatePlanDTO ratePlanDTO) {
         final RatePlan ratePlan = ratePlanRepository.findById(ratePlanId)
                 .orElseThrow(NotFoundException::new);
         ratePlanMapper.updateRatePlan(ratePlanDTO, ratePlan, productRepository, currenciesRepository);
@@ -100,12 +99,12 @@ public class RatePlanServiceImpl implements RatePlanService {
     }
 
     @Override
-    public void delete(final UUID ratePlanId) {
+    public void delete(final Long ratePlanId) {
         ratePlanRepository.deleteById(ratePlanId);
     }
 
     @Override
-    public ReferencedWarning getReferencedWarning(final UUID ratePlanId) {
+    public ReferencedWarning getReferencedWarning(final Long ratePlanId) {
         final ReferencedWarning referencedWarning = new ReferencedWarning();
         final RatePlan ratePlan = ratePlanRepository.findById(ratePlanId)
                 .orElseThrow(NotFoundException::new);

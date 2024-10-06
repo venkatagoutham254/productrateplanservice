@@ -7,7 +7,6 @@ import aforo.productrateplanservie.rate_plan.domain.RatePlan;
 import aforo.productrateplanservie.rate_plan.repos.RatePlanRepository;
 import aforo.productrateplanservie.util.NotFoundException;
 import aforo.productrateplanservie.util.ReferencedWarning;
-import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -32,13 +31,13 @@ public class ProductServiceImpl implements ProductService {
     public Page<ProductDTO> findAll(final String filter, final Pageable pageable) {
         Page<Product> page;
         if (filter != null) {
-            UUID uuidFilter = null;
+            Long longFilter = null;
             try {
-                uuidFilter = UUID.fromString(filter);
-            } catch (final IllegalArgumentException illegalArgumentException) {
+                longFilter = Long.parseLong(filter);
+            } catch (final NumberFormatException numberFormatException) {
                 // keep null - no parseable input
             }
-            page = productRepository.findAllByProductId(uuidFilter, pageable);
+            page = productRepository.findAllByProductId(longFilter, pageable);
         } else {
             page = productRepository.findAll(pageable);
         }
@@ -50,21 +49,21 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ProductDTO get(final UUID productId) {
+    public ProductDTO get(final Long productId) {
         return productRepository.findById(productId)
                 .map(product -> productMapper.updateProductDTO(product, new ProductDTO()))
                 .orElseThrow(NotFoundException::new);
     }
 
     @Override
-    public UUID create(final ProductDTO productDTO) {
+    public Long create(final ProductDTO productDTO) {
         final Product product = new Product();
         productMapper.updateProduct(productDTO, product);
         return productRepository.save(product).getProductId();
     }
 
     @Override
-    public void update(final UUID productId, final ProductDTO productDTO) {
+    public void update(final Long productId, final ProductDTO productDTO) {
         final Product product = productRepository.findById(productId)
                 .orElseThrow(NotFoundException::new);
         productMapper.updateProduct(productDTO, product);
@@ -72,12 +71,12 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public void delete(final UUID productId) {
+    public void delete(final Long productId) {
         productRepository.deleteById(productId);
     }
 
     @Override
-    public ReferencedWarning getReferencedWarning(final UUID productId) {
+    public ReferencedWarning getReferencedWarning(final Long productId) {
         final ReferencedWarning referencedWarning = new ReferencedWarning();
         final Product product = productRepository.findById(productId)
                 .orElseThrow(NotFoundException::new);

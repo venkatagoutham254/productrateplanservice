@@ -11,7 +11,6 @@ import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
-import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -78,22 +77,22 @@ public class ProductResource {
 
     @GetMapping("/{productId}")
     public ResponseEntity<EntityModel<ProductDTO>> getProduct(
-            @PathVariable(name = "productId") final UUID productId) {
+            @PathVariable(name = "productId") final Long productId) {
         final ProductDTO productDTO = productService.get(productId);
         return ResponseEntity.ok(productAssembler.toModel(productDTO));
     }
 
     @PostMapping
     @ApiResponse(responseCode = "201")
-    public ResponseEntity<EntityModel<SimpleValue<UUID>>> createProduct(
+    public ResponseEntity<EntityModel<SimpleValue<Long>>> createProduct(
             @RequestBody @Valid final ProductDTO productDTO) {
-        final UUID createdProductId = productService.create(productDTO);
+        final Long createdProductId = productService.create(productDTO);
         return new ResponseEntity<>(productAssembler.toSimpleModel(createdProductId), HttpStatus.CREATED);
     }
 
     @PutMapping("/{productId}")
-    public ResponseEntity<EntityModel<SimpleValue<UUID>>> updateProduct(
-            @PathVariable(name = "productId") final UUID productId,
+    public ResponseEntity<EntityModel<SimpleValue<Long>>> updateProduct(
+            @PathVariable(name = "productId") final Long productId,
             @RequestBody @Valid final ProductDTO productDTO) {
         productService.update(productId, productDTO);
         return ResponseEntity.ok(productAssembler.toSimpleModel(productId));
@@ -102,7 +101,7 @@ public class ProductResource {
     @DeleteMapping("/{productId}")
     @ApiResponse(responseCode = "204")
     public ResponseEntity<Void> deleteProduct(
-            @PathVariable(name = "productId") final UUID productId) {
+            @PathVariable(name = "productId") final Long productId) {
         final ReferencedWarning referencedWarning = productService.getReferencedWarning(productId);
         if (referencedWarning != null) {
             throw new ReferencedException(referencedWarning);

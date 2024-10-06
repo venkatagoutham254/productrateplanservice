@@ -11,7 +11,6 @@ import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
-import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -79,22 +78,22 @@ public class RatePlanFreemiumRateResource {
 
     @GetMapping("/{ratePlanFreemiumRateId}")
     public ResponseEntity<EntityModel<RatePlanFreemiumRateDTO>> getRatePlanFreemiumRate(
-            @PathVariable(name = "ratePlanFreemiumRateId") final UUID ratePlanFreemiumRateId) {
+            @PathVariable(name = "ratePlanFreemiumRateId") final Long ratePlanFreemiumRateId) {
         final RatePlanFreemiumRateDTO ratePlanFreemiumRateDTO = ratePlanFreemiumRateService.get(ratePlanFreemiumRateId);
         return ResponseEntity.ok(ratePlanFreemiumRateAssembler.toModel(ratePlanFreemiumRateDTO));
     }
 
     @PostMapping
     @ApiResponse(responseCode = "201")
-    public ResponseEntity<EntityModel<SimpleValue<UUID>>> createRatePlanFreemiumRate(
+    public ResponseEntity<EntityModel<SimpleValue<Long>>> createRatePlanFreemiumRate(
             @RequestBody @Valid final RatePlanFreemiumRateDTO ratePlanFreemiumRateDTO) {
-        final UUID createdRatePlanFreemiumRateId = ratePlanFreemiumRateService.create(ratePlanFreemiumRateDTO);
+        final Long createdRatePlanFreemiumRateId = ratePlanFreemiumRateService.create(ratePlanFreemiumRateDTO);
         return new ResponseEntity<>(ratePlanFreemiumRateAssembler.toSimpleModel(createdRatePlanFreemiumRateId), HttpStatus.CREATED);
     }
 
     @PutMapping("/{ratePlanFreemiumRateId}")
-    public ResponseEntity<EntityModel<SimpleValue<UUID>>> updateRatePlanFreemiumRate(
-            @PathVariable(name = "ratePlanFreemiumRateId") final UUID ratePlanFreemiumRateId,
+    public ResponseEntity<EntityModel<SimpleValue<Long>>> updateRatePlanFreemiumRate(
+            @PathVariable(name = "ratePlanFreemiumRateId") final Long ratePlanFreemiumRateId,
             @RequestBody @Valid final RatePlanFreemiumRateDTO ratePlanFreemiumRateDTO) {
         ratePlanFreemiumRateService.update(ratePlanFreemiumRateId, ratePlanFreemiumRateDTO);
         return ResponseEntity.ok(ratePlanFreemiumRateAssembler.toSimpleModel(ratePlanFreemiumRateId));
@@ -103,7 +102,7 @@ public class RatePlanFreemiumRateResource {
     @DeleteMapping("/{ratePlanFreemiumRateId}")
     @ApiResponse(responseCode = "204")
     public ResponseEntity<Void> deleteRatePlanFreemiumRate(
-            @PathVariable(name = "ratePlanFreemiumRateId") final UUID ratePlanFreemiumRateId) {
+            @PathVariable(name = "ratePlanFreemiumRateId") final Long ratePlanFreemiumRateId) {
         final ReferencedWarning referencedWarning = ratePlanFreemiumRateService.getReferencedWarning(ratePlanFreemiumRateId);
         if (referencedWarning != null) {
             throw new ReferencedException(referencedWarning);

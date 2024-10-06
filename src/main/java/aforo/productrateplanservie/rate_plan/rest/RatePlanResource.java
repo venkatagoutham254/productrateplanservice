@@ -11,7 +11,6 @@ import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
-import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -78,22 +77,22 @@ public class RatePlanResource {
 
     @GetMapping("/{ratePlanId}")
     public ResponseEntity<EntityModel<RatePlanDTO>> getRatePlan(
-            @PathVariable(name = "ratePlanId") final UUID ratePlanId) {
+            @PathVariable(name = "ratePlanId") final Long ratePlanId) {
         final RatePlanDTO ratePlanDTO = ratePlanService.get(ratePlanId);
         return ResponseEntity.ok(ratePlanAssembler.toModel(ratePlanDTO));
     }
 
     @PostMapping
     @ApiResponse(responseCode = "201")
-    public ResponseEntity<EntityModel<SimpleValue<UUID>>> createRatePlan(
+    public ResponseEntity<EntityModel<SimpleValue<Long>>> createRatePlan(
             @RequestBody @Valid final RatePlanDTO ratePlanDTO) {
-        final UUID createdRatePlanId = ratePlanService.create(ratePlanDTO);
+        final Long createdRatePlanId = ratePlanService.create(ratePlanDTO);
         return new ResponseEntity<>(ratePlanAssembler.toSimpleModel(createdRatePlanId), HttpStatus.CREATED);
     }
 
     @PutMapping("/{ratePlanId}")
-    public ResponseEntity<EntityModel<SimpleValue<UUID>>> updateRatePlan(
-            @PathVariable(name = "ratePlanId") final UUID ratePlanId,
+    public ResponseEntity<EntityModel<SimpleValue<Long>>> updateRatePlan(
+            @PathVariable(name = "ratePlanId") final Long ratePlanId,
             @RequestBody @Valid final RatePlanDTO ratePlanDTO) {
         ratePlanService.update(ratePlanId, ratePlanDTO);
         return ResponseEntity.ok(ratePlanAssembler.toSimpleModel(ratePlanId));
@@ -102,7 +101,7 @@ public class RatePlanResource {
     @DeleteMapping("/{ratePlanId}")
     @ApiResponse(responseCode = "204")
     public ResponseEntity<Void> deleteRatePlan(
-            @PathVariable(name = "ratePlanId") final UUID ratePlanId) {
+            @PathVariable(name = "ratePlanId") final Long ratePlanId) {
         final ReferencedWarning referencedWarning = ratePlanService.getReferencedWarning(ratePlanId);
         if (referencedWarning != null) {
             throw new ReferencedException(referencedWarning);

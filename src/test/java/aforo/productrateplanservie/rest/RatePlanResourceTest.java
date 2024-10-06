@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import aforo.productrateplanservie.config.BaseIT;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
-import java.util.UUID;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
@@ -25,7 +24,7 @@ public class RatePlanResourceTest extends BaseIT {
                 .then()
                     .statusCode(HttpStatus.OK.value())
                     .body("page.totalElements", Matchers.equalTo(2))
-                    .body("_embedded.ratePlanDTOList.get(0).ratePlanId", Matchers.equalTo("a92d0103-08a6-3379-9a3d-9c728ee74244"))
+                    .body("_embedded.ratePlanDTOList.get(0).ratePlanId", Matchers.equalTo(1200))
                     .body("_links.self.href", Matchers.endsWith("/api/ratePlans?page=0&size=20&sort=ratePlanId,asc"));
     }
 
@@ -36,11 +35,11 @@ public class RatePlanResourceTest extends BaseIT {
                 .given()
                     .accept(ContentType.JSON)
                 .when()
-                    .get("/api/ratePlans?filter=b801e5d4-da87-3c39-9782-741cd794002d")
+                    .get("/api/ratePlans?filter=1201")
                 .then()
                     .statusCode(HttpStatus.OK.value())
                     .body("page.totalElements", Matchers.equalTo(1))
-                    .body("_embedded.ratePlanDTOList.get(0).ratePlanId", Matchers.equalTo("b801e5d4-da87-3c39-9782-741cd794002d"));
+                    .body("_embedded.ratePlanDTOList.get(0).ratePlanId", Matchers.equalTo(1201));
     }
 
     @Test
@@ -50,11 +49,11 @@ public class RatePlanResourceTest extends BaseIT {
                 .given()
                     .accept(ContentType.JSON)
                 .when()
-                    .get("/api/ratePlans/a92d0103-08a6-3379-9a3d-9c728ee74244")
+                    .get("/api/ratePlans/1200")
                 .then()
                     .statusCode(HttpStatus.OK.value())
                     .body("ratePlanName", Matchers.equalTo("Sed ut perspiciatis."))
-                    .body("_links.self.href", Matchers.endsWith("/api/ratePlans/a92d0103-08a6-3379-9a3d-9c728ee74244"));
+                    .body("_links.self.href", Matchers.endsWith("/api/ratePlans/1200"));
     }
 
     @Test
@@ -63,7 +62,7 @@ public class RatePlanResourceTest extends BaseIT {
                 .given()
                     .accept(ContentType.JSON)
                 .when()
-                    .get("/api/ratePlans/23de10ad-baa1-32ee-93f7-7f679fa1483a")
+                    .get("/api/ratePlans/1866")
                 .then()
                     .statusCode(HttpStatus.NOT_FOUND.value())
                     .body("code", Matchers.equalTo("NOT_FOUND"));
@@ -109,11 +108,11 @@ public class RatePlanResourceTest extends BaseIT {
                     .contentType(ContentType.JSON)
                     .body(readResource("/requests/ratePlanDTORequest.json"))
                 .when()
-                    .put("/api/ratePlans/a92d0103-08a6-3379-9a3d-9c728ee74244")
+                    .put("/api/ratePlans/1200")
                 .then()
                     .statusCode(HttpStatus.OK.value())
-                    .body("_links.self.href", Matchers.endsWith("/api/ratePlans/a92d0103-08a6-3379-9a3d-9c728ee74244"));
-        assertEquals("Nulla facilisis.", ratePlanRepository.findById(UUID.fromString("a92d0103-08a6-3379-9a3d-9c728ee74244")).orElseThrow().getRatePlanName());
+                    .body("_links.self.href", Matchers.endsWith("/api/ratePlans/1200"));
+        assertEquals("Nulla facilisis.", ratePlanRepository.findById(((long)1200)).orElseThrow().getRatePlanName());
         assertEquals(2, ratePlanRepository.count());
     }
 
@@ -124,7 +123,7 @@ public class RatePlanResourceTest extends BaseIT {
                 .given()
                     .accept(ContentType.JSON)
                 .when()
-                    .delete("/api/ratePlans/a92d0103-08a6-3379-9a3d-9c728ee74244")
+                    .delete("/api/ratePlans/1200")
                 .then()
                     .statusCode(HttpStatus.NO_CONTENT.value());
         assertEquals(1, ratePlanRepository.count());

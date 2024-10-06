@@ -2,7 +2,6 @@ package aforo.productrateplanservie.product.model;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import java.util.UUID;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,7 +10,7 @@ import lombok.Setter;
 @Setter
 public class ProductDTO {
 
-    private UUID productId;
+    private Long productId;
 
     @NotNull
     @Size(max = 100)

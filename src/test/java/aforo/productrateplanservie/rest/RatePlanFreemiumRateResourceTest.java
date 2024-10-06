@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import aforo.productrateplanservie.config.BaseIT;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
-import java.util.UUID;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
@@ -25,7 +24,7 @@ public class RatePlanFreemiumRateResourceTest extends BaseIT {
                 .then()
                     .statusCode(HttpStatus.OK.value())
                     .body("page.totalElements", Matchers.equalTo(2))
-                    .body("_embedded.ratePlanFreemiumRateDTOList.get(0).ratePlanFreemiumRateId", Matchers.equalTo("a9ad8fa4-7bbe-3282-badb-b8de5374b894"))
+                    .body("_embedded.ratePlanFreemiumRateDTOList.get(0).ratePlanFreemiumRateId", Matchers.equalTo(2100))
                     .body("_links.self.href", Matchers.endsWith("/api/ratePlanFreemiumRates?page=0&size=20&sort=ratePlanFreemiumRateId,asc"));
     }
 
@@ -36,11 +35,11 @@ public class RatePlanFreemiumRateResourceTest extends BaseIT {
                 .given()
                     .accept(ContentType.JSON)
                 .when()
-                    .get("/api/ratePlanFreemiumRates?filter=b8866e93-cab1-3768-90fe-343c9e7063fb")
+                    .get("/api/ratePlanFreemiumRates?filter=2101")
                 .then()
                     .statusCode(HttpStatus.OK.value())
                     .body("page.totalElements", Matchers.equalTo(1))
-                    .body("_embedded.ratePlanFreemiumRateDTOList.get(0).ratePlanFreemiumRateId", Matchers.equalTo("b8866e93-cab1-3768-90fe-343c9e7063fb"));
+                    .body("_embedded.ratePlanFreemiumRateDTOList.get(0).ratePlanFreemiumRateId", Matchers.equalTo(2101));
     }
 
     @Test
@@ -50,11 +49,11 @@ public class RatePlanFreemiumRateResourceTest extends BaseIT {
                 .given()
                     .accept(ContentType.JSON)
                 .when()
-                    .get("/api/ratePlanFreemiumRates/a9ad8fa4-7bbe-3282-badb-b8de5374b894")
+                    .get("/api/ratePlanFreemiumRates/2100")
                 .then()
                     .statusCode(HttpStatus.OK.value())
                     .body("ratePlanFreemiumDescription", Matchers.equalTo("Eget est lorem."))
-                    .body("_links.self.href", Matchers.endsWith("/api/ratePlanFreemiumRates/a9ad8fa4-7bbe-3282-badb-b8de5374b894"));
+                    .body("_links.self.href", Matchers.endsWith("/api/ratePlanFreemiumRates/2100"));
     }
 
     @Test
@@ -63,7 +62,7 @@ public class RatePlanFreemiumRateResourceTest extends BaseIT {
                 .given()
                     .accept(ContentType.JSON)
                 .when()
-                    .get("/api/ratePlanFreemiumRates/235cf83a-b072-3e78-acf7-2d14e44adf98")
+                    .get("/api/ratePlanFreemiumRates/2766")
                 .then()
                     .statusCode(HttpStatus.NOT_FOUND.value())
                     .body("code", Matchers.equalTo("NOT_FOUND"));
@@ -109,11 +108,11 @@ public class RatePlanFreemiumRateResourceTest extends BaseIT {
                     .contentType(ContentType.JSON)
                     .body(readResource("/requests/ratePlanFreemiumRateDTORequest.json"))
                 .when()
-                    .put("/api/ratePlanFreemiumRates/a9ad8fa4-7bbe-3282-badb-b8de5374b894")
+                    .put("/api/ratePlanFreemiumRates/2100")
                 .then()
                     .statusCode(HttpStatus.OK.value())
-                    .body("_links.self.href", Matchers.endsWith("/api/ratePlanFreemiumRates/a9ad8fa4-7bbe-3282-badb-b8de5374b894"));
-        assertEquals("Consectetuer adipiscing.", ratePlanFreemiumRateRepository.findById(UUID.fromString("a9ad8fa4-7bbe-3282-badb-b8de5374b894")).orElseThrow().getRatePlanFreemiumDescription());
+                    .body("_links.self.href", Matchers.endsWith("/api/ratePlanFreemiumRates/2100"));
+        assertEquals("Consectetuer adipiscing.", ratePlanFreemiumRateRepository.findById(((long)2100)).orElseThrow().getRatePlanFreemiumDescription());
         assertEquals(2, ratePlanFreemiumRateRepository.count());
     }
 
@@ -124,7 +123,7 @@ public class RatePlanFreemiumRateResourceTest extends BaseIT {
                 .given()
                     .accept(ContentType.JSON)
                 .when()
-                    .delete("/api/ratePlanFreemiumRates/a9ad8fa4-7bbe-3282-badb-b8de5374b894")
+                    .delete("/api/ratePlanFreemiumRates/2100")
                 .then()
                     .statusCode(HttpStatus.NO_CONTENT.value());
         assertEquals(1, ratePlanFreemiumRateRepository.count());

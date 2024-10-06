@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import aforo.productrateplanservie.config.BaseIT;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
-import java.util.UUID;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
@@ -25,7 +24,7 @@ public class RatePlanFlatRateResourceTest extends BaseIT {
                 .then()
                     .statusCode(HttpStatus.OK.value())
                     .body("page.totalElements", Matchers.equalTo(2))
-                    .body("_embedded.ratePlanFlatRateDTOList.get(0).ratePlanFlatRateId", Matchers.equalTo("a9e00f2f-4bfc-3b75-85cb-641066f2859b"))
+                    .body("_embedded.ratePlanFlatRateDTOList.get(0).ratePlanFlatRateId", Matchers.equalTo(1700))
                     .body("_links.self.href", Matchers.endsWith("/api/ratePlanFlatRates?page=0&size=20&sort=ratePlanFlatRateId,asc"));
     }
 
@@ -36,11 +35,11 @@ public class RatePlanFlatRateResourceTest extends BaseIT {
                 .given()
                     .accept(ContentType.JSON)
                 .when()
-                    .get("/api/ratePlanFlatRates?filter=b8231a7c-e4ba-389d-93b7-22cc5c955834")
+                    .get("/api/ratePlanFlatRates?filter=1701")
                 .then()
                     .statusCode(HttpStatus.OK.value())
                     .body("page.totalElements", Matchers.equalTo(1))
-                    .body("_embedded.ratePlanFlatRateDTOList.get(0).ratePlanFlatRateId", Matchers.equalTo("b8231a7c-e4ba-389d-93b7-22cc5c955834"));
+                    .body("_embedded.ratePlanFlatRateDTOList.get(0).ratePlanFlatRateId", Matchers.equalTo(1701));
     }
 
     @Test
@@ -50,11 +49,11 @@ public class RatePlanFlatRateResourceTest extends BaseIT {
                 .given()
                     .accept(ContentType.JSON)
                 .when()
-                    .get("/api/ratePlanFlatRates/a9e00f2f-4bfc-3b75-85cb-641066f2859b")
+                    .get("/api/ratePlanFlatRates/1700")
                 .then()
                     .statusCode(HttpStatus.OK.value())
                     .body("ratePlanFlatDescription", Matchers.equalTo("Commodo consequat."))
-                    .body("_links.self.href", Matchers.endsWith("/api/ratePlanFlatRates/a9e00f2f-4bfc-3b75-85cb-641066f2859b"));
+                    .body("_links.self.href", Matchers.endsWith("/api/ratePlanFlatRates/1700"));
     }
 
     @Test
@@ -63,7 +62,7 @@ public class RatePlanFlatRateResourceTest extends BaseIT {
                 .given()
                     .accept(ContentType.JSON)
                 .when()
-                    .get("/api/ratePlanFlatRates/23b1fb02-964a-364e-a57f-9f26a31f72cf")
+                    .get("/api/ratePlanFlatRates/2366")
                 .then()
                     .statusCode(HttpStatus.NOT_FOUND.value())
                     .body("code", Matchers.equalTo("NOT_FOUND"));
@@ -109,11 +108,11 @@ public class RatePlanFlatRateResourceTest extends BaseIT {
                     .contentType(ContentType.JSON)
                     .body(readResource("/requests/ratePlanFlatRateDTORequest.json"))
                 .when()
-                    .put("/api/ratePlanFlatRates/a9e00f2f-4bfc-3b75-85cb-641066f2859b")
+                    .put("/api/ratePlanFlatRates/1700")
                 .then()
                     .statusCode(HttpStatus.OK.value())
-                    .body("_links.self.href", Matchers.endsWith("/api/ratePlanFlatRates/a9e00f2f-4bfc-3b75-85cb-641066f2859b"));
-        assertEquals("Stet clita kasd.", ratePlanFlatRateRepository.findById(UUID.fromString("a9e00f2f-4bfc-3b75-85cb-641066f2859b")).orElseThrow().getRatePlanFlatDescription());
+                    .body("_links.self.href", Matchers.endsWith("/api/ratePlanFlatRates/1700"));
+        assertEquals("Stet clita kasd.", ratePlanFlatRateRepository.findById(((long)1700)).orElseThrow().getRatePlanFlatDescription());
         assertEquals(2, ratePlanFlatRateRepository.count());
     }
 
@@ -124,7 +123,7 @@ public class RatePlanFlatRateResourceTest extends BaseIT {
                 .given()
                     .accept(ContentType.JSON)
                 .when()
-                    .delete("/api/ratePlanFlatRates/a9e00f2f-4bfc-3b75-85cb-641066f2859b")
+                    .delete("/api/ratePlanFlatRates/1700")
                 .then()
                     .statusCode(HttpStatus.NO_CONTENT.value());
         assertEquals(1, ratePlanFlatRateRepository.count());

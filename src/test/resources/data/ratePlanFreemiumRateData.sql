@@ -10,14 +10,14 @@ INSERT INTO aforo_rate_plan_freemium_rate (
     date_created,
     last_updated
 ) VALUES (
-    'a9ad8fa4-7bbe-3282-badb-b8de5374b894',
+    2100,
     'Eget est lorem.',
     'Dictum fusce ut placerat orci nulla pellentesque dignissim enim.',
     'Duis autem vel.',
     'At vero eos.',
     'Eget est lorem.',
     'Consetetur sadipscing.',
-    'a92d0103-08a6-3379-9a3d-9c728ee74244',
+    1200,
     '2024-09-02 14:30:00',
     '2024-09-02 14:30:00'
 );
@@ -34,14 +34,14 @@ INSERT INTO aforo_rate_plan_freemium_rate (
     date_created,
     last_updated
 ) VALUES (
-    'b8866e93-cab1-3768-90fe-343c9e7063fb',
+    2101,
     'Viverra suspendisse.',
     'Erat pellentesque adipiscing commodo elit.',
     'Ut wisi enim.',
     'Stet clita kasd.',
     'Viverra suspendisse.',
     'Sed diam nonumy.',
-    'b801e5d4-da87-3c39-9782-741cd794002d',
+    1201,
     '2024-09-03 14:30:00',
     '2024-09-03 14:30:00'
 );

@@ -3,7 +3,6 @@ package aforo.productrateplanservie.rate_plan.model;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.time.LocalDate;
-import java.util.UUID;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,7 +11,7 @@ import lombok.Setter;
 @Setter
 public class RatePlanDTO {
 
-    private UUID ratePlanId;
+    private Long ratePlanId;
 
     @NotNull
     @Size(max = 100)
@@ -35,9 +34,9 @@ public class RatePlanDTO {
     private String status;
 
     @NotNull
-    private UUID product;
+    private Long product;
 
     @NotNull
-    private UUID currency;
+    private Long currency;
 
 }

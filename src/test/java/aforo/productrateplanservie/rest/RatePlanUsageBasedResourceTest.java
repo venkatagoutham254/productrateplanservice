@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import aforo.productrateplanservie.config.BaseIT;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
-import java.util.UUID;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
@@ -25,7 +24,7 @@ public class RatePlanUsageBasedResourceTest extends BaseIT {
                 .then()
                     .statusCode(HttpStatus.OK.value())
                     .body("page.totalElements", Matchers.equalTo(2))
-                    .body("_embedded.ratePlanUsageBasedDTOList.get(0).ratePlanUsageRateId", Matchers.equalTo("a93e29a3-5278-371c-bf65-495871231324"))
+                    .body("_embedded.ratePlanUsageBasedDTOList.get(0).ratePlanUsageRateId", Matchers.equalTo(1300))
                     .body("_links.self.href", Matchers.endsWith("/api/ratePlanUsageBaseds?page=0&size=20&sort=ratePlanUsageRateId,asc"));
     }
 
@@ -36,11 +35,11 @@ public class RatePlanUsageBasedResourceTest extends BaseIT {
                 .given()
                     .accept(ContentType.JSON)
                 .when()
-                    .get("/api/ratePlanUsageBaseds?filter=b8f45244-f093-39e1-aea3-f9117ca45157")
+                    .get("/api/ratePlanUsageBaseds?filter=1301")
                 .then()
                     .statusCode(HttpStatus.OK.value())
                     .body("page.totalElements", Matchers.equalTo(1))
-                    .body("_embedded.ratePlanUsageBasedDTOList.get(0).ratePlanUsageRateId", Matchers.equalTo("b8f45244-f093-39e1-aea3-f9117ca45157"));
+                    .body("_embedded.ratePlanUsageBasedDTOList.get(0).ratePlanUsageRateId", Matchers.equalTo(1301));
     }
 
     @Test
@@ -50,11 +49,11 @@ public class RatePlanUsageBasedResourceTest extends BaseIT {
                 .given()
                     .accept(ContentType.JSON)
                 .when()
-                    .get("/api/ratePlanUsageBaseds/a93e29a3-5278-371c-bf65-495871231324")
+                    .get("/api/ratePlanUsageBaseds/1300")
                 .then()
                     .statusCode(HttpStatus.OK.value())
                     .body("ratePlanUsageDescription", Matchers.equalTo("Consectetuer adipiscing."))
-                    .body("_links.self.href", Matchers.endsWith("/api/ratePlanUsageBaseds/a93e29a3-5278-371c-bf65-495871231324"));
+                    .body("_links.self.href", Matchers.endsWith("/api/ratePlanUsageBaseds/1300"));
     }
 
     @Test
@@ -63,7 +62,7 @@ public class RatePlanUsageBasedResourceTest extends BaseIT {
                 .given()
                     .accept(ContentType.JSON)
                 .when()
-                    .get("/api/ratePlanUsageBaseds/2383af9d-6f6c-36ac-ae72-992f2977f67e")
+                    .get("/api/ratePlanUsageBaseds/1966")
                 .then()
                     .statusCode(HttpStatus.NOT_FOUND.value())
                     .body("code", Matchers.equalTo("NOT_FOUND"));
@@ -109,11 +108,11 @@ public class RatePlanUsageBasedResourceTest extends BaseIT {
                     .contentType(ContentType.JSON)
                     .body(readResource("/requests/ratePlanUsageBasedDTORequest.json"))
                 .when()
-                    .put("/api/ratePlanUsageBaseds/a93e29a3-5278-371c-bf65-495871231324")
+                    .put("/api/ratePlanUsageBaseds/1300")
                 .then()
                     .statusCode(HttpStatus.OK.value())
-                    .body("_links.self.href", Matchers.endsWith("/api/ratePlanUsageBaseds/a93e29a3-5278-371c-bf65-495871231324"));
-        assertEquals("Sed diam voluptua.", ratePlanUsageBasedRepository.findById(UUID.fromString("a93e29a3-5278-371c-bf65-495871231324")).orElseThrow().getRatePlanUsageDescription());
+                    .body("_links.self.href", Matchers.endsWith("/api/ratePlanUsageBaseds/1300"));
+        assertEquals("Sed diam voluptua.", ratePlanUsageBasedRepository.findById(((long)1300)).orElseThrow().getRatePlanUsageDescription());
         assertEquals(2, ratePlanUsageBasedRepository.count());
     }
 
@@ -124,7 +123,7 @@ public class RatePlanUsageBasedResourceTest extends BaseIT {
                 .given()
                     .accept(ContentType.JSON)
                 .when()
-                    .delete("/api/ratePlanUsageBaseds/a93e29a3-5278-371c-bf65-495871231324")
+                    .delete("/api/ratePlanUsageBaseds/1300")
                 .then()
                     .statusCode(HttpStatus.NO_CONTENT.value());
         assertEquals(1, ratePlanUsageBasedRepository.count());
