@@ -6,15 +6,14 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
-import java.util.UUID;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.UuidGenerator;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -27,10 +26,9 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 public class RatePlanFreemiumRateDetails {
 
     @Id
-    @Column(nullable = false, updatable = false, columnDefinition = "char(36)")
-    @GeneratedValue
-    @UuidGenerator
-    private UUID id;
+    @Column(nullable = false, updatable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @Column(nullable = false, precision = 12, scale = 2)
     private BigDecimal freemiumMaxUnitQuantity;

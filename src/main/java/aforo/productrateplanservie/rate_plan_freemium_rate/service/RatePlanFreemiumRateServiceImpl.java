@@ -8,7 +8,6 @@ import aforo.productrateplanservie.rate_plan_freemium_rate_details.domain.RatePl
 import aforo.productrateplanservie.rate_plan_freemium_rate_details.repos.RatePlanFreemiumRateDetailsRepository;
 import aforo.productrateplanservie.util.NotFoundException;
 import aforo.productrateplanservie.util.ReferencedWarning;
-import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -38,13 +37,13 @@ public class RatePlanFreemiumRateServiceImpl implements RatePlanFreemiumRateServ
     public Page<RatePlanFreemiumRateDTO> findAll(final String filter, final Pageable pageable) {
         Page<RatePlanFreemiumRate> page;
         if (filter != null) {
-            UUID uuidFilter = null;
+            Long longFilter = null;
             try {
-                uuidFilter = UUID.fromString(filter);
-            } catch (final IllegalArgumentException illegalArgumentException) {
+                longFilter = Long.parseLong(filter);
+            } catch (final NumberFormatException numberFormatException) {
                 // keep null - no parseable input
             }
-            page = ratePlanFreemiumRateRepository.findAllByRatePlanFreemiumRateId(uuidFilter, pageable);
+            page = ratePlanFreemiumRateRepository.findAllByRatePlanFreemiumRateId(longFilter, pageable);
         } else {
             page = ratePlanFreemiumRateRepository.findAll(pageable);
         }
@@ -56,21 +55,21 @@ public class RatePlanFreemiumRateServiceImpl implements RatePlanFreemiumRateServ
     }
 
     @Override
-    public RatePlanFreemiumRateDTO get(final UUID ratePlanFreemiumRateId) {
+    public RatePlanFreemiumRateDTO get(final Long ratePlanFreemiumRateId) {
         return ratePlanFreemiumRateRepository.findById(ratePlanFreemiumRateId)
                 .map(ratePlanFreemiumRate -> ratePlanFreemiumRateMapper.updateRatePlanFreemiumRateDTO(ratePlanFreemiumRate, new RatePlanFreemiumRateDTO()))
                 .orElseThrow(NotFoundException::new);
     }
 
     @Override
-    public UUID create(final RatePlanFreemiumRateDTO ratePlanFreemiumRateDTO) {
+    public Long create(final RatePlanFreemiumRateDTO ratePlanFreemiumRateDTO) {
         final RatePlanFreemiumRate ratePlanFreemiumRate = new RatePlanFreemiumRate();
         ratePlanFreemiumRateMapper.updateRatePlanFreemiumRate(ratePlanFreemiumRateDTO, ratePlanFreemiumRate, ratePlanRepository);
         return ratePlanFreemiumRateRepository.save(ratePlanFreemiumRate).getRatePlanFreemiumRateId();
     }
 
     @Override
-    public void update(final UUID ratePlanFreemiumRateId,
+    public void update(final Long ratePlanFreemiumRateId,
             final RatePlanFreemiumRateDTO ratePlanFreemiumRateDTO) {
         final RatePlanFreemiumRate ratePlanFreemiumRate = ratePlanFreemiumRateRepository.findById(ratePlanFreemiumRateId)
                 .orElseThrow(NotFoundException::new);
@@ -79,12 +78,12 @@ public class RatePlanFreemiumRateServiceImpl implements RatePlanFreemiumRateServ
     }
 
     @Override
-    public void delete(final UUID ratePlanFreemiumRateId) {
+    public void delete(final Long ratePlanFreemiumRateId) {
         ratePlanFreemiumRateRepository.deleteById(ratePlanFreemiumRateId);
     }
 
     @Override
-    public ReferencedWarning getReferencedWarning(final UUID ratePlanFreemiumRateId) {
+    public ReferencedWarning getReferencedWarning(final Long ratePlanFreemiumRateId) {
         final ReferencedWarning referencedWarning = new ReferencedWarning();
         final RatePlanFreemiumRate ratePlanFreemiumRate = ratePlanFreemiumRateRepository.findById(ratePlanFreemiumRateId)
                 .orElseThrow(NotFoundException::new);

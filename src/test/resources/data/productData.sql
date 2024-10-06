@@ -6,7 +6,7 @@ INSERT INTO aforo_product (
     date_created,
     last_updated
 ) VALUES (
-    'a9b7ba70-783b-317e-9998-dc4dd82eb3c5',
+    1000,
     'Sed diam nonumy.',
     'Sed blandit libero volutpat sed cras ornare arcu dui vivamus.',
     'No sea takimata.',
@@ -22,7 +22,7 @@ INSERT INTO aforo_product (
     date_created,
     last_updated
 ) VALUES (
-    'b8c37e33-defd-351c-b91e-1e03e51657da',
+    1001,
     'Sed diam voluptua.',
     'Dictum fusce ut placerat orci nulla pellentesque dignissim enim.',
     'Vel illum dolore.',

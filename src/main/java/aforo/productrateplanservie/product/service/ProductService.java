@@ -2,7 +2,6 @@ package aforo.productrateplanservie.product.service;
 
 import aforo.productrateplanservie.product.model.ProductDTO;
 import aforo.productrateplanservie.util.ReferencedWarning;
-import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -11,14 +10,14 @@ public interface ProductService {
 
     Page<ProductDTO> findAll(String filter, Pageable pageable);
 
-    ProductDTO get(UUID productId);
+    ProductDTO get(Long productId);
 
-    UUID create(ProductDTO productDTO);
+    Long create(ProductDTO productDTO);
 
-    void update(UUID productId, ProductDTO productDTO);
+    void update(Long productId, ProductDTO productDTO);
 
-    void delete(UUID productId);
+    void delete(Long productId);
 
-    ReferencedWarning getReferencedWarning(UUID productId);
+    ReferencedWarning getReferencedWarning(Long productId);
 
 }

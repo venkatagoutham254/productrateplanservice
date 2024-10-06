@@ -5,7 +5,6 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 import aforo.productrateplanservie.currencies.model.CurrenciesDTO;
 import aforo.productrateplanservie.model.SimpleValue;
-import java.util.UUID;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.IanaLinkRelations;
@@ -27,8 +26,8 @@ public class CurrenciesAssembler implements SimpleRepresentationModelAssembler<C
         collectionModel.add(linkTo(methodOn(CurrenciesResource.class).getAllCurrenciess(null, null)).withSelfRel());
     }
 
-    public EntityModel<SimpleValue<UUID>> toSimpleModel(final UUID currencyId) {
-        final EntityModel<SimpleValue<UUID>> simpleModel = SimpleValue.entityModelOf(currencyId);
+    public EntityModel<SimpleValue<Long>> toSimpleModel(final Long currencyId) {
+        final EntityModel<SimpleValue<Long>> simpleModel = SimpleValue.entityModelOf(currencyId);
         simpleModel.add(linkTo(methodOn(CurrenciesResource.class).getCurrencies(currencyId)).withSelfRel());
         return simpleModel;
     }

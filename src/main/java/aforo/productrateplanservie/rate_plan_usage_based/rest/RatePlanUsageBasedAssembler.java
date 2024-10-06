@@ -6,7 +6,6 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 import aforo.productrateplanservie.model.SimpleValue;
 import aforo.productrateplanservie.rate_plan.rest.RatePlanResource;
 import aforo.productrateplanservie.rate_plan_usage_based.model.RatePlanUsageBasedDTO;
-import java.util.UUID;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.IanaLinkRelations;
@@ -30,8 +29,8 @@ public class RatePlanUsageBasedAssembler implements SimpleRepresentationModelAss
         collectionModel.add(linkTo(methodOn(RatePlanUsageBasedResource.class).getAllRatePlanUsageBaseds(null, null)).withSelfRel());
     }
 
-    public EntityModel<SimpleValue<UUID>> toSimpleModel(final UUID ratePlanUsageRateId) {
-        final EntityModel<SimpleValue<UUID>> simpleModel = SimpleValue.entityModelOf(ratePlanUsageRateId);
+    public EntityModel<SimpleValue<Long>> toSimpleModel(final Long ratePlanUsageRateId) {
+        final EntityModel<SimpleValue<Long>> simpleModel = SimpleValue.entityModelOf(ratePlanUsageRateId);
         simpleModel.add(linkTo(methodOn(RatePlanUsageBasedResource.class).getRatePlanUsageBased(ratePlanUsageRateId)).withSelfRel());
         return simpleModel;
     }

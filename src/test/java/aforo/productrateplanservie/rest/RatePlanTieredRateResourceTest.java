@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import aforo.productrateplanservie.config.BaseIT;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
-import java.util.UUID;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
@@ -25,7 +24,7 @@ public class RatePlanTieredRateResourceTest extends BaseIT {
                 .then()
                     .statusCode(HttpStatus.OK.value())
                     .body("page.totalElements", Matchers.equalTo(2))
-                    .body("_embedded.ratePlanTieredRateDTOList.get(0).ratePlanTieredRateId", Matchers.equalTo("a9a53013-58b9-3cbe-baa4-5b1ceea088c6"))
+                    .body("_embedded.ratePlanTieredRateDTOList.get(0).ratePlanTieredRateId", Matchers.equalTo(1500))
                     .body("_links.self.href", Matchers.endsWith("/api/ratePlanTieredRates?page=0&size=20&sort=ratePlanTieredRateId,asc"));
     }
 
@@ -36,11 +35,11 @@ public class RatePlanTieredRateResourceTest extends BaseIT {
                 .given()
                     .accept(ContentType.JSON)
                 .when()
-                    .get("/api/ratePlanTieredRates?filter=b8bdfd0d-fa22-33fc-a726-6376887f549b")
+                    .get("/api/ratePlanTieredRates?filter=1501")
                 .then()
                     .statusCode(HttpStatus.OK.value())
                     .body("page.totalElements", Matchers.equalTo(1))
-                    .body("_embedded.ratePlanTieredRateDTOList.get(0).ratePlanTieredRateId", Matchers.equalTo("b8bdfd0d-fa22-33fc-a726-6376887f549b"));
+                    .body("_embedded.ratePlanTieredRateDTOList.get(0).ratePlanTieredRateId", Matchers.equalTo(1501));
     }
 
     @Test
@@ -50,11 +49,11 @@ public class RatePlanTieredRateResourceTest extends BaseIT {
                 .given()
                     .accept(ContentType.JSON)
                 .when()
-                    .get("/api/ratePlanTieredRates/a9a53013-58b9-3cbe-baa4-5b1ceea088c6")
+                    .get("/api/ratePlanTieredRates/1500")
                 .then()
                     .statusCode(HttpStatus.OK.value())
                     .body("ratePlanTieredDescription", Matchers.equalTo("No sea takimata."))
-                    .body("_links.self.href", Matchers.endsWith("/api/ratePlanTieredRates/a9a53013-58b9-3cbe-baa4-5b1ceea088c6"));
+                    .body("_links.self.href", Matchers.endsWith("/api/ratePlanTieredRates/1500"));
     }
 
     @Test
@@ -63,7 +62,7 @@ public class RatePlanTieredRateResourceTest extends BaseIT {
                 .given()
                     .accept(ContentType.JSON)
                 .when()
-                    .get("/api/ratePlanTieredRates/23e05616-c8ed-3594-a3f9-af00b142dd6f")
+                    .get("/api/ratePlanTieredRates/2166")
                 .then()
                     .statusCode(HttpStatus.NOT_FOUND.value())
                     .body("code", Matchers.equalTo("NOT_FOUND"));
@@ -109,11 +108,11 @@ public class RatePlanTieredRateResourceTest extends BaseIT {
                     .contentType(ContentType.JSON)
                     .body(readResource("/requests/ratePlanTieredRateDTORequest.json"))
                 .when()
-                    .put("/api/ratePlanTieredRates/a9a53013-58b9-3cbe-baa4-5b1ceea088c6")
+                    .put("/api/ratePlanTieredRates/1500")
                 .then()
                     .statusCode(HttpStatus.OK.value())
-                    .body("_links.self.href", Matchers.endsWith("/api/ratePlanTieredRates/a9a53013-58b9-3cbe-baa4-5b1ceea088c6"));
-        assertEquals("Consetetur sadipscing.", ratePlanTieredRateRepository.findById(UUID.fromString("a9a53013-58b9-3cbe-baa4-5b1ceea088c6")).orElseThrow().getRatePlanTieredDescription());
+                    .body("_links.self.href", Matchers.endsWith("/api/ratePlanTieredRates/1500"));
+        assertEquals("Consetetur sadipscing.", ratePlanTieredRateRepository.findById(((long)1500)).orElseThrow().getRatePlanTieredDescription());
         assertEquals(2, ratePlanTieredRateRepository.count());
     }
 
@@ -124,7 +123,7 @@ public class RatePlanTieredRateResourceTest extends BaseIT {
                 .given()
                     .accept(ContentType.JSON)
                 .when()
-                    .delete("/api/ratePlanTieredRates/a9a53013-58b9-3cbe-baa4-5b1ceea088c6")
+                    .delete("/api/ratePlanTieredRates/1500")
                 .then()
                     .statusCode(HttpStatus.NO_CONTENT.value());
         assertEquals(1, ratePlanTieredRateRepository.count());

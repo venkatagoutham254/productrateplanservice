@@ -8,7 +8,6 @@ import aforo.productrateplanservie.rate_plan_subscription_rate_details.domain.Ra
 import aforo.productrateplanservie.rate_plan_subscription_rate_details.repos.RatePlanSubscriptionRateDetailsRepository;
 import aforo.productrateplanservie.util.NotFoundException;
 import aforo.productrateplanservie.util.ReferencedWarning;
-import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -38,13 +37,13 @@ public class RatePlanSubscriptionRateServiceImpl implements RatePlanSubscription
     public Page<RatePlanSubscriptionRateDTO> findAll(final String filter, final Pageable pageable) {
         Page<RatePlanSubscriptionRate> page;
         if (filter != null) {
-            UUID uuidFilter = null;
+            Long longFilter = null;
             try {
-                uuidFilter = UUID.fromString(filter);
-            } catch (final IllegalArgumentException illegalArgumentException) {
+                longFilter = Long.parseLong(filter);
+            } catch (final NumberFormatException numberFormatException) {
                 // keep null - no parseable input
             }
-            page = ratePlanSubscriptionRateRepository.findAllByRatePlanSubscriptionRateId(uuidFilter, pageable);
+            page = ratePlanSubscriptionRateRepository.findAllByRatePlanSubscriptionRateId(longFilter, pageable);
         } else {
             page = ratePlanSubscriptionRateRepository.findAll(pageable);
         }
@@ -56,21 +55,21 @@ public class RatePlanSubscriptionRateServiceImpl implements RatePlanSubscription
     }
 
     @Override
-    public RatePlanSubscriptionRateDTO get(final UUID ratePlanSubscriptionRateId) {
+    public RatePlanSubscriptionRateDTO get(final Long ratePlanSubscriptionRateId) {
         return ratePlanSubscriptionRateRepository.findById(ratePlanSubscriptionRateId)
                 .map(ratePlanSubscriptionRate -> ratePlanSubscriptionRateMapper.updateRatePlanSubscriptionRateDTO(ratePlanSubscriptionRate, new RatePlanSubscriptionRateDTO()))
                 .orElseThrow(NotFoundException::new);
     }
 
     @Override
-    public UUID create(final RatePlanSubscriptionRateDTO ratePlanSubscriptionRateDTO) {
+    public Long create(final RatePlanSubscriptionRateDTO ratePlanSubscriptionRateDTO) {
         final RatePlanSubscriptionRate ratePlanSubscriptionRate = new RatePlanSubscriptionRate();
         ratePlanSubscriptionRateMapper.updateRatePlanSubscriptionRate(ratePlanSubscriptionRateDTO, ratePlanSubscriptionRate, ratePlanRepository);
         return ratePlanSubscriptionRateRepository.save(ratePlanSubscriptionRate).getRatePlanSubscriptionRateId();
     }
 
     @Override
-    public void update(final UUID ratePlanSubscriptionRateId,
+    public void update(final Long ratePlanSubscriptionRateId,
             final RatePlanSubscriptionRateDTO ratePlanSubscriptionRateDTO) {
         final RatePlanSubscriptionRate ratePlanSubscriptionRate = ratePlanSubscriptionRateRepository.findById(ratePlanSubscriptionRateId)
                 .orElseThrow(NotFoundException::new);
@@ -79,12 +78,12 @@ public class RatePlanSubscriptionRateServiceImpl implements RatePlanSubscription
     }
 
     @Override
-    public void delete(final UUID ratePlanSubscriptionRateId) {
+    public void delete(final Long ratePlanSubscriptionRateId) {
         ratePlanSubscriptionRateRepository.deleteById(ratePlanSubscriptionRateId);
     }
 
     @Override
-    public ReferencedWarning getReferencedWarning(final UUID ratePlanSubscriptionRateId) {
+    public ReferencedWarning getReferencedWarning(final Long ratePlanSubscriptionRateId) {
         final ReferencedWarning referencedWarning = new ReferencedWarning();
         final RatePlanSubscriptionRate ratePlanSubscriptionRate = ratePlanSubscriptionRateRepository.findById(ratePlanSubscriptionRateId)
                 .orElseThrow(NotFoundException::new);

@@ -8,7 +8,6 @@ import aforo.productrateplanservie.rate_plan_tiered_rate_details.domain.RatePlan
 import aforo.productrateplanservie.rate_plan_tiered_rate_details.repos.RatePlanTieredRateDetailsRepository;
 import aforo.productrateplanservie.util.NotFoundException;
 import aforo.productrateplanservie.util.ReferencedWarning;
-import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -38,13 +37,13 @@ public class RatePlanTieredRateServiceImpl implements RatePlanTieredRateService 
     public Page<RatePlanTieredRateDTO> findAll(final String filter, final Pageable pageable) {
         Page<RatePlanTieredRate> page;
         if (filter != null) {
-            UUID uuidFilter = null;
+            Long longFilter = null;
             try {
-                uuidFilter = UUID.fromString(filter);
-            } catch (final IllegalArgumentException illegalArgumentException) {
+                longFilter = Long.parseLong(filter);
+            } catch (final NumberFormatException numberFormatException) {
                 // keep null - no parseable input
             }
-            page = ratePlanTieredRateRepository.findAllByRatePlanTieredRateId(uuidFilter, pageable);
+            page = ratePlanTieredRateRepository.findAllByRatePlanTieredRateId(longFilter, pageable);
         } else {
             page = ratePlanTieredRateRepository.findAll(pageable);
         }
@@ -56,21 +55,21 @@ public class RatePlanTieredRateServiceImpl implements RatePlanTieredRateService 
     }
 
     @Override
-    public RatePlanTieredRateDTO get(final UUID ratePlanTieredRateId) {
+    public RatePlanTieredRateDTO get(final Long ratePlanTieredRateId) {
         return ratePlanTieredRateRepository.findById(ratePlanTieredRateId)
                 .map(ratePlanTieredRate -> ratePlanTieredRateMapper.updateRatePlanTieredRateDTO(ratePlanTieredRate, new RatePlanTieredRateDTO()))
                 .orElseThrow(NotFoundException::new);
     }
 
     @Override
-    public UUID create(final RatePlanTieredRateDTO ratePlanTieredRateDTO) {
+    public Long create(final RatePlanTieredRateDTO ratePlanTieredRateDTO) {
         final RatePlanTieredRate ratePlanTieredRate = new RatePlanTieredRate();
         ratePlanTieredRateMapper.updateRatePlanTieredRate(ratePlanTieredRateDTO, ratePlanTieredRate, ratePlanRepository);
         return ratePlanTieredRateRepository.save(ratePlanTieredRate).getRatePlanTieredRateId();
     }
 
     @Override
-    public void update(final UUID ratePlanTieredRateId,
+    public void update(final Long ratePlanTieredRateId,
             final RatePlanTieredRateDTO ratePlanTieredRateDTO) {
         final RatePlanTieredRate ratePlanTieredRate = ratePlanTieredRateRepository.findById(ratePlanTieredRateId)
                 .orElseThrow(NotFoundException::new);
@@ -79,12 +78,12 @@ public class RatePlanTieredRateServiceImpl implements RatePlanTieredRateService 
     }
 
     @Override
-    public void delete(final UUID ratePlanTieredRateId) {
+    public void delete(final Long ratePlanTieredRateId) {
         ratePlanTieredRateRepository.deleteById(ratePlanTieredRateId);
     }
 
     @Override
-    public ReferencedWarning getReferencedWarning(final UUID ratePlanTieredRateId) {
+    public ReferencedWarning getReferencedWarning(final Long ratePlanTieredRateId) {
         final ReferencedWarning referencedWarning = new ReferencedWarning();
         final RatePlanTieredRate ratePlanTieredRate = ratePlanTieredRateRepository.findById(ratePlanTieredRateId)
                 .orElseThrow(NotFoundException::new);

@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import aforo.productrateplanservie.config.BaseIT;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
-import java.util.UUID;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
@@ -25,7 +24,7 @@ public class CurrenciesResourceTest extends BaseIT {
                 .then()
                     .statusCode(HttpStatus.OK.value())
                     .body("page.totalElements", Matchers.equalTo(2))
-                    .body("_embedded.currenciesDTOList.get(0).currencyId", Matchers.equalTo("a96e0a04-d20f-3096-bc64-dac2d639a577"))
+                    .body("_embedded.currenciesDTOList.get(0).currencyId", Matchers.equalTo(1100))
                     .body("_links.self.href", Matchers.endsWith("/api/currenciess?page=0&size=20&sort=currencyId,asc"));
     }
 
@@ -36,11 +35,11 @@ public class CurrenciesResourceTest extends BaseIT {
                 .given()
                     .accept(ContentType.JSON)
                 .when()
-                    .get("/api/currenciess?filter=b8bff625-bdb0-3939-92c9-d4db0c6bbe45")
+                    .get("/api/currenciess?filter=1101")
                 .then()
                     .statusCode(HttpStatus.OK.value())
                     .body("page.totalElements", Matchers.equalTo(1))
-                    .body("_embedded.currenciesDTOList.get(0).currencyId", Matchers.equalTo("b8bff625-bdb0-3939-92c9-d4db0c6bbe45"));
+                    .body("_embedded.currenciesDTOList.get(0).currencyId", Matchers.equalTo(1101));
     }
 
     @Test
@@ -50,11 +49,11 @@ public class CurrenciesResourceTest extends BaseIT {
                 .given()
                     .accept(ContentType.JSON)
                 .when()
-                    .get("/api/currenciess/a96e0a04-d20f-3096-bc64-dac2d639a577")
+                    .get("/api/currenciess/1100")
                 .then()
                     .statusCode(HttpStatus.OK.value())
                     .body("currencyCode", Matchers.equalTo("No"))
-                    .body("_links.self.href", Matchers.endsWith("/api/currenciess/a96e0a04-d20f-3096-bc64-dac2d639a577"));
+                    .body("_links.self.href", Matchers.endsWith("/api/currenciess/1100"));
     }
 
     @Test
@@ -63,7 +62,7 @@ public class CurrenciesResourceTest extends BaseIT {
                 .given()
                     .accept(ContentType.JSON)
                 .when()
-                    .get("/api/currenciess/23a93ba8-9a5b-3c6c-a26e-49b88973f46e")
+                    .get("/api/currenciess/1766")
                 .then()
                     .statusCode(HttpStatus.NOT_FOUND.value())
                     .body("code", Matchers.equalTo("NOT_FOUND"));
@@ -108,11 +107,11 @@ public class CurrenciesResourceTest extends BaseIT {
                     .contentType(ContentType.JSON)
                     .body(readResource("/requests/currenciesDTORequest.json"))
                 .when()
-                    .put("/api/currenciess/a96e0a04-d20f-3096-bc64-dac2d639a577")
+                    .put("/api/currenciess/1100")
                 .then()
                     .statusCode(HttpStatus.OK.value())
-                    .body("_links.self.href", Matchers.endsWith("/api/currenciess/a96e0a04-d20f-3096-bc64-dac2d639a577"));
-        assertEquals("Con", currenciesRepository.findById(UUID.fromString("a96e0a04-d20f-3096-bc64-dac2d639a577")).orElseThrow().getCurrencyCode());
+                    .body("_links.self.href", Matchers.endsWith("/api/currenciess/1100"));
+        assertEquals("Con", currenciesRepository.findById(((long)1100)).orElseThrow().getCurrencyCode());
         assertEquals(2, currenciesRepository.count());
     }
 
@@ -123,7 +122,7 @@ public class CurrenciesResourceTest extends BaseIT {
                 .given()
                     .accept(ContentType.JSON)
                 .when()
-                    .delete("/api/currenciess/a96e0a04-d20f-3096-bc64-dac2d639a577")
+                    .delete("/api/currenciess/1100")
                 .then()
                     .statusCode(HttpStatus.NO_CONTENT.value());
         assertEquals(1, currenciesRepository.count());

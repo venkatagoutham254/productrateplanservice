@@ -3,7 +3,6 @@ package aforo.productrateplanservie.currencies.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import java.util.UUID;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,7 +11,7 @@ import lombok.Setter;
 @Setter
 public class CurrenciesDTO {
 
-    private UUID currencyId;
+    private Long currencyId;
 
     @NotNull
     @Size(max = 3)

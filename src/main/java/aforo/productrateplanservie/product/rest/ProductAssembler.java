@@ -5,7 +5,6 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 import aforo.productrateplanservie.model.SimpleValue;
 import aforo.productrateplanservie.product.model.ProductDTO;
-import java.util.UUID;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.IanaLinkRelations;
@@ -27,8 +26,8 @@ public class ProductAssembler implements SimpleRepresentationModelAssembler<Prod
         collectionModel.add(linkTo(methodOn(ProductResource.class).getAllProducts(null, null)).withSelfRel());
     }
 
-    public EntityModel<SimpleValue<UUID>> toSimpleModel(final UUID productId) {
-        final EntityModel<SimpleValue<UUID>> simpleModel = SimpleValue.entityModelOf(productId);
+    public EntityModel<SimpleValue<Long>> toSimpleModel(final Long productId) {
+        final EntityModel<SimpleValue<Long>> simpleModel = SimpleValue.entityModelOf(productId);
         simpleModel.add(linkTo(methodOn(ProductResource.class).getProduct(productId)).withSelfRel());
         return simpleModel;
     }

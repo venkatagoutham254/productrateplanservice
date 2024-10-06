@@ -11,7 +11,6 @@ import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
-import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -78,22 +77,22 @@ public class CurrenciesResource {
 
     @GetMapping("/{currencyId}")
     public ResponseEntity<EntityModel<CurrenciesDTO>> getCurrencies(
-            @PathVariable(name = "currencyId") final UUID currencyId) {
+            @PathVariable(name = "currencyId") final Long currencyId) {
         final CurrenciesDTO currenciesDTO = currenciesService.get(currencyId);
         return ResponseEntity.ok(currenciesAssembler.toModel(currenciesDTO));
     }
 
     @PostMapping
     @ApiResponse(responseCode = "201")
-    public ResponseEntity<EntityModel<SimpleValue<UUID>>> createCurrencies(
+    public ResponseEntity<EntityModel<SimpleValue<Long>>> createCurrencies(
             @RequestBody @Valid final CurrenciesDTO currenciesDTO) {
-        final UUID createdCurrencyId = currenciesService.create(currenciesDTO);
+        final Long createdCurrencyId = currenciesService.create(currenciesDTO);
         return new ResponseEntity<>(currenciesAssembler.toSimpleModel(createdCurrencyId), HttpStatus.CREATED);
     }
 
     @PutMapping("/{currencyId}")
-    public ResponseEntity<EntityModel<SimpleValue<UUID>>> updateCurrencies(
-            @PathVariable(name = "currencyId") final UUID currencyId,
+    public ResponseEntity<EntityModel<SimpleValue<Long>>> updateCurrencies(
+            @PathVariable(name = "currencyId") final Long currencyId,
             @RequestBody @Valid final CurrenciesDTO currenciesDTO) {
         currenciesService.update(currencyId, currenciesDTO);
         return ResponseEntity.ok(currenciesAssembler.toSimpleModel(currencyId));
@@ -102,7 +101,7 @@ public class CurrenciesResource {
     @DeleteMapping("/{currencyId}")
     @ApiResponse(responseCode = "204")
     public ResponseEntity<Void> deleteCurrencies(
-            @PathVariable(name = "currencyId") final UUID currencyId) {
+            @PathVariable(name = "currencyId") final Long currencyId) {
         final ReferencedWarning referencedWarning = currenciesService.getReferencedWarning(currencyId);
         if (referencedWarning != null) {
             throw new ReferencedException(referencedWarning);

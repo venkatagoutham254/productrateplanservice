@@ -8,7 +8,9 @@ databaseChangeLog:
             columns:
               - column:
                   name: product_id
-                  type: uuid
+                  type: bigint
+                  autoIncrement: true
+                  startWith: 10000
                   constraints:
                     primaryKey: true
                     nullable: false
@@ -40,7 +42,9 @@ databaseChangeLog:
             columns:
               - column:
                   name: currency_id
-                  type: uuid
+                  type: bigint
+                  autoIncrement: true
+                  startWith: 10000
                   constraints:
                     primaryKey: true
                     nullable: false
@@ -74,7 +78,9 @@ databaseChangeLog:
             columns:
               - column:
                   name: rate_plan_id
-                  type: uuid
+                  type: bigint
+                  autoIncrement: true
+                  startWith: 10000
                   constraints:
                     primaryKey: true
                     nullable: false
@@ -108,12 +114,12 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: product_id
-                  type: uuid
+                  type: bigint
                   constraints:
                     nullable: false
               - column:
                   name: currency_id
-                  type: uuid
+                  type: bigint
                   constraints:
                     nullable: false
               - column:
@@ -131,7 +137,9 @@ databaseChangeLog:
             columns:
               - column:
                   name: rate_plan_usage_rate_id
-                  type: uuid
+                  type: bigint
+                  autoIncrement: true
+                  startWith: 10000
                   constraints:
                     primaryKey: true
                     nullable: false
@@ -160,7 +168,7 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: rate_plan_id
-                  type: uuid
+                  type: bigint
                   constraints:
                     nullable: false
               - column:
@@ -178,7 +186,9 @@ databaseChangeLog:
             columns:
               - column:
                   name: id
-                  type: uuid
+                  type: bigint
+                  autoIncrement: true
+                  startWith: 10000
                   constraints:
                     primaryKey: true
                     nullable: false
@@ -189,7 +199,7 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: rate_plan_usage_rate_id
-                  type: uuid
+                  type: bigint
                   constraints:
                     nullable: false
               - column:
@@ -207,7 +217,9 @@ databaseChangeLog:
             columns:
               - column:
                   name: rate_plan_tiered_rate_id
-                  type: uuid
+                  type: bigint
+                  autoIncrement: true
+                  startWith: 10000
                   constraints:
                     primaryKey: true
                     nullable: false
@@ -236,7 +248,7 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: rate_plan_id
-                  type: uuid
+                  type: bigint
                   constraints:
                     nullable: false
               - column:
@@ -254,7 +266,9 @@ databaseChangeLog:
             columns:
               - column:
                   name: tier_number
-                  type: uuid
+                  type: bigint
+                  autoIncrement: true
+                  startWith: 10000
                   constraints:
                     primaryKey: true
                     nullable: false
@@ -275,7 +289,7 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: rate_plan_tiered_rate_id
-                  type: uuid
+                  type: bigint
                   constraints:
                     nullable: false
               - column:
@@ -293,7 +307,9 @@ databaseChangeLog:
             columns:
               - column:
                   name: rate_plan_flat_rate_id
-                  type: uuid
+                  type: bigint
+                  autoIncrement: true
+                  startWith: 10000
                   constraints:
                     primaryKey: true
                     nullable: false
@@ -327,7 +343,7 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: rate_plan_id
-                  type: uuid
+                  type: bigint
                   constraints:
                     nullable: false
               - column:
@@ -345,7 +361,9 @@ databaseChangeLog:
             columns:
               - column:
                   name: id
-                  type: uuid
+                  type: bigint
+                  autoIncrement: true
+                  startWith: 10000
                   constraints:
                     primaryKey: true
                     nullable: false
@@ -361,7 +379,7 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: rate_plan_flat_rate_id
-                  type: uuid
+                  type: bigint
                   constraints:
                     nullable: false
               - column:
@@ -379,7 +397,9 @@ databaseChangeLog:
             columns:
               - column:
                   name: rate_plan_subscription_rate_id
-                  type: uuid
+                  type: bigint
+                  autoIncrement: true
+                  startWith: 10000
                   constraints:
                     primaryKey: true
                     nullable: false
@@ -413,7 +433,7 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: rate_plan_id
-                  type: uuid
+                  type: bigint
                   constraints:
                     nullable: false
               - column:
@@ -431,7 +451,9 @@ databaseChangeLog:
             columns:
               - column:
                   name: id
-                  type: uuid
+                  type: bigint
+                  autoIncrement: true
+                  startWith: 10000
                   constraints:
                     primaryKey: true
                     nullable: false
@@ -447,7 +469,7 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: rate_plan_subscription_rate_id
-                  type: uuid
+                  type: bigint
                   constraints:
                     nullable: false
               - column:
@@ -465,7 +487,9 @@ databaseChangeLog:
             columns:
               - column:
                   name: rate_plan_freemium_rate_id
-                  type: uuid
+                  type: bigint
+                  autoIncrement: true
+                  startWith: 10000
                   constraints:
                     primaryKey: true
                     nullable: false
@@ -499,7 +523,7 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: rate_plan_id
-                  type: uuid
+                  type: bigint
                   constraints:
                     nullable: false
               - column:
@@ -517,7 +541,9 @@ databaseChangeLog:
             columns:
               - column:
                   name: id
-                  type: uuid
+                  type: bigint
+                  autoIncrement: true
+                  startWith: 10000
                   constraints:
                     primaryKey: true
                     nullable: false
@@ -528,7 +554,7 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: rate_plan_freemium_rate_id
-                  type: uuid
+                  type: bigint
                   constraints:
                     nullable: false
               - column:

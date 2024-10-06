@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import aforo.productrateplanservie.config.BaseIT;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
-import java.util.UUID;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
@@ -25,7 +24,7 @@ public class RatePlanSubscriptionRateResourceTest extends BaseIT {
                 .then()
                     .statusCode(HttpStatus.OK.value())
                     .body("page.totalElements", Matchers.equalTo(2))
-                    .body("_embedded.ratePlanSubscriptionRateDTOList.get(0).ratePlanSubscriptionRateId", Matchers.equalTo("a9db62f9-32ad-355a-b2c0-e09e55861964"))
+                    .body("_embedded.ratePlanSubscriptionRateDTOList.get(0).ratePlanSubscriptionRateId", Matchers.equalTo(1900))
                     .body("_links.self.href", Matchers.endsWith("/api/ratePlanSubscriptionRates?page=0&size=20&sort=ratePlanSubscriptionRateId,asc"));
     }
 
@@ -36,11 +35,11 @@ public class RatePlanSubscriptionRateResourceTest extends BaseIT {
                 .given()
                     .accept(ContentType.JSON)
                 .when()
-                    .get("/api/ratePlanSubscriptionRates?filter=b84e99a6-c037-34e9-9e69-65532dec148b")
+                    .get("/api/ratePlanSubscriptionRates?filter=1901")
                 .then()
                     .statusCode(HttpStatus.OK.value())
                     .body("page.totalElements", Matchers.equalTo(1))
-                    .body("_embedded.ratePlanSubscriptionRateDTOList.get(0).ratePlanSubscriptionRateId", Matchers.equalTo("b84e99a6-c037-34e9-9e69-65532dec148b"));
+                    .body("_embedded.ratePlanSubscriptionRateDTOList.get(0).ratePlanSubscriptionRateId", Matchers.equalTo(1901));
     }
 
     @Test
@@ -50,11 +49,11 @@ public class RatePlanSubscriptionRateResourceTest extends BaseIT {
                 .given()
                     .accept(ContentType.JSON)
                 .when()
-                    .get("/api/ratePlanSubscriptionRates/a9db62f9-32ad-355a-b2c0-e09e55861964")
+                    .get("/api/ratePlanSubscriptionRates/1900")
                 .then()
                     .statusCode(HttpStatus.OK.value())
                     .body("ratePlanSubscriptionDescription", Matchers.equalTo("No sea takimata."))
-                    .body("_links.self.href", Matchers.endsWith("/api/ratePlanSubscriptionRates/a9db62f9-32ad-355a-b2c0-e09e55861964"));
+                    .body("_links.self.href", Matchers.endsWith("/api/ratePlanSubscriptionRates/1900"));
     }
 
     @Test
@@ -63,7 +62,7 @@ public class RatePlanSubscriptionRateResourceTest extends BaseIT {
                 .given()
                     .accept(ContentType.JSON)
                 .when()
-                    .get("/api/ratePlanSubscriptionRates/23fe8808-1292-3e52-8249-e808937738d2")
+                    .get("/api/ratePlanSubscriptionRates/2566")
                 .then()
                     .statusCode(HttpStatus.NOT_FOUND.value())
                     .body("code", Matchers.equalTo("NOT_FOUND"));
@@ -109,11 +108,11 @@ public class RatePlanSubscriptionRateResourceTest extends BaseIT {
                     .contentType(ContentType.JSON)
                     .body(readResource("/requests/ratePlanSubscriptionRateDTORequest.json"))
                 .when()
-                    .put("/api/ratePlanSubscriptionRates/a9db62f9-32ad-355a-b2c0-e09e55861964")
+                    .put("/api/ratePlanSubscriptionRates/1900")
                 .then()
                     .statusCode(HttpStatus.OK.value())
-                    .body("_links.self.href", Matchers.endsWith("/api/ratePlanSubscriptionRates/a9db62f9-32ad-355a-b2c0-e09e55861964"));
-        assertEquals("Consetetur sadipscing.", ratePlanSubscriptionRateRepository.findById(UUID.fromString("a9db62f9-32ad-355a-b2c0-e09e55861964")).orElseThrow().getRatePlanSubscriptionDescription());
+                    .body("_links.self.href", Matchers.endsWith("/api/ratePlanSubscriptionRates/1900"));
+        assertEquals("Consetetur sadipscing.", ratePlanSubscriptionRateRepository.findById(((long)1900)).orElseThrow().getRatePlanSubscriptionDescription());
         assertEquals(2, ratePlanSubscriptionRateRepository.count());
     }
 
@@ -124,7 +123,7 @@ public class RatePlanSubscriptionRateResourceTest extends BaseIT {
                 .given()
                     .accept(ContentType.JSON)
                 .when()
-                    .delete("/api/ratePlanSubscriptionRates/a9db62f9-32ad-355a-b2c0-e09e55861964")
+                    .delete("/api/ratePlanSubscriptionRates/1900")
                 .then()
                     .statusCode(HttpStatus.NO_CONTENT.value());
         assertEquals(1, ratePlanSubscriptionRateRepository.count());

@@ -8,7 +8,6 @@ import aforo.productrateplanservie.rate_plan_flat_rate_details.domain.RatePlanFl
 import aforo.productrateplanservie.rate_plan_flat_rate_details.repos.RatePlanFlatRateDetailsRepository;
 import aforo.productrateplanservie.util.NotFoundException;
 import aforo.productrateplanservie.util.ReferencedWarning;
-import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -37,13 +36,13 @@ public class RatePlanFlatRateServiceImpl implements RatePlanFlatRateService {
     public Page<RatePlanFlatRateDTO> findAll(final String filter, final Pageable pageable) {
         Page<RatePlanFlatRate> page;
         if (filter != null) {
-            UUID uuidFilter = null;
+            Long longFilter = null;
             try {
-                uuidFilter = UUID.fromString(filter);
-            } catch (final IllegalArgumentException illegalArgumentException) {
+                longFilter = Long.parseLong(filter);
+            } catch (final NumberFormatException numberFormatException) {
                 // keep null - no parseable input
             }
-            page = ratePlanFlatRateRepository.findAllByRatePlanFlatRateId(uuidFilter, pageable);
+            page = ratePlanFlatRateRepository.findAllByRatePlanFlatRateId(longFilter, pageable);
         } else {
             page = ratePlanFlatRateRepository.findAll(pageable);
         }
@@ -55,21 +54,21 @@ public class RatePlanFlatRateServiceImpl implements RatePlanFlatRateService {
     }
 
     @Override
-    public RatePlanFlatRateDTO get(final UUID ratePlanFlatRateId) {
+    public RatePlanFlatRateDTO get(final Long ratePlanFlatRateId) {
         return ratePlanFlatRateRepository.findById(ratePlanFlatRateId)
                 .map(ratePlanFlatRate -> ratePlanFlatRateMapper.updateRatePlanFlatRateDTO(ratePlanFlatRate, new RatePlanFlatRateDTO()))
                 .orElseThrow(NotFoundException::new);
     }
 
     @Override
-    public UUID create(final RatePlanFlatRateDTO ratePlanFlatRateDTO) {
+    public Long create(final RatePlanFlatRateDTO ratePlanFlatRateDTO) {
         final RatePlanFlatRate ratePlanFlatRate = new RatePlanFlatRate();
         ratePlanFlatRateMapper.updateRatePlanFlatRate(ratePlanFlatRateDTO, ratePlanFlatRate, ratePlanRepository);
         return ratePlanFlatRateRepository.save(ratePlanFlatRate).getRatePlanFlatRateId();
     }
 
     @Override
-    public void update(final UUID ratePlanFlatRateId,
+    public void update(final Long ratePlanFlatRateId,
             final RatePlanFlatRateDTO ratePlanFlatRateDTO) {
         final RatePlanFlatRate ratePlanFlatRate = ratePlanFlatRateRepository.findById(ratePlanFlatRateId)
                 .orElseThrow(NotFoundException::new);
@@ -78,12 +77,12 @@ public class RatePlanFlatRateServiceImpl implements RatePlanFlatRateService {
     }
 
     @Override
-    public void delete(final UUID ratePlanFlatRateId) {
+    public void delete(final Long ratePlanFlatRateId) {
         ratePlanFlatRateRepository.deleteById(ratePlanFlatRateId);
     }
 
     @Override
-    public ReferencedWarning getReferencedWarning(final UUID ratePlanFlatRateId) {
+    public ReferencedWarning getReferencedWarning(final Long ratePlanFlatRateId) {
         final ReferencedWarning referencedWarning = new ReferencedWarning();
         final RatePlanFlatRate ratePlanFlatRate = ratePlanFlatRateRepository.findById(ratePlanFlatRateId)
                 .orElseThrow(NotFoundException::new);

@@ -7,7 +7,6 @@ import aforo.productrateplanservie.currencies.rest.CurrenciesResource;
 import aforo.productrateplanservie.model.SimpleValue;
 import aforo.productrateplanservie.product.rest.ProductResource;
 import aforo.productrateplanservie.rate_plan.model.RatePlanDTO;
-import java.util.UUID;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.IanaLinkRelations;
@@ -31,8 +30,8 @@ public class RatePlanAssembler implements SimpleRepresentationModelAssembler<Rat
         collectionModel.add(linkTo(methodOn(RatePlanResource.class).getAllRatePlans(null, null)).withSelfRel());
     }
 
-    public EntityModel<SimpleValue<UUID>> toSimpleModel(final UUID ratePlanId) {
-        final EntityModel<SimpleValue<UUID>> simpleModel = SimpleValue.entityModelOf(ratePlanId);
+    public EntityModel<SimpleValue<Long>> toSimpleModel(final Long ratePlanId) {
+        final EntityModel<SimpleValue<Long>> simpleModel = SimpleValue.entityModelOf(ratePlanId);
         simpleModel.add(linkTo(methodOn(RatePlanResource.class).getRatePlan(ratePlanId)).withSelfRel());
         return simpleModel;
     }

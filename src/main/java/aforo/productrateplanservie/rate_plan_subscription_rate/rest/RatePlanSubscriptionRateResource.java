@@ -11,7 +11,6 @@ import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
-import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -79,22 +78,22 @@ public class RatePlanSubscriptionRateResource {
 
     @GetMapping("/{ratePlanSubscriptionRateId}")
     public ResponseEntity<EntityModel<RatePlanSubscriptionRateDTO>> getRatePlanSubscriptionRate(
-            @PathVariable(name = "ratePlanSubscriptionRateId") final UUID ratePlanSubscriptionRateId) {
+            @PathVariable(name = "ratePlanSubscriptionRateId") final Long ratePlanSubscriptionRateId) {
         final RatePlanSubscriptionRateDTO ratePlanSubscriptionRateDTO = ratePlanSubscriptionRateService.get(ratePlanSubscriptionRateId);
         return ResponseEntity.ok(ratePlanSubscriptionRateAssembler.toModel(ratePlanSubscriptionRateDTO));
     }
 
     @PostMapping
     @ApiResponse(responseCode = "201")
-    public ResponseEntity<EntityModel<SimpleValue<UUID>>> createRatePlanSubscriptionRate(
+    public ResponseEntity<EntityModel<SimpleValue<Long>>> createRatePlanSubscriptionRate(
             @RequestBody @Valid final RatePlanSubscriptionRateDTO ratePlanSubscriptionRateDTO) {
-        final UUID createdRatePlanSubscriptionRateId = ratePlanSubscriptionRateService.create(ratePlanSubscriptionRateDTO);
+        final Long createdRatePlanSubscriptionRateId = ratePlanSubscriptionRateService.create(ratePlanSubscriptionRateDTO);
         return new ResponseEntity<>(ratePlanSubscriptionRateAssembler.toSimpleModel(createdRatePlanSubscriptionRateId), HttpStatus.CREATED);
     }
 
     @PutMapping("/{ratePlanSubscriptionRateId}")
-    public ResponseEntity<EntityModel<SimpleValue<UUID>>> updateRatePlanSubscriptionRate(
-            @PathVariable(name = "ratePlanSubscriptionRateId") final UUID ratePlanSubscriptionRateId,
+    public ResponseEntity<EntityModel<SimpleValue<Long>>> updateRatePlanSubscriptionRate(
+            @PathVariable(name = "ratePlanSubscriptionRateId") final Long ratePlanSubscriptionRateId,
             @RequestBody @Valid final RatePlanSubscriptionRateDTO ratePlanSubscriptionRateDTO) {
         ratePlanSubscriptionRateService.update(ratePlanSubscriptionRateId, ratePlanSubscriptionRateDTO);
         return ResponseEntity.ok(ratePlanSubscriptionRateAssembler.toSimpleModel(ratePlanSubscriptionRateId));
@@ -103,7 +102,7 @@ public class RatePlanSubscriptionRateResource {
     @DeleteMapping("/{ratePlanSubscriptionRateId}")
     @ApiResponse(responseCode = "204")
     public ResponseEntity<Void> deleteRatePlanSubscriptionRate(
-            @PathVariable(name = "ratePlanSubscriptionRateId") final UUID ratePlanSubscriptionRateId) {
+            @PathVariable(name = "ratePlanSubscriptionRateId") final Long ratePlanSubscriptionRateId) {
         final ReferencedWarning referencedWarning = ratePlanSubscriptionRateService.getReferencedWarning(ratePlanSubscriptionRateId);
         if (referencedWarning != null) {
             throw new ReferencedException(referencedWarning);

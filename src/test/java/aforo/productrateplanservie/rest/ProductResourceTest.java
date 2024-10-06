@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import aforo.productrateplanservie.config.BaseIT;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
-import java.util.UUID;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
@@ -25,7 +24,7 @@ public class ProductResourceTest extends BaseIT {
                 .then()
                     .statusCode(HttpStatus.OK.value())
                     .body("page.totalElements", Matchers.equalTo(2))
-                    .body("_embedded.productDTOList.get(0).productId", Matchers.equalTo("a9b7ba70-783b-317e-9998-dc4dd82eb3c5"))
+                    .body("_embedded.productDTOList.get(0).productId", Matchers.equalTo(1000))
                     .body("_links.self.href", Matchers.endsWith("/api/products?page=0&size=20&sort=productId,asc"));
     }
 
@@ -36,11 +35,11 @@ public class ProductResourceTest extends BaseIT {
                 .given()
                     .accept(ContentType.JSON)
                 .when()
-                    .get("/api/products?filter=b8c37e33-defd-351c-b91e-1e03e51657da")
+                    .get("/api/products?filter=1001")
                 .then()
                     .statusCode(HttpStatus.OK.value())
                     .body("page.totalElements", Matchers.equalTo(1))
-                    .body("_embedded.productDTOList.get(0).productId", Matchers.equalTo("b8c37e33-defd-351c-b91e-1e03e51657da"));
+                    .body("_embedded.productDTOList.get(0).productId", Matchers.equalTo(1001));
     }
 
     @Test
@@ -50,11 +49,11 @@ public class ProductResourceTest extends BaseIT {
                 .given()
                     .accept(ContentType.JSON)
                 .when()
-                    .get("/api/products/a9b7ba70-783b-317e-9998-dc4dd82eb3c5")
+                    .get("/api/products/1000")
                 .then()
                     .statusCode(HttpStatus.OK.value())
                     .body("productName", Matchers.equalTo("Sed diam nonumy."))
-                    .body("_links.self.href", Matchers.endsWith("/api/products/a9b7ba70-783b-317e-9998-dc4dd82eb3c5"));
+                    .body("_links.self.href", Matchers.endsWith("/api/products/1000"));
     }
 
     @Test
@@ -63,7 +62,7 @@ public class ProductResourceTest extends BaseIT {
                 .given()
                     .accept(ContentType.JSON)
                 .when()
-                    .get("/api/products/23d7c8a0-8b4a-3a1b-87c5-99473f5dddda")
+                    .get("/api/products/1666")
                 .then()
                     .statusCode(HttpStatus.NOT_FOUND.value())
                     .body("code", Matchers.equalTo("NOT_FOUND"));
@@ -108,11 +107,11 @@ public class ProductResourceTest extends BaseIT {
                     .contentType(ContentType.JSON)
                     .body(readResource("/requests/productDTORequest.json"))
                 .when()
-                    .put("/api/products/a9b7ba70-783b-317e-9998-dc4dd82eb3c5")
+                    .put("/api/products/1000")
                 .then()
                     .statusCode(HttpStatus.OK.value())
-                    .body("_links.self.href", Matchers.endsWith("/api/products/a9b7ba70-783b-317e-9998-dc4dd82eb3c5"));
-        assertEquals("Lorem ipsum dolor.", productRepository.findById(UUID.fromString("a9b7ba70-783b-317e-9998-dc4dd82eb3c5")).orElseThrow().getProductName());
+                    .body("_links.self.href", Matchers.endsWith("/api/products/1000"));
+        assertEquals("Lorem ipsum dolor.", productRepository.findById(((long)1000)).orElseThrow().getProductName());
         assertEquals(2, productRepository.count());
     }
 
@@ -123,7 +122,7 @@ public class ProductResourceTest extends BaseIT {
                 .given()
                     .accept(ContentType.JSON)
                 .when()
-                    .delete("/api/products/a9b7ba70-783b-317e-9998-dc4dd82eb3c5")
+                    .delete("/api/products/1000")
                 .then()
                     .statusCode(HttpStatus.NO_CONTENT.value());
         assertEquals(1, productRepository.count());
