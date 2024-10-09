@@ -20,8 +20,8 @@ public class RatePlanAssembler implements SimpleRepresentationModelAssembler<Rat
     public void addLinks(final EntityModel<RatePlanDTO> entityModel) {
         entityModel.add(linkTo(methodOn(RatePlanResource.class).getRatePlan(entityModel.getContent().getRatePlanId())).withSelfRel());
         entityModel.add(linkTo(methodOn(RatePlanResource.class).getAllRatePlans(null, null)).withRel(IanaLinkRelations.COLLECTION));
-        entityModel.add(linkTo(methodOn(ProductResource.class).getProduct(entityModel.getContent().getProduct())).withRel("product"));
-        entityModel.add(linkTo(methodOn(CurrenciesResource.class).getCurrencies(entityModel.getContent().getCurrency())).withRel("currency"));
+        entityModel.add(linkTo(methodOn(ProductResource.class).getProduct(entityModel.getContent().getProductId())).withRel("product"));
+        entityModel.add(linkTo(methodOn(CurrenciesResource.class).getCurrencies(entityModel.getContent().getCurrencyId())).withRel("currency"));
     }
 
     @Override

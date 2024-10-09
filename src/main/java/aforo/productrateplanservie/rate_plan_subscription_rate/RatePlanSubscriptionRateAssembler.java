@@ -19,7 +19,7 @@ public class RatePlanSubscriptionRateAssembler implements SimpleRepresentationMo
     public void addLinks(final EntityModel<RatePlanSubscriptionRateDTO> entityModel) {
         entityModel.add(linkTo(methodOn(RatePlanSubscriptionRateResource.class).getRatePlanSubscriptionRate(entityModel.getContent().getRatePlanSubscriptionRateId())).withSelfRel());
         entityModel.add(linkTo(methodOn(RatePlanSubscriptionRateResource.class).getAllRatePlanSubscriptionRates(null, null)).withRel(IanaLinkRelations.COLLECTION));
-        entityModel.add(linkTo(methodOn(RatePlanResource.class).getRatePlan(entityModel.getContent().getRatePlan())).withRel("ratePlan"));
+        entityModel.add(linkTo(methodOn(RatePlanResource.class).getRatePlan(entityModel.getContent().getRatePlanId())).withRel("ratePlan"));
     }
 
     @Override

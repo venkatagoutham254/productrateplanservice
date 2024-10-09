@@ -640,7 +640,7 @@ databaseChangeLog:
             onDelete: NO ACTION
             onUpdate: NO ACTION
         - addForeignKeyConstraint:
-            constraintName: fk_rate_plan_subscription_rate_details_rate_plan_subscription_rate_id
+            constraintName: fk_rate_plan_subs_rate_details_rate_plan_subs_rate_id
             baseTableName: aforo_rate_plan_subscription_rate_details
             baseColumnNames: rate_plan_subscription_rate_id
             referencedTableName: aforo_rate_plan_subscription_rate

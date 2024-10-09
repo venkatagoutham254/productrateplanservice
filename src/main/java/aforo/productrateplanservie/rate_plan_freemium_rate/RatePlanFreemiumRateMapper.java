@@ -25,7 +25,7 @@ public interface RatePlanFreemiumRateMapper {
     @AfterMapping
     default void afterUpdateRatePlanFreemiumRateDTO(RatePlanFreemiumRate ratePlanFreemiumRate,
             @MappingTarget RatePlanFreemiumRateDTO ratePlanFreemiumRateDTO) {
-        ratePlanFreemiumRateDTO.setRatePlan(ratePlanFreemiumRate.getRatePlan() == null ? null : (Long) ratePlanFreemiumRate.getRatePlan().getRatePlanId());
+        ratePlanFreemiumRateDTO.setRatePlanId(ratePlanFreemiumRate.getRatePlanId() == null ? null : (Long) ratePlanFreemiumRate.getRatePlanId());
     }
 
     @Mapping(target = "ratePlanFreemiumRateId", ignore = true)
@@ -38,9 +38,9 @@ public interface RatePlanFreemiumRateMapper {
     default void afterUpdateRatePlanFreemiumRate(RatePlanFreemiumRateDTO ratePlanFreemiumRateDTO,
             @MappingTarget RatePlanFreemiumRate ratePlanFreemiumRate,
             @Context RatePlanRepository ratePlanRepository) {
-        final RatePlan ratePlan = ratePlanFreemiumRateDTO.getRatePlan() == null ? null : ratePlanRepository.findById(ratePlanFreemiumRateDTO.getRatePlan())
+        final RatePlan ratePlan = ratePlanFreemiumRateDTO.getRatePlanId() == null ? null : ratePlanRepository.findById(ratePlanFreemiumRateDTO.getRatePlanId())
                 .orElseThrow(() -> new NotFoundException("ratePlan not found"));
-        ratePlanFreemiumRate.setRatePlan(ratePlan);
+        ratePlanFreemiumRate.setRatePlanId(ratePlan.getRatePlanId());
     }
 
 }

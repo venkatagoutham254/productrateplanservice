@@ -25,7 +25,7 @@ public interface RatePlanFlatRateMapper {
     @AfterMapping
     default void afterUpdateRatePlanFlatRateDTO(RatePlanFlatRate ratePlanFlatRate,
             @MappingTarget RatePlanFlatRateDTO ratePlanFlatRateDTO) {
-        ratePlanFlatRateDTO.setRatePlan(ratePlanFlatRate.getRatePlan() == null ? null : ((RatePlan) ratePlanFlatRate.getRatePlan()).getRatePlanId());
+        ratePlanFlatRateDTO.setRatePlanId(ratePlanFlatRate.getRatePlanId() == null ? null : ratePlanFlatRate.getRatePlanId());
     }
 
     @Mapping(target = "ratePlanFlatRateId", ignore = true)
@@ -38,9 +38,9 @@ public interface RatePlanFlatRateMapper {
     default void afterUpdateRatePlanFlatRate(RatePlanFlatRateDTO ratePlanFlatRateDTO,
             @MappingTarget RatePlanFlatRate ratePlanFlatRate,
             @Context RatePlanRepository ratePlanRepository) {
-        final RatePlan ratePlan = ratePlanFlatRateDTO.getRatePlan() == null ? null : ratePlanRepository.findById(ratePlanFlatRateDTO.getRatePlan())
+        final RatePlan ratePlan = ratePlanFlatRateDTO.getRatePlanId() == null ? null : ratePlanRepository.findById(ratePlanFlatRateDTO.getRatePlanId())
                 .orElseThrow(() -> new NotFoundException("ratePlan not found"));
-        ratePlanFlatRate.setRatePlan(ratePlan);
+        ratePlanFlatRate.setRatePlanId(ratePlan.getRatePlanId());
     }
 
 }

@@ -1,15 +1,13 @@
 package aforo.productrateplanservie.rate_plan_subscription_rate;
 
+import aforo.productrateplanservie.util.enums.UnitBillingFrequency;
+import aforo.productrateplanservie.util.enums.UnitMeasurement;
+import aforo.productrateplanservie.util.enums.UnitPriceFixedFrequency;
+import aforo.productrateplanservie.util.enums.UnitType;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.Getter;
-import lombok.Setter;
 
-
-@Getter
-@Setter
 public class RatePlanSubscriptionRateDTO {
-
     private Long ratePlanSubscriptionRateId;
 
     @NotNull
@@ -20,22 +18,22 @@ public class RatePlanSubscriptionRateDTO {
 
     @NotNull
     @Size(max = 255)
-    private String unitType;
+    private UnitType unitType;
 
     @NotNull
     @Size(max = 255)
-    private String unitMeasurement;
+    private UnitMeasurement unitMeasurement;
 
     @NotNull
     @Size(max = 255)
-    private String unitBillingFrequency;
+    private UnitBillingFrequency unitBillingFrequency;
 
     @NotNull
     @Size(max = 255)
-    private String unitPriceFixedFrequency;
+    private UnitPriceFixedFrequency unitPriceFixedFrequency;
 
     @NotNull
-    private Long ratePlan;
+    private Long ratePlanId;
 
 	public Long getRatePlanSubscriptionRateId() {
 		return ratePlanSubscriptionRateId;
@@ -61,51 +59,51 @@ public class RatePlanSubscriptionRateDTO {
 		this.description = description;
 	}
 
-	public String getUnitType() {
+	public UnitType getUnitType() {
 		return unitType;
 	}
 
-	public void setUnitType(String unitType) {
+	public void setUnitType(UnitType unitType) {
 		this.unitType = unitType;
 	}
 
-	public String getUnitMeasurement() {
+	public UnitMeasurement getUnitMeasurement() {
 		return unitMeasurement;
 	}
 
-	public void setUnitMeasurement(String unitMeasurement) {
+	public void setUnitMeasurement(UnitMeasurement unitMeasurement) {
 		this.unitMeasurement = unitMeasurement;
 	}
 
-	public String getUnitBillingFrequency() {
+	public UnitBillingFrequency getUnitBillingFrequency() {
 		return unitBillingFrequency;
 	}
 
-	public void setUnitBillingFrequency(String unitBillingFrequency) {
+	public void setUnitBillingFrequency(UnitBillingFrequency unitBillingFrequency) {
 		this.unitBillingFrequency = unitBillingFrequency;
 	}
 
-	public String getUnitPriceFixedFrequency() {
+	public UnitPriceFixedFrequency getUnitPriceFixedFrequency() {
 		return unitPriceFixedFrequency;
 	}
 
-	public void setUnitPriceFixedFrequency(String unitPriceFixedFrequency) {
+	public void setUnitPriceFixedFrequency(UnitPriceFixedFrequency unitPriceFixedFrequency) {
 		this.unitPriceFixedFrequency = unitPriceFixedFrequency;
 	}
 
-	public Long getRatePlan() {
-		return ratePlan;
+	public Long getRatePlanId() {
+		return ratePlanId;
 	}
 
-	public void setRatePlan(Long ratePlan) {
-		this.ratePlan = ratePlan;
+	public void setRatePlanId(Long ratePlanId) {
+		this.ratePlanId = ratePlanId;
 	}
 
 	public RatePlanSubscriptionRateDTO(Long ratePlanSubscriptionRateId,
 			@NotNull @Size(max = 100) String ratePlanSubscriptionDescription, String description,
-			@NotNull @Size(max = 255) String unitType, @NotNull @Size(max = 255) String unitMeasurement,
-			@NotNull @Size(max = 255) String unitBillingFrequency,
-			@NotNull @Size(max = 255) String unitPriceFixedFrequency, @NotNull Long ratePlan) {
+			@NotNull @Size(max = 255) UnitType unitType, @NotNull @Size(max = 255) UnitMeasurement unitMeasurement,
+			@NotNull @Size(max = 255) UnitBillingFrequency unitBillingFrequency,
+			@NotNull @Size(max = 255) UnitPriceFixedFrequency unitPriceFixedFrequency, @NotNull Long ratePlan) {
 		super();
 		this.ratePlanSubscriptionRateId = ratePlanSubscriptionRateId;
 		this.ratePlanSubscriptionDescription = ratePlanSubscriptionDescription;
@@ -114,7 +112,7 @@ public class RatePlanSubscriptionRateDTO {
 		this.unitMeasurement = unitMeasurement;
 		this.unitBillingFrequency = unitBillingFrequency;
 		this.unitPriceFixedFrequency = unitPriceFixedFrequency;
-		this.ratePlan = ratePlan;
+		this.ratePlanId = ratePlanId;
 	}
 
 	public RatePlanSubscriptionRateDTO() {

@@ -27,7 +27,7 @@ public interface RatePlanSubscriptionRateMapper {
     default void afterUpdateRatePlanSubscriptionRateDTO(
             RatePlanSubscriptionRate ratePlanSubscriptionRate,
             @MappingTarget RatePlanSubscriptionRateDTO ratePlanSubscriptionRateDTO) {
-        ratePlanSubscriptionRateDTO.setRatePlan(ratePlanSubscriptionRate.getRatePlan() == null ? null : (Long) ((RatePlan) ratePlanSubscriptionRate.getRatePlan()).getRatePlanId());
+        ratePlanSubscriptionRateDTO.setRatePlanId(ratePlanSubscriptionRate.getRatePlanId() == null ? null : ratePlanSubscriptionRate.getRatePlanId());
     }
 
     @Mapping(target = "ratePlanSubscriptionRateId", ignore = true)
@@ -42,9 +42,9 @@ public interface RatePlanSubscriptionRateMapper {
             RatePlanSubscriptionRateDTO ratePlanSubscriptionRateDTO,
             @MappingTarget RatePlanSubscriptionRate ratePlanSubscriptionRate,
             @Context RatePlanRepository ratePlanRepository) {
-        final RatePlan ratePlan = ratePlanSubscriptionRateDTO.getRatePlan() == null ? null : ratePlanRepository.findById(ratePlanSubscriptionRateDTO.getRatePlan())
+        final RatePlan ratePlan = ratePlanSubscriptionRateDTO.getRatePlanId() == null ? null : ratePlanRepository.findById(ratePlanSubscriptionRateDTO.getRatePlanId())
                 .orElseThrow(() -> new NotFoundException("ratePlan not found"));
-        ratePlanSubscriptionRate.setRatePlan(ratePlan);
+        ratePlanSubscriptionRate.setRatePlanId(ratePlan.getRatePlanId());
     }
 
 }

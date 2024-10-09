@@ -1,13 +1,10 @@
 package aforo.productrateplanservie.product;
 
+import aforo.productrateplanservie.util.enums.Status;
+import jakarta.persistence.Column;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.Getter;
-import lombok.Setter;
 
-
-@Getter
-@Setter
 public class ProductDTO {
 
     private Long productId;
@@ -20,7 +17,15 @@ public class ProductDTO {
 
     @NotNull
     @Size(max = 255)
-    private String status;
+    private Status status;
+    
+    @Column(nullable = false)
+	private Long producerId;
+	@Column
+	private Long organizationId;
+	@Column
+	private Long divisionId;
+
 
 	public Long getProductId() {
 		return productId;
@@ -46,21 +51,51 @@ public class ProductDTO {
 		this.productDescription = productDescription;
 	}
 
-	public String getStatus() {
+	public Status getStatus() {
 		return status;
 	}
 
-	public void setStatus(String status) {
+	public void setStatus(Status status) {
 		this.status = status;
 	}
 
+	public Long getProducerId() {
+		return producerId;
+	}
+
+	public void setProducerId(Long producerId) {
+		this.producerId = producerId;
+	}
+
+	public Long getOrganizationId() {
+		return organizationId;
+	}
+
+	public void setOrganizationId(Long organizationId) {
+		this.organizationId = organizationId;
+	}
+
+	public Long getDivisionId() {
+		return divisionId;
+	}
+
+	public void setDivisionId(Long divisionId) {
+		this.divisionId = divisionId;
+	}
+
 	public ProductDTO(Long productId, @NotNull @Size(max = 100) String productName, String productDescription,
-			@NotNull @Size(max = 255) String status) {
+			@NotNull @Size(max = 255) Status status, Long organizationId, Long producerId, Long divisionId) {
 		super();
 		this.productId = productId;
 		this.productName = productName;
 		this.productDescription = productDescription;
 		this.status = status;
+		this.organizationId = organizationId;
+		this.producerId = producerId;
+		this.divisionId = divisionId;
+		
+		
+		
 	}
 
 	public ProductDTO() {

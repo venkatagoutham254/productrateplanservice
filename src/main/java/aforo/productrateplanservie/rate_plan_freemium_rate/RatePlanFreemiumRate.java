@@ -1,7 +1,10 @@
 package aforo.productrateplanservie.rate_plan_freemium_rate;
 
-import aforo.productrateplanservie.rate_plan.RatePlan;
 import aforo.productrateplanservie.rate_plan_freemium_rate_details.RatePlanFreemiumRateDetails;
+import aforo.productrateplanservie.util.enums.UnitBillingFrequency;
+import aforo.productrateplanservie.util.enums.UnitFreePriceFixedFrequency;
+import aforo.productrateplanservie.util.enums.UnitMeasurement;
+import aforo.productrateplanservie.util.enums.UnitType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -14,8 +17,6 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import java.time.OffsetDateTime;
 import java.util.Set;
-import lombok.Getter;
-import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -23,8 +24,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-@Getter
-@Setter
+
 public class RatePlanFreemiumRate {
 
     @Id
@@ -39,20 +39,20 @@ public class RatePlanFreemiumRate {
     private String description;
 
     @Column(nullable = false)
-    private String unitType;
+    private UnitType unitType;
 
     @Column(nullable = false)
-    private String unitMeasurement;
+    private UnitMeasurement unitMeasurement;
 
     @Column(nullable = false)
-    private String unitBillingFrequency;
+    private UnitBillingFrequency unitBillingFrequency;
 
     @Column(nullable = false)
-    private String unitFreePriceFixedFrequency;
+    private UnitFreePriceFixedFrequency unitFreePriceFixedFrequency;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "rate_plan_id", nullable = false)
-    private RatePlan ratePlan;
+    private Long ratePlanId;
 
     @OneToMany(mappedBy = "ratePlanFreemiumRate")
     private Set<RatePlanFreemiumRateDetails> ratePlanFreemiumRateRatePlanFreemiumRateDetailses;
@@ -65,10 +65,8 @@ public class RatePlanFreemiumRate {
     @Column(nullable = false)
     private OffsetDateTime lastUpdated;
 
-	public Object getRatePlanFreemiumRateId() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	
+	
 
 	public String getRatePlanFreemiumDescription() {
 		return ratePlanFreemiumDescription;
@@ -86,44 +84,44 @@ public class RatePlanFreemiumRate {
 		this.description = description;
 	}
 
-	public String getUnitType() {
+	public UnitType getUnitType() {
 		return unitType;
 	}
 
-	public void setUnitType(String unitType) {
+	public void setUnitType(UnitType unitType) {
 		this.unitType = unitType;
 	}
 
-	public String getUnitMeasurement() {
+	public UnitMeasurement getUnitMeasurement() {
 		return unitMeasurement;
 	}
 
-	public void setUnitMeasurement(String unitMeasurement) {
+	public void setUnitMeasurement(UnitMeasurement unitMeasurement) {
 		this.unitMeasurement = unitMeasurement;
 	}
 
-	public String getUnitBillingFrequency() {
+	public UnitBillingFrequency getUnitBillingFrequency() {
 		return unitBillingFrequency;
 	}
 
-	public void setUnitBillingFrequency(String unitBillingFrequency) {
+	public void setUnitBillingFrequency(UnitBillingFrequency unitBillingFrequency) {
 		this.unitBillingFrequency = unitBillingFrequency;
 	}
 
-	public String getUnitFreePriceFixedFrequency() {
+	public UnitFreePriceFixedFrequency getUnitFreePriceFixedFrequency() {
 		return unitFreePriceFixedFrequency;
 	}
 
-	public void setUnitFreePriceFixedFrequency(String unitFreePriceFixedFrequency) {
+	public void setUnitFreePriceFixedFrequency(UnitFreePriceFixedFrequency unitFreePriceFixedFrequency) {
 		this.unitFreePriceFixedFrequency = unitFreePriceFixedFrequency;
 	}
 
-	public RatePlan getRatePlan() {
-		return ratePlan;
+	public Long getRatePlanId() {
+		return ratePlanId;
 	}
 
-	public void setRatePlan(RatePlan ratePlan) {
-		this.ratePlan = ratePlan;
+	public void setRatePlanId(Long ratePlanId) {
+		this.ratePlanId = ratePlanId;
 	}
 
 	public Set<RatePlanFreemiumRateDetails> getRatePlanFreemiumRateRatePlanFreemiumRateDetailses() {
@@ -149,6 +147,10 @@ public class RatePlanFreemiumRate {
 
 	public void setLastUpdated(OffsetDateTime lastUpdated) {
 		this.lastUpdated = lastUpdated;
+	}
+	
+	public Long getRatePlanFreemiumRateId() {
+		return ratePlanFreemiumRateId;
 	}
 
 	public void setRatePlanFreemiumRateId(Long ratePlanFreemiumRateId) {

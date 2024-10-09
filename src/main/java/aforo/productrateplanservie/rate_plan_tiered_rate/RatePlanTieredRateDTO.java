@@ -1,15 +1,12 @@
 package aforo.productrateplanservie.rate_plan_tiered_rate;
 
+import aforo.productrateplanservie.util.enums.UnitCalculation;
+import aforo.productrateplanservie.util.enums.UnitMeasurement;
+import aforo.productrateplanservie.util.enums.UnitType;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.Getter;
-import lombok.Setter;
 
-
-@Getter
-@Setter
 public class RatePlanTieredRateDTO {
-
     private Long ratePlanTieredRateId;
 
     @NotNull
@@ -20,23 +17,23 @@ public class RatePlanTieredRateDTO {
 
     @NotNull
     @Size(max = 255)
-    private String unitType;
+    private UnitType unitType;
 
     @NotNull
     @Size(max = 255)
-    private String unitMeasurement;
+    private UnitMeasurement unitMeasurement;
 
     @NotNull
     @Size(max = 255)
-    private String unitCalculation;
+    private UnitCalculation unitCalculation;
 
     @NotNull
-    private Long ratePlan;
+    private Long ratePlanId;
 
 	public RatePlanTieredRateDTO(Long ratePlanTieredRateId, @NotNull @Size(max = 100) String ratePlanTieredDescription,
-			String description, @NotNull @Size(max = 255) String unitType,
-			@NotNull @Size(max = 255) String unitMeasurement, @NotNull @Size(max = 255) String unitCalculation,
-			@NotNull Long ratePlan) {
+			String description, @NotNull @Size(max = 255) UnitType unitType,
+			@NotNull @Size(max = 255) UnitMeasurement unitMeasurement, @NotNull @Size(max = 255) UnitCalculation unitCalculation,
+			@NotNull Long ratePlanId) {
 		super();
 		this.ratePlanTieredRateId = ratePlanTieredRateId;
 		this.ratePlanTieredDescription = ratePlanTieredDescription;
@@ -44,7 +41,7 @@ public class RatePlanTieredRateDTO {
 		this.unitType = unitType;
 		this.unitMeasurement = unitMeasurement;
 		this.unitCalculation = unitCalculation;
-		this.ratePlan = ratePlan;
+		this.ratePlanId = ratePlanId;
 	}
 
 	public RatePlanTieredRateDTO() {
@@ -75,36 +72,36 @@ public class RatePlanTieredRateDTO {
 		this.description = description;
 	}
 
-	public String getUnitType() {
+	public UnitType getUnitType() {
 		return unitType;
 	}
 
-	public void setUnitType(String unitType) {
+	public void setUnitType(UnitType unitType) {
 		this.unitType = unitType;
 	}
 
-	public String getUnitMeasurement() {
+	public UnitMeasurement getUnitMeasurement() {
 		return unitMeasurement;
 	}
 
-	public void setUnitMeasurement(String unitMeasurement) {
+	public void setUnitMeasurement(UnitMeasurement unitMeasurement) {
 		this.unitMeasurement = unitMeasurement;
 	}
 
-	public String getUnitCalculation() {
+	public UnitCalculation getUnitCalculation() {
 		return unitCalculation;
 	}
 
-	public void setUnitCalculation(String unitCalculation) {
+	public void setUnitCalculation(UnitCalculation unitCalculation) {
 		this.unitCalculation = unitCalculation;
 	}
 
-	public Long getRatePlan() {
-		return ratePlan;
+	public Long getRatePlanId() {
+		return ratePlanId;
 	}
 
-	public void setRatePlan(Long ratePlan) {
-		this.ratePlan = ratePlan;
+	public void setRatePlanId(Long ratePlanId) {
+		this.ratePlanId = ratePlanId;
 	}
     
 

@@ -25,7 +25,7 @@ public interface RatePlanUsageBasedMapper {
     @AfterMapping
     default void afterUpdateRatePlanUsageBasedDTO(RatePlanUsageBased ratePlanUsageBased,
             @MappingTarget RatePlanUsageBasedDTO ratePlanUsageBasedDTO) {
-        ratePlanUsageBasedDTO.setRatePlan(ratePlanUsageBased.getRatePlan() == null ? null : ratePlanUsageBased.getRatePlan().getRatePlanId());
+        ratePlanUsageBasedDTO.setRatePlanId(ratePlanUsageBased.getRatePlanId() == null ? null : ratePlanUsageBased.getRatePlanId());
     }
 
     @Mapping(target = "ratePlanUsageRateId", ignore = true)
@@ -38,9 +38,9 @@ public interface RatePlanUsageBasedMapper {
     default void afterUpdateRatePlanUsageBased(RatePlanUsageBasedDTO ratePlanUsageBasedDTO,
             @MappingTarget RatePlanUsageBased ratePlanUsageBased,
             @Context RatePlanRepository ratePlanRepository) {
-        final RatePlan ratePlan = ratePlanUsageBasedDTO.getRatePlan() == null ? null : ratePlanRepository.findById(ratePlanUsageBasedDTO.getRatePlan())
+        final RatePlan ratePlan = ratePlanUsageBasedDTO.getRatePlanId() == null ? null : ratePlanRepository.findById(ratePlanUsageBasedDTO.getRatePlanId())
                 .orElseThrow(() -> new NotFoundException("ratePlan not found"));
-        ratePlanUsageBased.setRatePlan(ratePlan);
+        ratePlanUsageBased.setRatePlanId(ratePlan.getRatePlanId());
     }
 
 }

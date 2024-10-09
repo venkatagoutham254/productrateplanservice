@@ -19,7 +19,7 @@ public class RatePlanUsageBasedAssembler implements SimpleRepresentationModelAss
     public void addLinks(final EntityModel<RatePlanUsageBasedDTO> entityModel) {
         entityModel.add(linkTo(methodOn(RatePlanUsageBasedResource.class).getRatePlanUsageBased(entityModel.getContent().getRatePlanUsageRateId())).withSelfRel());
         entityModel.add(linkTo(methodOn(RatePlanUsageBasedResource.class).getAllRatePlanUsageBaseds(null, null)).withRel(IanaLinkRelations.COLLECTION));
-        entityModel.add(linkTo(methodOn(RatePlanResource.class).getRatePlan(entityModel.getContent().getRatePlan())).withRel("ratePlan"));
+        entityModel.add(linkTo(methodOn(RatePlanResource.class).getRatePlan(entityModel.getContent().getRatePlanId())).withRel("ratePlan"));
     }
 
     @Override

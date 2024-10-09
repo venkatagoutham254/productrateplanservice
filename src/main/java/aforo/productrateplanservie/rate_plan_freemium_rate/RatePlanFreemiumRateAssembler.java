@@ -19,7 +19,7 @@ public class RatePlanFreemiumRateAssembler implements SimpleRepresentationModelA
     public void addLinks(final EntityModel<RatePlanFreemiumRateDTO> entityModel) {
         entityModel.add(linkTo(methodOn(RatePlanFreemiumRateResource.class).getRatePlanFreemiumRate(entityModel.getContent().getRatePlanFreemiumRateId())).withSelfRel());
         entityModel.add(linkTo(methodOn(RatePlanFreemiumRateResource.class).getAllRatePlanFreemiumRates(null, null)).withRel(IanaLinkRelations.COLLECTION));
-        entityModel.add(linkTo(methodOn(RatePlanResource.class).getRatePlan(entityModel.getContent().getRatePlan())).withRel("ratePlan"));
+        entityModel.add(linkTo(methodOn(RatePlanResource.class).getRatePlan(entityModel.getContent().getRatePlanId())).withRel("ratePlan"));
     }
 
     @Override

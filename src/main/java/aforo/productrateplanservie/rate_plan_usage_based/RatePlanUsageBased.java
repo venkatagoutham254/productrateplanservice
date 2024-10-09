@@ -2,6 +2,9 @@ package aforo.productrateplanservie.rate_plan_usage_based;
 
 import aforo.productrateplanservie.rate_plan.RatePlan;
 import aforo.productrateplanservie.rate_plan_usage_based_rates.RatePlanUsageBasedRates;
+import aforo.productrateplanservie.util.enums.UnitCalculation;
+import aforo.productrateplanservie.util.enums.UnitMeasurement;
+import aforo.productrateplanservie.util.enums.UnitType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -23,8 +26,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-@Getter
-@Setter
+
 public class RatePlanUsageBased {
 
     @Id
@@ -39,17 +41,17 @@ public class RatePlanUsageBased {
     private String description;
 
     @Column(nullable = false)
-    private String unitType;
+    private UnitType unitType;
 
     @Column(nullable = false)
-    private String unitMeasurement;
+    private UnitMeasurement unitMeasurement;
 
     @Column(nullable = false)
-    private String unitCalculation;
+    private UnitCalculation unitCalculation;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "rate_plan_id", nullable = false)
-    private RatePlan ratePlan;
+    private Long ratePlanId;
 
     @OneToMany(mappedBy = "ratePlanUsageRate")
     private Set<RatePlanUsageBasedRates> ratePlanUsageRateRatePlanUsageBasedRateses;
@@ -62,9 +64,8 @@ public class RatePlanUsageBased {
     @Column(nullable = false)
     private OffsetDateTime lastUpdated;
 
-	public Object getRatePlanUsageRateId() {
-		// TODO Auto-generated method stub
-		return null;
+	public Long getRatePlanUsageRateId() {
+		return ratePlanUsageRateId;
 	}
 
 	public String getRatePlanUsageDescription() {
@@ -83,36 +84,36 @@ public class RatePlanUsageBased {
 		this.description = description;
 	}
 
-	public String getUnitType() {
+	public UnitType getUnitType() {
 		return unitType;
 	}
 
-	public void setUnitType(String unitType) {
+	public void setUnitType(UnitType unitType) {
 		this.unitType = unitType;
 	}
 
-	public String getUnitMeasurement() {
+	public UnitMeasurement getUnitMeasurement() {
 		return unitMeasurement;
 	}
 
-	public void setUnitMeasurement(String unitMeasurement) {
+	public void setUnitMeasurement(UnitMeasurement unitMeasurement) {
 		this.unitMeasurement = unitMeasurement;
 	}
 
-	public String getUnitCalculation() {
+	public UnitCalculation getUnitCalculation() {
 		return unitCalculation;
 	}
 
-	public void setUnitCalculation(String unitCalculation) {
+	public void setUnitCalculation(UnitCalculation unitCalculation) {
 		this.unitCalculation = unitCalculation;
 	}
 
-	public RatePlan getRatePlan() {
-		return ratePlan;
+	public Long getRatePlanId() {
+		return ratePlanId;
 	}
 
-	public void setRatePlan(RatePlan ratePlan) {
-		this.ratePlan = ratePlan;
+	public void setRatePlanId(Long ratePlanId) {
+		this.ratePlanId = ratePlanId;
 	}
 
 	public Set<RatePlanUsageBasedRates> getRatePlanUsageRateRatePlanUsageBasedRateses() {

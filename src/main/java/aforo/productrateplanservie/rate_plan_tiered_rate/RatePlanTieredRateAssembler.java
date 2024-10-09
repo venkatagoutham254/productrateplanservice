@@ -19,7 +19,7 @@ public class RatePlanTieredRateAssembler implements SimpleRepresentationModelAss
     public void addLinks(final EntityModel<RatePlanTieredRateDTO> entityModel) {
         entityModel.add(linkTo(methodOn(RatePlanTieredRateResource.class).getRatePlanTieredRate(entityModel.getContent().getRatePlanTieredRateId())).withSelfRel());
         entityModel.add(linkTo(methodOn(RatePlanTieredRateResource.class).getAllRatePlanTieredRates(null, null)).withRel(IanaLinkRelations.COLLECTION));
-        entityModel.add(linkTo(methodOn(RatePlanResource.class).getRatePlan(entityModel.getContent().getRatePlan())).withRel("ratePlan"));
+        entityModel.add(linkTo(methodOn(RatePlanResource.class).getRatePlan(entityModel.getContent().getRatePlanId())).withRel("ratePlan"));
     }
 
     @Override

@@ -46,7 +46,7 @@ public class RatePlanFreemiumRateServiceImpl implements RatePlanFreemiumRateServ
         }
         return new PageImpl<>(page.getContent()
                 .stream()
-                .map(ratePlanFreemiumRate -> ratePlanFreemiumRateMapper.updateRatePlanFreemiumRateDTO(ratePlanFreemiumRate, new RatePlanFreemiumRateDTO(null, filter, filter, filter, filter, filter, filter, null)))
+                .map(ratePlanFreemiumRate -> ratePlanFreemiumRateMapper.updateRatePlanFreemiumRateDTO(ratePlanFreemiumRate, new RatePlanFreemiumRateDTO()))
                 .toList(),
                 pageable, page.getTotalElements());
     }

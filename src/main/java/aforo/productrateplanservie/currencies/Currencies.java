@@ -10,8 +10,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import java.time.OffsetDateTime;
 import java.util.Set;
-import lombok.Getter;
-import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -19,8 +17,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-@Getter
-@Setter
+
 public class Currencies {
 
     @Id
@@ -37,7 +34,7 @@ public class Currencies {
     @Column(nullable = false, columnDefinition = "tinyint", length = 1)
     private Boolean isActive;
 
-    @OneToMany(mappedBy = "currency")
+    @OneToMany(mappedBy = "currencyId")
     private Set<RatePlan> currencyRatePlans;
 
     @CreatedDate
@@ -48,10 +45,51 @@ public class Currencies {
     @Column(nullable = false)
     private OffsetDateTime lastUpdated;
 
-	public Long getCurrencyId() {
-		// TODO Auto-generated method stub
-		return null;
+    public Long getCurrencyId() {
+		return currencyId;
 	}
-    
 
+	public void setCurrencyId(Long currencyId) {
+		this.currencyId = currencyId;
+	}
+
+	public String getCurrencyCode() {
+		return currencyCode;
+	}
+
+	public void setCurrencyCode(String currencyCode) {
+		this.currencyCode = currencyCode;
+	}
+
+	public String getCurrencyName() {
+		return currencyName;
+	}
+
+	public void setCurrencyName(String currencyName) {
+		this.currencyName = currencyName;
+	}
+
+	public Boolean getIsActive() {
+		return isActive;
+	}
+
+	public void setIsActive(Boolean isActive) {
+		this.isActive = isActive;
+	}
+	
+	public OffsetDateTime getDateCreated() {
+	    return dateCreated;
+	}
+
+	public void setDateCreated(OffsetDateTime dateCreated) {
+	    this.dateCreated = dateCreated;
+	}
+
+	public OffsetDateTime getLastUpdated() {
+	    return lastUpdated;
+	}
+
+	public void setLastUpdated(OffsetDateTime lastUpdated) {
+	    this.lastUpdated = lastUpdated;
+	}
 }

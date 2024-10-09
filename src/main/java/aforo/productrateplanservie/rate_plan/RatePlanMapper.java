@@ -26,8 +26,8 @@ public interface RatePlanMapper {
 
     @AfterMapping
     default void afterUpdateRatePlanDTO(RatePlan ratePlan, @MappingTarget RatePlanDTO ratePlanDTO) {
-        ratePlanDTO.setProduct(ratePlan.getProduct() == null ? null : ratePlan.getProduct().getProductId());
-        ratePlanDTO.setCurrency(ratePlan.getCurrency() == null ? null : ratePlan.getCurrency().getCurrencyId());
+        ratePlanDTO.setProductId(ratePlan.getProductId() == null ? null : ratePlan.getProductId());
+        ratePlanDTO.setCurrencyId(ratePlan.getCurrencyId() == null ? null : ratePlan.getCurrencyId());
     }
 
     @Mapping(target = "ratePlanId", ignore = true)
@@ -41,12 +41,12 @@ public interface RatePlanMapper {
     default void afterUpdateRatePlan(RatePlanDTO ratePlanDTO, @MappingTarget RatePlan ratePlan,
             @Context ProductRepository productRepository,
             @Context CurrenciesRepository currenciesRepository) {
-        final Product product = ratePlanDTO.getProduct() == null ? null : productRepository.findById(ratePlanDTO.getProduct())
+        final Product product = ratePlanDTO.getProductId() == null ? null : productRepository.findById(ratePlanDTO.getProductId())
                 .orElseThrow(() -> new NotFoundException("product not found"));
-        ratePlan.setProduct(product);
-        final Currencies currency = ratePlanDTO.getCurrency() == null ? null : currenciesRepository.findById(ratePlanDTO.getCurrency())
+        ratePlan.setProductId(product.getProductId());
+        final Currencies currency = ratePlanDTO.getCurrencyId() == null ? null : currenciesRepository.findById(ratePlanDTO.getCurrencyId())
                 .orElseThrow(() -> new NotFoundException("currency not found"));
-        ratePlan.setCurrency(currency);
+        ratePlan.setCurrencyId(currency.getCurrencyId());
     }
 
 }

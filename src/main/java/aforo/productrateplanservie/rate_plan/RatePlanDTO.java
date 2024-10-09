@@ -3,12 +3,10 @@ package aforo.productrateplanservie.rate_plan;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.time.LocalDate;
-import lombok.Getter;
-import lombok.Setter;
 
+import aforo.productrateplanservie.util.enums.RatePlanType;
+import aforo.productrateplanservie.util.enums.Status;
 
-@Getter
-@Setter
 public class RatePlanDTO {
 
     private Long ratePlanId;
@@ -21,7 +19,7 @@ public class RatePlanDTO {
 
     @NotNull
     @Size(max = 255)
-    private String ratePlanType;
+    private RatePlanType ratePlanType;
 
     @NotNull
     private LocalDate startDate;
@@ -31,13 +29,13 @@ public class RatePlanDTO {
 
     @NotNull
     @Size(max = 255)
-    private String status;
+    private Status status;
 
     @NotNull
-    private Long product;
+    private Long productId;
 
     @NotNull
-    private Long currency;
+    private Long currencyId;
 
 	public Long getRatePlanId() {
 		return ratePlanId;
@@ -63,11 +61,11 @@ public class RatePlanDTO {
 		this.description = description;
 	}
 
-	public String getRatePlanType() {
+	public RatePlanType getRatePlanType() {
 		return ratePlanType;
 	}
 
-	public void setRatePlanType(String ratePlanType) {
+	public void setRatePlanType(RatePlanType ratePlanType) {
 		this.ratePlanType = ratePlanType;
 	}
 
@@ -87,33 +85,33 @@ public class RatePlanDTO {
 		this.endDate = endDate;
 	}
 
-	public String getStatus() {
+	public Status getStatus() {
 		return status;
 	}
 
-	public void setStatus(String status) {
+	public void setStatus(Status status) {
 		this.status = status;
 	}
 
-	public Long getProduct() {
-		return product;
+	public Long getProductId() {
+		return productId;
 	}
 
-	public void setProduct(Long product) {
-		this.product = product;
+	public void setProductId(Long productId) {
+		this.productId = productId;
 	}
 
-	public Long getCurrency() {
-		return currency;
+	public Long getCurrencyId() {
+		return currencyId;
 	}
 
-	public void setCurrency(Long currency) {
-		this.currency = currency;
+	public void setCurrencyId(Long currencyId) {
+		this.currencyId = currencyId;
 	}
 
 	public RatePlanDTO(Long ratePlanId, @NotNull @Size(max = 100) String ratePlanName, String description,
-			@NotNull @Size(max = 255) String ratePlanType, @NotNull LocalDate startDate, @NotNull LocalDate endDate,
-			@NotNull @Size(max = 255) String status, @NotNull Long product, @NotNull Long currency) {
+			@NotNull @Size(max = 255) RatePlanType ratePlanType, @NotNull LocalDate startDate, @NotNull LocalDate endDate,
+			@NotNull @Size(max = 255) Status status, @NotNull Long productId, @NotNull Long currencyId) {
 		super();
 		this.ratePlanId = ratePlanId;
 		this.ratePlanName = ratePlanName;
@@ -122,8 +120,8 @@ public class RatePlanDTO {
 		this.startDate = startDate;
 		this.endDate = endDate;
 		this.status = status;
-		this.product = product;
-		this.currency = currency;
+		this.productId = productId;
+		this.currencyId = currencyId;
 	}
 
 	public RatePlanDTO() {

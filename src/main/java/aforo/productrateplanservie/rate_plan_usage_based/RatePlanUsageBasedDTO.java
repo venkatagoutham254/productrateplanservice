@@ -1,5 +1,8 @@
 package aforo.productrateplanservie.rate_plan_usage_based;
 
+import aforo.productrateplanservie.util.enums.UnitCalculation;
+import aforo.productrateplanservie.util.enums.UnitMeasurement;
+import aforo.productrateplanservie.util.enums.UnitType;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
@@ -20,18 +23,18 @@ public class RatePlanUsageBasedDTO {
 
     @NotNull
     @Size(max = 255)
-    private String unitType;
+    private UnitType unitType;
 
     @NotNull
     @Size(max = 255)
-    private String unitMeasurement;
+    private UnitMeasurement unitMeasurement;
 
     @NotNull
     @Size(max = 255)
-    private String unitCalculation;
+    private UnitCalculation unitCalculation;
 
     @NotNull
-    private Long ratePlan;
+    private Long ratePlanId;
 
 	public Long getRatePlanUsageRateId() {
 		return ratePlanUsageRateId;
@@ -57,42 +60,42 @@ public class RatePlanUsageBasedDTO {
 		this.description = description;
 	}
 
-	public String getUnitType() {
+	public UnitType getUnitType() {
 		return unitType;
 	}
 
-	public void setUnitType(String unitType) {
+	public void setUnitType(UnitType unitType) {
 		this.unitType = unitType;
 	}
 
-	public String getUnitMeasurement() {
+	public UnitMeasurement getUnitMeasurement() {
 		return unitMeasurement;
 	}
 
-	public void setUnitMeasurement(String unitMeasurement) {
+	public void setUnitMeasurement(UnitMeasurement unitMeasurement) {
 		this.unitMeasurement = unitMeasurement;
 	}
 
-	public String getUnitCalculation() {
+	public UnitCalculation getUnitCalculation() {
 		return unitCalculation;
 	}
 
-	public void setUnitCalculation(String unitCalculation) {
+	public void setUnitCalculation(UnitCalculation unitCalculation) {
 		this.unitCalculation = unitCalculation;
 	}
 
-	public Long getRatePlan() {
-		return ratePlan;
+	public Long getRatePlanId() {
+		return ratePlanId;
 	}
 
-	public void setRatePlan(Long ratePlan) {
-		this.ratePlan = ratePlan;
+	public void setRatePlan(Long ratePlanId) {
+		this.ratePlanId = ratePlanId;
 	}
 
 	public RatePlanUsageBasedDTO(Long ratePlanUsageRateId, @NotNull @Size(max = 100) String ratePlanUsageDescription,
-			String description, @NotNull @Size(max = 255) String unitType,
-			@NotNull @Size(max = 255) String unitMeasurement, @NotNull @Size(max = 255) String unitCalculation,
-			@NotNull Long ratePlan) {
+			String description, @NotNull @Size(max = 255) UnitType unitType,
+			@NotNull @Size(max = 255) UnitMeasurement unitMeasurement, @NotNull @Size(max = 255) UnitCalculation unitCalculation,
+			@NotNull Long ratePlanId) {
 		super();
 		this.ratePlanUsageRateId = ratePlanUsageRateId;
 		this.ratePlanUsageDescription = ratePlanUsageDescription;
@@ -100,7 +103,7 @@ public class RatePlanUsageBasedDTO {
 		this.unitType = unitType;
 		this.unitMeasurement = unitMeasurement;
 		this.unitCalculation = unitCalculation;
-		this.ratePlan = ratePlan;
+		this.ratePlanId = ratePlanId;
 	}
 
 	public RatePlanUsageBasedDTO() {

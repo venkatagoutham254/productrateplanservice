@@ -1,14 +1,13 @@
 package aforo.productrateplanservie.currencies;
 
+import java.time.OffsetDateTime;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import jakarta.persistence.Column;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.Getter;
-import lombok.Setter;
 
-
-@Getter
-@Setter
 public class CurrenciesDTO {
 
     private Long currencyId;
@@ -24,6 +23,13 @@ public class CurrenciesDTO {
     @NotNull
     @JsonProperty("isActive")
     private Boolean isActive;
+    
+    @Column(nullable = false, updatable = false)
+    private OffsetDateTime dateCreated;
+    
+    @Column(nullable = false)
+    private OffsetDateTime lastUpdated;
+    
 
 	public Long getCurrencyId() {
 		return currencyId;
@@ -56,14 +62,32 @@ public class CurrenciesDTO {
 	public void setIsActive(Boolean isActive) {
 		this.isActive = isActive;
 	}
+	
+	public OffsetDateTime getDateCreated() {
+	    return dateCreated;
+	}
+
+	public void setDateCreated(OffsetDateTime dateCreated) {
+	    this.dateCreated = dateCreated;
+	}
+
+	public OffsetDateTime getLastUpdated() {
+	    return lastUpdated;
+	}
+
+	public void setLastUpdated(OffsetDateTime lastUpdated) {
+	    this.lastUpdated = lastUpdated;
+	}
 
 	public CurrenciesDTO(Long currencyId, @NotNull @Size(max = 3) String currencyCode,
-			@NotNull @Size(max = 50) String currencyName, @NotNull Boolean isActive) {
+			@NotNull @Size(max = 50) String currencyName, @NotNull Boolean isActive, OffsetDateTime dateCreated,OffsetDateTime lastUpdated ) {
 		super();
 		this.currencyId = currencyId;
 		this.currencyCode = currencyCode;
 		this.currencyName = currencyName;
 		this.isActive = isActive;
+		this.dateCreated = dateCreated;
+		this.lastUpdated = lastUpdated;
 	}
 
 	public CurrenciesDTO() {

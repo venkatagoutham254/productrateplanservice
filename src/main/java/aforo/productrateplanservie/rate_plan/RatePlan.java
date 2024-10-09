@@ -1,12 +1,12 @@
 package aforo.productrateplanservie.rate_plan;
 
-import aforo.productrateplanservie.currencies.Currencies;
-import aforo.productrateplanservie.product.Product;
 import aforo.productrateplanservie.rate_plan_flat_rate.RatePlanFlatRate;
 import aforo.productrateplanservie.rate_plan_freemium_rate.RatePlanFreemiumRate;
 import aforo.productrateplanservie.rate_plan_subscription_rate.RatePlanSubscriptionRate;
 import aforo.productrateplanservie.rate_plan_tiered_rate.RatePlanTieredRate;
 import aforo.productrateplanservie.rate_plan_usage_based.RatePlanUsageBased;
+import aforo.productrateplanservie.util.enums.RatePlanType;
+import aforo.productrateplanservie.util.enums.Status;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -20,17 +20,13 @@ import jakarta.persistence.OneToMany;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.Set;
-import lombok.Getter;
-import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-@Getter
-@Setter
+
 public class RatePlan {
 
     @Id
@@ -45,7 +41,7 @@ public class RatePlan {
     private String description;
 
     @Column(nullable = false)
-    private String ratePlanType;
+    private RatePlanType ratePlanType;
 
     @Column(nullable = false)
     private LocalDate startDate;
@@ -54,15 +50,15 @@ public class RatePlan {
     private LocalDate endDate;
 
     @Column(nullable = false)
-    private String status;
+    private Status status;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id", nullable = false)
-    private Product product;
+    private Long productId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "currency_id", nullable = false)
-    private Currencies currency;
+    private Long currencyId;
 
     @OneToMany(mappedBy = "ratePlan")
     private Set<RatePlanUsageBased> ratePlanRatePlanUsageBaseds;
@@ -87,29 +83,75 @@ public class RatePlan {
     @Column(nullable = false)
     private OffsetDateTime lastUpdated;
 
-	public Long getRatePlanId() {
-		// TODO Auto-generated method stub
-		return null;
+    public Long getRatePlanId() {
+		return ratePlanId;
 	}
 
-	public void setCurrency(Currencies currency2) {
-		// TODO Auto-generated method stub
-		
+	public void setRatePlanId(Long ratePlanId) {
+		this.ratePlanId = ratePlanId;
 	}
 
-	public void setProduct(Product product2) {
-		// TODO Auto-generated method stub
-		
+	public String getRatePlanName() {
+		return ratePlanName;
 	}
 
-	public Currencies getCurrency() {
-		// TODO Auto-generated method stub
-		return null;
+	public void setRatePlanName(String ratePlanName) {
+		this.ratePlanName = ratePlanName;
 	}
 
-	public Product getProduct() {
-		// TODO Auto-generated method stub
-		return null;
+	public String getDescription() {
+		return description;
 	}
 
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public RatePlanType getRatePlanType() {
+		return ratePlanType;
+	}
+
+	public void setRatePlanType(RatePlanType ratePlanType) {
+		this.ratePlanType = ratePlanType;
+	}
+
+	public LocalDate getStartDate() {
+		return startDate;
+	}
+
+	public void setStartDate(LocalDate startDate) {
+		this.startDate = startDate;
+	}
+
+	public LocalDate getEndDate() {
+		return endDate;
+	}
+
+	public void setEndDate(LocalDate endDate) {
+		this.endDate = endDate;
+	}
+
+	public Status getStatus() {
+		return status;
+	}
+
+	public void setStatus(Status status) {
+		this.status = status;
+	}
+
+	public Long getProductId() {
+		return productId;
+	}
+
+	public void setProductId(Long productId) {
+		this.productId = productId;
+	}
+
+	public Long getCurrencyId() {
+		return currencyId;
+	}
+
+	public void setCurrencyId(Long currencyId) {
+		this.currencyId = currencyId;
+	}
 }
