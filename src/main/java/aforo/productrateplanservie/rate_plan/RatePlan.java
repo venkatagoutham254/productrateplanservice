@@ -1,5 +1,7 @@
 package aforo.productrateplanservie.rate_plan;
 
+import aforo.productrateplanservie.currencies.Currencies;
+import aforo.productrateplanservie.product.Product;
 import aforo.productrateplanservie.rate_plan_flat_rate.RatePlanFlatRate;
 import aforo.productrateplanservie.rate_plan_freemium_rate.RatePlanFreemiumRate;
 import aforo.productrateplanservie.rate_plan_subscription_rate.RatePlanSubscriptionRate;
@@ -7,16 +9,7 @@ import aforo.productrateplanservie.rate_plan_tiered_rate.RatePlanTieredRate;
 import aforo.productrateplanservie.rate_plan_usage_based.RatePlanUsageBased;
 import aforo.productrateplanservie.util.enums.RatePlanType;
 import aforo.productrateplanservie.util.enums.Status;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EntityListeners;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.Set;
@@ -26,7 +19,6 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-
 public class RatePlan {
 
     @Id
@@ -54,11 +46,11 @@ public class RatePlan {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id", nullable = false)
-    private Long productId;
+    private Product product;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "currency_id", nullable = false)
-    private Long currencyId;
+    private Currencies currency;
 
     @OneToMany(mappedBy = "ratePlan")
     private Set<RatePlanUsageBased> ratePlanRatePlanUsageBaseds;
@@ -83,75 +75,77 @@ public class RatePlan {
     @Column(nullable = false)
     private OffsetDateTime lastUpdated;
 
+    // Getters and Setters
+
     public Long getRatePlanId() {
-		return ratePlanId;
-	}
+        return ratePlanId;
+    }
 
-	public void setRatePlanId(Long ratePlanId) {
-		this.ratePlanId = ratePlanId;
-	}
+    public void setRatePlanId(Long ratePlanId) {
+        this.ratePlanId = ratePlanId;
+    }
 
-	public String getRatePlanName() {
-		return ratePlanName;
-	}
+    public String getRatePlanName() {
+        return ratePlanName;
+    }
 
-	public void setRatePlanName(String ratePlanName) {
-		this.ratePlanName = ratePlanName;
-	}
+    public void setRatePlanName(String ratePlanName) {
+        this.ratePlanName = ratePlanName;
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	public RatePlanType getRatePlanType() {
-		return ratePlanType;
-	}
+    public RatePlanType getRatePlanType() {
+        return ratePlanType;
+    }
 
-	public void setRatePlanType(RatePlanType ratePlanType) {
-		this.ratePlanType = ratePlanType;
-	}
+    public void setRatePlanType(RatePlanType ratePlanType) {
+        this.ratePlanType = ratePlanType;
+    }
 
-	public LocalDate getStartDate() {
-		return startDate;
-	}
+    public LocalDate getStartDate() {
+        return startDate;
+    }
 
-	public void setStartDate(LocalDate startDate) {
-		this.startDate = startDate;
-	}
+    public void setStartDate(LocalDate startDate) {
+        this.startDate = startDate;
+    }
 
-	public LocalDate getEndDate() {
-		return endDate;
-	}
+    public LocalDate getEndDate() {
+        return endDate;
+    }
 
-	public void setEndDate(LocalDate endDate) {
-		this.endDate = endDate;
-	}
+    public void setEndDate(LocalDate endDate) {
+        this.endDate = endDate;
+    }
 
-	public Status getStatus() {
-		return status;
-	}
+    public Status getStatus() {
+        return status;
+    }
 
-	public void setStatus(Status status) {
-		this.status = status;
-	}
+    public void setStatus(Status status) {
+        this.status = status;
+    }
 
-	public Long getProductId() {
-		return productId;
-	}
+    public Product getProduct() {
+        return product;
+    }
 
-	public void setProductId(Long productId) {
-		this.productId = productId;
-	}
+    public void setProduct(Product product) {
+        this.product = product;
+    }
 
-	public Long getCurrencyId() {
-		return currencyId;
-	}
+    public Currencies getCurrency() {
+        return currency;
+    }
 
-	public void setCurrencyId(Long currencyId) {
-		this.currencyId = currencyId;
-	}
+    public void setCurrency(Currencies currency) {
+        this.currency = currency;
+    }
 }

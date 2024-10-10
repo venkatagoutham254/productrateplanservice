@@ -11,21 +11,20 @@ import org.mapstruct.MappingConstants;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.ReportingPolicy;
 
-
 @Mapper(
         componentModel = MappingConstants.ComponentModel.SPRING,
         unmappedTargetPolicy = ReportingPolicy.IGNORE
 )
 public interface RatePlanTieredRateMapper {
 
-    @Mapping(target = "ratePlan", ignore = true)
+    @Mapping(target = "ratePlanId", ignore = true)
     RatePlanTieredRateDTO updateRatePlanTieredRateDTO(RatePlanTieredRate ratePlanTieredRate,
             @MappingTarget RatePlanTieredRateDTO ratePlanTieredRateDTO);
 
     @AfterMapping
     default void afterUpdateRatePlanTieredRateDTO(RatePlanTieredRate ratePlanTieredRate,
             @MappingTarget RatePlanTieredRateDTO ratePlanTieredRateDTO) {
-        ratePlanTieredRateDTO.setRatePlanId(ratePlanTieredRate.getRatePlanId() == null ? null : (Long) ratePlanTieredRate.getRatePlanId());
+        ratePlanTieredRateDTO.setRatePlanId(ratePlanTieredRate.getRatePlan() == null ? null : ratePlanTieredRate.getRatePlan().getRatePlanId());
     }
 
     @Mapping(target = "ratePlanTieredRateId", ignore = true)
@@ -39,8 +38,7 @@ public interface RatePlanTieredRateMapper {
             @MappingTarget RatePlanTieredRate ratePlanTieredRate,
             @Context RatePlanRepository ratePlanRepository) {
         final RatePlan ratePlan = ratePlanTieredRateDTO.getRatePlanId() == null ? null : ratePlanRepository.findById(ratePlanTieredRateDTO.getRatePlanId())
-                .orElseThrow(() -> new NotFoundException("ratePlan not found"));
-        ratePlanTieredRate.setRatePlanId(ratePlan.getRatePlanId());
+                .orElseThrow(() -> new NotFoundException("RatePlan not found"));
+        ratePlanTieredRate.setRatePlan(ratePlan);
     }
-
 }

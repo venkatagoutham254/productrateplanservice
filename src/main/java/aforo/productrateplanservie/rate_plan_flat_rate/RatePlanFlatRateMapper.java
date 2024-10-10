@@ -11,7 +11,6 @@ import org.mapstruct.MappingConstants;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.ReportingPolicy;
 
-
 @Mapper(
         componentModel = MappingConstants.ComponentModel.SPRING,
         unmappedTargetPolicy = ReportingPolicy.IGNORE
@@ -25,11 +24,14 @@ public interface RatePlanFlatRateMapper {
     @AfterMapping
     default void afterUpdateRatePlanFlatRateDTO(RatePlanFlatRate ratePlanFlatRate,
             @MappingTarget RatePlanFlatRateDTO ratePlanFlatRateDTO) {
-        ratePlanFlatRateDTO.setRatePlanId(ratePlanFlatRate.getRatePlanId() == null ? null : ratePlanFlatRate.getRatePlanId());
+        // No need to set ratePlanId here since we're directly dealing with RatePlan
+        ratePlanFlatRateDTO.setRatePlanId(ratePlanFlatRate.getRatePlan() != null 
+                ? ratePlanFlatRate.getRatePlan().getRatePlanId() 
+                : null);
     }
 
     @Mapping(target = "ratePlanFlatRateId", ignore = true)
-    @Mapping(target = "ratePlan", ignore = true)
+    @Mapping(target = "ratePlan", ignore = true) // Ignore the entire RatePlan to set it later
     RatePlanFlatRate updateRatePlanFlatRate(RatePlanFlatRateDTO ratePlanFlatRateDTO,
             @MappingTarget RatePlanFlatRate ratePlanFlatRate,
             @Context RatePlanRepository ratePlanRepository);
@@ -38,9 +40,9 @@ public interface RatePlanFlatRateMapper {
     default void afterUpdateRatePlanFlatRate(RatePlanFlatRateDTO ratePlanFlatRateDTO,
             @MappingTarget RatePlanFlatRate ratePlanFlatRate,
             @Context RatePlanRepository ratePlanRepository) {
-        final RatePlan ratePlan = ratePlanFlatRateDTO.getRatePlanId() == null ? null : ratePlanRepository.findById(ratePlanFlatRateDTO.getRatePlanId())
+        final RatePlan ratePlan = ratePlanFlatRateDTO.getRatePlanId() == null ? null 
+                : ratePlanRepository.findById(ratePlanFlatRateDTO.getRatePlanId())
                 .orElseThrow(() -> new NotFoundException("ratePlan not found"));
-        ratePlanFlatRate.setRatePlanId(ratePlan.getRatePlanId());
+        ratePlanFlatRate.setRatePlan(ratePlan); // Set the RatePlan entity instead of ratePlanId
     }
-
 }

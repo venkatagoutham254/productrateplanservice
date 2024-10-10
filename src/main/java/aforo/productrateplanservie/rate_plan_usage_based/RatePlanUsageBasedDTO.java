@@ -110,5 +110,10 @@ public class RatePlanUsageBasedDTO {
 		// TODO Auto-generated constructor stub
 	}
 
+	public void setRatePlanId(Long ratePlanId) {
+		this.ratePlanId=ratePlanId;
+		
+	}
+
     
 }

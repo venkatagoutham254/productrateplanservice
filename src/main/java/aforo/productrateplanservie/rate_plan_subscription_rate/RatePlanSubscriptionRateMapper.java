@@ -11,14 +11,13 @@ import org.mapstruct.MappingConstants;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.ReportingPolicy;
 
-
 @Mapper(
         componentModel = MappingConstants.ComponentModel.SPRING,
         unmappedTargetPolicy = ReportingPolicy.IGNORE
 )
 public interface RatePlanSubscriptionRateMapper {
 
-    @Mapping(target = "ratePlan", ignore = true)
+    @Mapping(target = "ratePlanId", ignore = true)
     RatePlanSubscriptionRateDTO updateRatePlanSubscriptionRateDTO(
             RatePlanSubscriptionRate ratePlanSubscriptionRate,
             @MappingTarget RatePlanSubscriptionRateDTO ratePlanSubscriptionRateDTO);
@@ -27,7 +26,7 @@ public interface RatePlanSubscriptionRateMapper {
     default void afterUpdateRatePlanSubscriptionRateDTO(
             RatePlanSubscriptionRate ratePlanSubscriptionRate,
             @MappingTarget RatePlanSubscriptionRateDTO ratePlanSubscriptionRateDTO) {
-        ratePlanSubscriptionRateDTO.setRatePlanId(ratePlanSubscriptionRate.getRatePlanId() == null ? null : ratePlanSubscriptionRate.getRatePlanId());
+        ratePlanSubscriptionRateDTO.setRatePlanId(ratePlanSubscriptionRate.getRatePlan() == null ? null : ratePlanSubscriptionRate.getRatePlan().getRatePlanId());
     }
 
     @Mapping(target = "ratePlanSubscriptionRateId", ignore = true)
@@ -42,9 +41,9 @@ public interface RatePlanSubscriptionRateMapper {
             RatePlanSubscriptionRateDTO ratePlanSubscriptionRateDTO,
             @MappingTarget RatePlanSubscriptionRate ratePlanSubscriptionRate,
             @Context RatePlanRepository ratePlanRepository) {
-        final RatePlan ratePlan = ratePlanSubscriptionRateDTO.getRatePlanId() == null ? null : ratePlanRepository.findById(ratePlanSubscriptionRateDTO.getRatePlanId())
-                .orElseThrow(() -> new NotFoundException("ratePlan not found"));
-        ratePlanSubscriptionRate.setRatePlanId(ratePlan.getRatePlanId());
+        final RatePlan ratePlan = ratePlanSubscriptionRateDTO.getRatePlanId() == null ? null :
+                ratePlanRepository.findById(ratePlanSubscriptionRateDTO.getRatePlanId())
+                        .orElseThrow(() -> new NotFoundException("RatePlan not found"));
+        ratePlanSubscriptionRate.setRatePlan(ratePlan); // Update this line to set RatePlan object
     }
-
 }
