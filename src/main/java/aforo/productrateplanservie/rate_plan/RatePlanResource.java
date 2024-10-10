@@ -79,7 +79,6 @@ public class RatePlanResource {
         final RatePlanDTO ratePlanDTO = ratePlanService.get(ratePlanId);
         return ResponseEntity.ok(ratePlanAssembler.toModel(ratePlanDTO));
     }
-
     @PostMapping
     @ApiResponse(responseCode = "201")
     public ResponseEntity<EntityModel<SimpleValue<Long>>> createRatePlan(
