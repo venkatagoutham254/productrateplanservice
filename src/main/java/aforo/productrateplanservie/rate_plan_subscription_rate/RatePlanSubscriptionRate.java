@@ -1,32 +1,22 @@
 package aforo.productrateplanservie.rate_plan_subscription_rate;
 
+
+import jakarta.persistence.*;
+import java.time.OffsetDateTime;
+import java.util.Set;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import aforo.productrateplanservie.rate_plan.RatePlan;
 import aforo.productrateplanservie.rate_plan_subscription_rate_details.RatePlanSubscriptionRateDetails;
 import aforo.productrateplanservie.util.enums.UnitBillingFrequency;
 import aforo.productrateplanservie.util.enums.UnitMeasurement;
 import aforo.productrateplanservie.util.enums.UnitPriceFixedFrequency;
 import aforo.productrateplanservie.util.enums.UnitType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EntityListeners;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import java.time.OffsetDateTime;
-import java.util.Set;
-
-import lombok.Data;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-@Data
 public class RatePlanSubscriptionRate {
 
     @Id
@@ -40,24 +30,28 @@ public class RatePlanSubscriptionRate {
     @Column(name = "\"description\"", columnDefinition = "longtext")
     private String description;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private UnitType unitType;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private UnitMeasurement unitMeasurement;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private UnitBillingFrequency unitBillingFrequency;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private UnitPriceFixedFrequency unitPriceFixedFrequency;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "rate_plan_id", nullable = false)
-    private Long ratePlanId;
+    private RatePlan ratePlan;
 
-    @OneToMany(mappedBy = "ratePlanSubscriptionRate")
-    private Set<RatePlanSubscriptionRateDetails> ratePlanSubscriptionRateRatePlanSubscriptionRateDetailses;
+    @OneToMany(mappedBy = "ratePlanSubscriptionRate", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<RatePlanSubscriptionRateDetails> ratePlanSubscriptionRateDetails;
 
     @CreatedDate
     @Column(nullable = false, updatable = false)
@@ -123,21 +117,20 @@ public class RatePlanSubscriptionRate {
 		this.unitPriceFixedFrequency = unitPriceFixedFrequency;
 	}
 
-	public Long getRatePlan() {
-		return ratePlanId;
+	public RatePlan getRatePlan() {
+		return ratePlan;
 	}
 
-	public void setRatePlan(Long ratePlanId) {
-		this.ratePlanId = ratePlanId;
+	public void setRatePlan(RatePlan ratePlan) {
+		this.ratePlan = ratePlan;
 	}
 
-	public Set<RatePlanSubscriptionRateDetails> getRatePlanSubscriptionRateRatePlanSubscriptionRateDetailses() {
-		return ratePlanSubscriptionRateRatePlanSubscriptionRateDetailses;
+	public Set<RatePlanSubscriptionRateDetails> getRatePlanSubscriptionRateDetails() {
+		return ratePlanSubscriptionRateDetails;
 	}
 
-	public void setRatePlanSubscriptionRateRatePlanSubscriptionRateDetailses(
-			Set<RatePlanSubscriptionRateDetails> ratePlanSubscriptionRateRatePlanSubscriptionRateDetailses) {
-		this.ratePlanSubscriptionRateRatePlanSubscriptionRateDetailses = ratePlanSubscriptionRateRatePlanSubscriptionRateDetailses;
+	public void setRatePlanSubscriptionRateDetails(Set<RatePlanSubscriptionRateDetails> ratePlanSubscriptionRateDetails) {
+		this.ratePlanSubscriptionRateDetails = ratePlanSubscriptionRateDetails;
 	}
 
 	public OffsetDateTime getDateCreated() {
@@ -156,6 +149,5 @@ public class RatePlanSubscriptionRate {
 		this.lastUpdated = lastUpdated;
 	}
 
-
-
+    
 }

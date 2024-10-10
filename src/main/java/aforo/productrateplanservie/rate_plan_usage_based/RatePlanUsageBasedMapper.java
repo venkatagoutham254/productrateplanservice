@@ -11,7 +11,6 @@ import org.mapstruct.MappingConstants;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.ReportingPolicy;
 
-
 @Mapper(
         componentModel = MappingConstants.ComponentModel.SPRING,
         unmappedTargetPolicy = ReportingPolicy.IGNORE
@@ -25,11 +24,11 @@ public interface RatePlanUsageBasedMapper {
     @AfterMapping
     default void afterUpdateRatePlanUsageBasedDTO(RatePlanUsageBased ratePlanUsageBased,
             @MappingTarget RatePlanUsageBasedDTO ratePlanUsageBasedDTO) {
-        ratePlanUsageBasedDTO.setRatePlanId(ratePlanUsageBased.getRatePlanId() == null ? null : ratePlanUsageBased.getRatePlanId());
+        ratePlanUsageBasedDTO.setRatePlanId(ratePlanUsageBased.getRatePlan().getRatePlanId());
     }
 
     @Mapping(target = "ratePlanUsageRateId", ignore = true)
-    @Mapping(target = "ratePlan", ignore = true)
+    @Mapping(target = "ratePlanId", ignore = true)
     RatePlanUsageBased updateRatePlanUsageBased(RatePlanUsageBasedDTO ratePlanUsageBasedDTO,
             @MappingTarget RatePlanUsageBased ratePlanUsageBased,
             @Context RatePlanRepository ratePlanRepository);
@@ -40,7 +39,6 @@ public interface RatePlanUsageBasedMapper {
             @Context RatePlanRepository ratePlanRepository) {
         final RatePlan ratePlan = ratePlanUsageBasedDTO.getRatePlanId() == null ? null : ratePlanRepository.findById(ratePlanUsageBasedDTO.getRatePlanId())
                 .orElseThrow(() -> new NotFoundException("ratePlan not found"));
-        ratePlanUsageBased.setRatePlanId(ratePlan.getRatePlanId());
+        ratePlanUsageBased.setRatePlan(ratePlan);
     }
-
 }
