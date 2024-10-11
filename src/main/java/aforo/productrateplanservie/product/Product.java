@@ -5,6 +5,8 @@ import aforo.productrateplanservie.util.enums.Status;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -31,7 +33,8 @@ public class Product {
 	@Column(columnDefinition = "longtext")
 	private String productDescription;
 
-	@Column(nullable = false)
+	@Enumerated(EnumType.STRING)
+	@Column(name = "status", nullable = false)
 	private Status status;
 
 	@Column(nullable = false)

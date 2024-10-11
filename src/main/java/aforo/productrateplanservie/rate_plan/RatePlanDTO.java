@@ -8,7 +8,6 @@ import aforo.productrateplanservie.util.enums.RatePlanType;
 import aforo.productrateplanservie.util.enums.Status;
 
 public class RatePlanDTO {
-
     private Long ratePlanId;
 
     @NotNull
@@ -18,7 +17,6 @@ public class RatePlanDTO {
     private String description;
 
     @NotNull
-    @Size(max = 255)
     private RatePlanType ratePlanType;
 
     @NotNull
@@ -26,9 +24,8 @@ public class RatePlanDTO {
 
     @NotNull
     private LocalDate endDate;
-
+    
     @NotNull
-    @Size(max = 255)
     private Status status;
 
     @NotNull
@@ -110,8 +107,8 @@ public class RatePlanDTO {
 	}
 
 	public RatePlanDTO(Long ratePlanId, @NotNull @Size(max = 100) String ratePlanName, String description,
-			@NotNull @Size(max = 255) RatePlanType ratePlanType, @NotNull LocalDate startDate, @NotNull LocalDate endDate,
-			@NotNull @Size(max = 255) Status status, @NotNull Long productId, @NotNull Long currencyId) {
+			@NotNull RatePlanType ratePlanType, @NotNull LocalDate startDate, @NotNull LocalDate endDate,
+			@NotNull Status status, @NotNull Long productId, @NotNull Long currencyId) {
 		super();
 		this.ratePlanId = ratePlanId;
 		this.ratePlanName = ratePlanName;
@@ -127,7 +124,4 @@ public class RatePlanDTO {
 	public RatePlanDTO() {
 		// TODO Auto-generated constructor stub
 	}
-    
-	
-
 }

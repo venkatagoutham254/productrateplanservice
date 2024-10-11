@@ -31,7 +31,8 @@ public class RatePlan {
 
     @Column(name = "\"description\"", columnDefinition = "longtext")
     private String description;
-
+    
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private RatePlanType ratePlanType;
 
@@ -40,7 +41,8 @@ public class RatePlan {
 
     @Column(nullable = false)
     private LocalDate endDate;
-
+    
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Status status;
 
