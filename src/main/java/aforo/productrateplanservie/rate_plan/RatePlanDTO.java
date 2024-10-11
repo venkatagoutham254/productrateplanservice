@@ -8,7 +8,6 @@ import aforo.productrateplanservie.util.enums.RatePlanType;
 import aforo.productrateplanservie.util.enums.Status;
 
 public class RatePlanDTO {
-
     private Long ratePlanId;
 
     @NotNull
@@ -125,7 +124,4 @@ public class RatePlanDTO {
 	public RatePlanDTO() {
 		// TODO Auto-generated constructor stub
 	}
-    
-	
-
 }

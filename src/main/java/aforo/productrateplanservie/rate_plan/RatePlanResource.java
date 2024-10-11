@@ -29,82 +29,65 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-
 @RestController
 @RequestMapping(value = "/api/ratePlans", produces = MediaType.APPLICATION_JSON_VALUE)
 public class RatePlanResource {
 
-    private final RatePlanService ratePlanService;
-    private final RatePlanAssembler ratePlanAssembler;
-    private final PagedResourcesAssembler<RatePlanDTO> pagedResourcesAssembler;
+	private final RatePlanService ratePlanService;
+	private final RatePlanAssembler ratePlanAssembler;
+	private final PagedResourcesAssembler<RatePlanDTO> pagedResourcesAssembler;
 
-    public RatePlanResource(final RatePlanService ratePlanService,
-            final RatePlanAssembler ratePlanAssembler,
-            final PagedResourcesAssembler<RatePlanDTO> pagedResourcesAssembler) {
-        this.ratePlanService = ratePlanService;
-        this.ratePlanAssembler = ratePlanAssembler;
-        this.pagedResourcesAssembler = pagedResourcesAssembler;
-    }
+	public RatePlanResource(final RatePlanService ratePlanService, final RatePlanAssembler ratePlanAssembler,
+			final PagedResourcesAssembler<RatePlanDTO> pagedResourcesAssembler) {
+		this.ratePlanService = ratePlanService;
+		this.ratePlanAssembler = ratePlanAssembler;
+		this.pagedResourcesAssembler = pagedResourcesAssembler;
+	}
 
-    @Operation(
-            parameters = {
-                    @Parameter(
-                            name = "page",
-                            in = ParameterIn.QUERY,
-                            schema = @Schema(implementation = Integer.class)
-                    ),
-                    @Parameter(
-                            name = "size",
-                            in = ParameterIn.QUERY,
-                            schema = @Schema(implementation = Integer.class)
-                    ),
-                    @Parameter(
-                            name = "sort",
-                            in = ParameterIn.QUERY,
-                            schema = @Schema(implementation = String.class)
-                    )
-            }
-    )
-    @GetMapping
-    public ResponseEntity<PagedModel<EntityModel<RatePlanDTO>>> getAllRatePlans(
-            @RequestParam(name = "filter", required = false) final String filter,
-            @Parameter(hidden = true) @SortDefault(sort = "ratePlanId") @PageableDefault(size = 20) final Pageable pageable) {
-        final Page<RatePlanDTO> ratePlanDTOs = ratePlanService.findAll(filter, pageable);
-        return ResponseEntity.ok(pagedResourcesAssembler.toModel(ratePlanDTOs, ratePlanAssembler));
-    }
+	@Operation(parameters = {
+			@Parameter(name = "page", in = ParameterIn.QUERY, schema = @Schema(implementation = Integer.class)),
+			@Parameter(name = "size", in = ParameterIn.QUERY, schema = @Schema(implementation = Integer.class)),
+			@Parameter(name = "sort", in = ParameterIn.QUERY, schema = @Schema(implementation = String.class)) })
+	@GetMapping
+	public ResponseEntity<PagedModel<EntityModel<RatePlanDTO>>> getAllRatePlans(
+			@RequestParam(name = "filter", required = false) final String filter,
+			@Parameter(hidden = true) @SortDefault(sort = "ratePlanId") @PageableDefault(size = 20) final Pageable pageable) {
+		final Page<RatePlanDTO> ratePlanDTOs = ratePlanService.findAll(filter, pageable);
+		return ResponseEntity.ok(pagedResourcesAssembler.toModel(ratePlanDTOs, ratePlanAssembler));
+	}
 
-    @GetMapping("/{ratePlanId}")
-    public ResponseEntity<EntityModel<RatePlanDTO>> getRatePlan(
-            @PathVariable(name = "ratePlanId") final Long ratePlanId) {
-        final RatePlanDTO ratePlanDTO = ratePlanService.get(ratePlanId);
-        return ResponseEntity.ok(ratePlanAssembler.toModel(ratePlanDTO));
-    }
-    @PostMapping
-    @ApiResponse(responseCode = "201")
-    public ResponseEntity<EntityModel<SimpleValue<Long>>> createRatePlan(
-            @RequestBody @Valid final RatePlanDTO ratePlanDTO) {
-        final Long createdRatePlanId = ratePlanService.create(ratePlanDTO);
-        return new ResponseEntity<>(ratePlanAssembler.toSimpleModel(createdRatePlanId), HttpStatus.CREATED);
-    }
+	@GetMapping("/{ratePlanId}")
+	public ResponseEntity<EntityModel<RatePlanDTO>> getRatePlan(
+			@PathVariable(name = "ratePlanId") final Long ratePlanId) {
+		final RatePlanDTO ratePlanDTO = ratePlanService.get(ratePlanId);
+		return ResponseEntity.ok(ratePlanAssembler.toModel(ratePlanDTO));
+	}
 
-    @PutMapping("/{ratePlanId}")
-    public ResponseEntity<EntityModel<SimpleValue<Long>>> updateRatePlan(
-            @PathVariable(name = "ratePlanId") final Long ratePlanId,
-            @RequestBody @Valid final RatePlanDTO ratePlanDTO) {
-        ratePlanService.update(ratePlanId, ratePlanDTO);
-        return ResponseEntity.ok(ratePlanAssembler.toSimpleModel(ratePlanId));
-    }
+	@PostMapping
+	@ApiResponse(responseCode = "201")
+	public ResponseEntity<EntityModel<SimpleValue<Long>>> createRatePlan(
+			@RequestBody @Valid final RatePlanDTO ratePlanDTO) {
+		final Long createdRatePlanId = ratePlanService.create(ratePlanDTO);
+		return new ResponseEntity<>(ratePlanAssembler.toSimpleModel(createdRatePlanId), HttpStatus.CREATED);
+	}
 
-    @DeleteMapping("/{ratePlanId}")
-    @ApiResponse(responseCode = "204")
-    public ResponseEntity<Void> deleteRatePlan(
-            @PathVariable(name = "ratePlanId") final Long ratePlanId) {
-        final ReferencedWarning referencedWarning = ratePlanService.getReferencedWarning(ratePlanId);
-        if (referencedWarning != null) {
-            throw new ReferencedException(referencedWarning);
-        }
-        ratePlanService.delete(ratePlanId);
-        return ResponseEntity.noContent().build();
-    }
+	@PutMapping("/{ratePlanId}")
+	public ResponseEntity<EntityModel<SimpleValue<Long>>> updateRatePlan(
+			@PathVariable(name = "ratePlanId") final Long ratePlanId,
+			@RequestBody @Valid final RatePlanDTO ratePlanDTO) {
+		ratePlanService.update(ratePlanId, ratePlanDTO);
+		return ResponseEntity.ok(ratePlanAssembler.toSimpleModel(ratePlanId));
+	}
+
+	@DeleteMapping("/{ratePlanId}")
+	@ApiResponse(responseCode = "204")
+	public ResponseEntity<Void> deleteRatePlan(@PathVariable(name = "ratePlanId") final Long ratePlanId) {
+		final ReferencedWarning referencedWarning = ratePlanService.getReferencedWarning(ratePlanId);
+		if (referencedWarning != null) {
+			throw new ReferencedException(referencedWarning);
+		}
+		ratePlanService.delete(ratePlanId);
+		return ResponseEntity.noContent().build();
+	}
 
 }
