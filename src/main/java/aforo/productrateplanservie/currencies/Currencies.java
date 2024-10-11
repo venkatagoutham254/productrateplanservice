@@ -23,7 +23,7 @@ public class Currencies {
     @Column(nullable = false, length = 50)
     private String currencyName;
 
-    @Column(nullable = false, columnDefinition = "tinyint", length = 1)
+    @Column(nullable = false, length = 1)
     private Boolean isActive;
 
     // Update this line
