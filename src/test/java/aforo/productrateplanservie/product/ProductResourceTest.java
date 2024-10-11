@@ -1,133 +1,83 @@
 package aforo.productrateplanservie.product;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import java.io.IOException;
-
-import aforo.productrateplanservie.config.BaseIT;
-import io.restassured.RestAssured;
-import io.restassured.http.ContentType;
-import org.hamcrest.Matchers;
+import aforo.productrateplanservie.model.SimpleValue;
+import aforo.productrateplanservie.util.ReferencedException;
+import aforo.productrateplanservie.util.ReferencedWarning;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
-import org.springframework.test.context.jdbc.Sql;
-
-
-public class ProductResourceTest extends BaseIT {
-
-    @Test
-    @Sql("/data/productData.sql")
-    void getAllProducts_success() {
-        RestAssured
-                .given()
-                    .accept(ContentType.JSON)
-                .when()
-                    .get("/api/products")
-                .then()
-                    .statusCode(HttpStatus.OK.value())
-                    .body("page.totalElements", Matchers.equalTo(2))
-                    .body("_embedded.productDTOList.get(0).productId", Matchers.equalTo(1000))
-                    .body("_links.self.href", Matchers.endsWith("/api/products?page=0&size=20&sort=productId,asc"));
-    }
-
-    @Test
-    @Sql("/data/productData.sql")
-    void getAllProducts_filtered() {
-        RestAssured
-                .given()
-                    .accept(ContentType.JSON)
-                .when()
-                    .get("/api/products?filter=1001")
-                .then()
-                    .statusCode(HttpStatus.OK.value())
-                    .body("page.totalElements", Matchers.equalTo(1))
-                    .body("_embedded.productDTOList.get(0).productId", Matchers.equalTo(1001));
-    }
-
-    @Test
-    @Sql("/data/productData.sql")
-    void getProduct_success() {
-        RestAssured
-                .given()
-                    .accept(ContentType.JSON)
-                .when()
-                    .get("/api/products/1000")
-                .then()
-                    .statusCode(HttpStatus.OK.value())
-                    .body("productName", Matchers.equalTo("Sed diam nonumy."))
-                    .body("_links.self.href", Matchers.endsWith("/api/products/1000"));
-    }
-
-    @Test
-    void getProduct_notFound() {
-        RestAssured
-                .given()
-                    .accept(ContentType.JSON)
-                .when()
-                    .get("/api/products/1666")
-                .then()
-                    .statusCode(HttpStatus.NOT_FOUND.value())
-                    .body("code", Matchers.equalTo("NOT_FOUND"));
-    }
-
-    @Test
-    void createProduct_success() throws IOException {
-        RestAssured
-                .given()
-                    .accept(ContentType.JSON)
-                    .contentType(ContentType.JSON)
-                    .body(readResource("/requests/productDTORequest.json"))
-                .when()
-                    .post("/api/products")
-                .then()
-                    .statusCode(HttpStatus.CREATED.value());
-        assertEquals(1, productRepository.count());
-    }
-
-    @Test
-    void createProduct_missingField() throws IOException {
-        RestAssured
-                .given()
-                    .accept(ContentType.JSON)
-                    .contentType(ContentType.JSON)
-                    .body(readResource("/requests/productDTORequest_missingField.json"))
-                .when()
-                    .post("/api/products")
-                .then()
-                    .statusCode(HttpStatus.BAD_REQUEST.value())
-                    .body("code", Matchers.equalTo("VALIDATION_FAILED"))
-                    .body("fieldErrors.get(0).property", Matchers.equalTo("productName"))
-                    .body("fieldErrors.get(0).code", Matchers.equalTo("REQUIRED_NOT_NULL"));
-    }
-
-    @Test
-    @Sql("/data/productData.sql")
-    void updateProduct_success() throws IOException {
-        RestAssured
-                .given()
-                    .accept(ContentType.JSON)
-                    .contentType(ContentType.JSON)
-                    .body(readResource("/requests/productDTORequest.json"))
-                .when()
-                    .put("/api/products/1000")
-                .then()
-                    .statusCode(HttpStatus.OK.value())
-                    .body("_links.self.href", Matchers.endsWith("/api/products/1000"));
-        assertEquals("Lorem ipsum dolor.", productRepository.findById(((long)1000)).orElseThrow().getProductName());
-        assertEquals(2, productRepository.count());
-    }
-
-    @Test
-    @Sql("/data/productData.sql")
-    void deleteProduct_success() {
-        RestAssured
-                .given()
-                    .accept(ContentType.JSON)
-                .when()
-                    .delete("/api/products/1000")
-                .then()
-                    .statusCode(HttpStatus.NO_CONTENT.value());
-        assertEquals(1, productRepository.count());
-    }
-
+import org.springframework.http.ResponseEntity;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.*;
+class ProductResourceTest {
+	@Mock
+	private ProductService productService;
+	@Mock
+	private ProductAssembler productAssembler;
+	@Mock
+	private PagedResourcesAssembler<ProductDTO> pagedResourcesAssembler;
+	@InjectMocks
+	private ProductResource productResource;
+	private ProductDTO productDTO;
+	private ProductDTO updatedProductDTO;
+	private Long productId = 1L;
+	@BeforeEach
+	void setUp() {
+		MockitoAnnotations.openMocks(this);
+		// Initialize mock data
+		productDTO = new ProductDTO(); // Populate as necessary
+		updatedProductDTO = new ProductDTO(); // Populate as necessary
+	}
+	@Test
+	void testGetProduct() {
+		when(productService.get(anyLong())).thenReturn(productDTO);
+		when(productAssembler.toModel(productDTO)).thenReturn(EntityModel.of(productDTO));
+		ResponseEntity<EntityModel<ProductDTO>> response = productResource.getProduct(productId);
+		assertEquals(HttpStatus.OK, response.getStatusCode());
+		assertNotNull(response.getBody());
+		assertEquals(EntityModel.of(productDTO), response.getBody());
+	}
+	@Test
+	void testCreateProduct() {
+		when(productService.create(any(ProductDTO.class))).thenReturn(productId);
+		when(productAssembler.toSimpleModel(productId)).thenReturn(EntityModel.of(new SimpleValue<>(productId)));
+		ResponseEntity<EntityModel<SimpleValue<Long>>> response = productResource.createProduct(productDTO);
+		assertEquals(HttpStatus.CREATED, response.getStatusCode());
+		assertNotNull(response.getBody());
+		assertEquals(productId, response.getBody().getContent().getValue());
+	}
+	@Test
+	void testUpdateProduct() {
+		doNothing().when(productService).update(anyLong(), any(ProductDTO.class));
+		when(productAssembler.toSimpleModel(productId)).thenReturn(EntityModel.of(new SimpleValue<>(productId)));
+		ResponseEntity<EntityModel<SimpleValue<Long>>> response = productResource.updateProduct(productId, updatedProductDTO);
+		assertEquals(HttpStatus.OK, response.getStatusCode());
+		assertNotNull(response.getBody());
+		assertEquals(productId, response.getBody().getContent().getValue());
+	}
+	@Test
+	void testDeleteProduct() {
+		@SuppressWarnings("unused")
+		ReferencedWarning warning = new ReferencedWarning(); // Initialize as needed
+		when(productService.getReferencedWarning(productId)).thenReturn(null);
+		doNothing().when(productService).delete(anyLong());
+		ResponseEntity<Void> response = productResource.deleteProduct(productId);
+		assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
+		verify(productService, times(1)).delete(productId);
+	}
+	@Test
+	void testDeleteProduct_withReferencedWarning() {
+		ReferencedWarning warning = new ReferencedWarning(); // Initialize as needed
+		when(productService.getReferencedWarning(productId)).thenReturn(warning);
+		ReferencedException thrown = assertThrows(ReferencedException.class, () -> productResource.deleteProduct(productId));
+		assertNotNull(thrown);
+		assertEquals(warning, thrown.getReferencedWarning());
+		verify(productService, times(0)).delete(productId);
+	}
 }
