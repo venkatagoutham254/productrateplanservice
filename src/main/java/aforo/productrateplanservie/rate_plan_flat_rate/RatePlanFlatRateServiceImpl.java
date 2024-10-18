@@ -58,7 +58,7 @@ public class RatePlanFlatRateServiceImpl implements RatePlanFlatRateService {
     public RatePlanFlatRateDTO get(Long ratePlanFlatRateId) {
         return ratePlanFlatRateRepository.findById(ratePlanFlatRateId)
                 .map(ratePlanFlatRate -> ratePlanFlatRateMapper.updateRatePlanFlatRateDTO(ratePlanFlatRate, new RatePlanFlatRateDTO()))
-                .orElseThrow(NotFoundException::new);
+                .orElseThrow(() -> new NotFoundException("RatePlanFlatRate not found with id: " + ratePlanFlatRateId));
     }
 
     @Override
@@ -66,7 +66,7 @@ public class RatePlanFlatRateServiceImpl implements RatePlanFlatRateService {
     public Long create(Long ratePlanId, RatePlanFlatRateDTO ratePlanFlatRateDTO) {
         // Ensure the RatePlan exists
         RatePlan ratePlan = ratePlanRepository.findById(ratePlanId)
-                .orElseThrow(() -> new NotFoundException("RatePlan not found"));
+                .orElseThrow(() -> new NotFoundException("RatePlan not found with id: " + ratePlanId));
 
         // Create a new RatePlanFlatRate
         RatePlanFlatRate ratePlanFlatRate = new RatePlanFlatRate();
@@ -95,7 +95,7 @@ public class RatePlanFlatRateServiceImpl implements RatePlanFlatRateService {
     public void update(Long ratePlanFlatRateId, RatePlanFlatRateDTO ratePlanFlatRateDTO) {
         // Fetch the existing RatePlanFlatRate
         RatePlanFlatRate ratePlanFlatRate = ratePlanFlatRateRepository.findById(ratePlanFlatRateId)
-                .orElseThrow(NotFoundException::new);
+                .orElseThrow(() -> new NotFoundException("RatePlanFlatRate not found with id: " + ratePlanFlatRateId));
 
         // Update the RatePlanFlatRate fields using the DTO
         ratePlanFlatRateMapper.updateRatePlanFlatRate(ratePlanFlatRateDTO, ratePlanFlatRate, ratePlanRepository);
@@ -122,7 +122,7 @@ public class RatePlanFlatRateServiceImpl implements RatePlanFlatRateService {
     public void delete(Long ratePlanFlatRateId) {
         // Fetch the RatePlanFlatRate
         RatePlanFlatRate ratePlanFlatRate = ratePlanFlatRateRepository.findById(ratePlanFlatRateId)
-                .orElseThrow(NotFoundException::new);
+                .orElseThrow(() -> new NotFoundException("RatePlanFlatRate not found with id: " + ratePlanFlatRateId));
 
         // Delete associated RatePlanFlatRateDetails
         ratePlanFlatRateDetailsRepository.deleteAllByRatePlanFlatRate(ratePlanFlatRate);
@@ -135,8 +135,19 @@ public class RatePlanFlatRateServiceImpl implements RatePlanFlatRateService {
     public ReferencedWarning getReferencedWarning(Long ratePlanFlatRateId) {
         final ReferencedWarning referencedWarning = new ReferencedWarning();
         final RatePlanFlatRate ratePlanFlatRate = ratePlanFlatRateRepository.findById(ratePlanFlatRateId)
-                .orElseThrow(NotFoundException::new);
+                .orElseThrow(() -> new NotFoundException("RatePlanFlatRate not found with id: " + ratePlanFlatRateId));
         // Assume implementation for retrieving referenced warnings
+        // Example: Check if the RatePlanFlatRate is referenced elsewhere and populate referencedWarning accordingly
         return referencedWarning;
+    }
+
+    @Override
+    public Page<RatePlanFlatRateDTO> findAllByRatePlanId(Long ratePlanId, Pageable pageable) {
+        Page<RatePlanFlatRate> page = ratePlanFlatRateRepository.findAllByRatePlan_RatePlanId(ratePlanId, pageable);
+        return new PageImpl<>(page.getContent()
+                .stream()
+                .map(ratePlanFlatRate -> ratePlanFlatRateMapper.updateRatePlanFlatRateDTO(ratePlanFlatRate, new RatePlanFlatRateDTO()))
+                .toList(),
+                pageable, page.getTotalElements());
     }
 }

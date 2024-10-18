@@ -20,15 +20,7 @@ import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(value = "/api/rateplans/flatrates", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -74,6 +66,18 @@ public class RatePlanFlatRateResource {
         return ResponseEntity.ok(pagedResourcesAssembler.toModel(ratePlanFlatRateDTOs, ratePlanFlatRateAssembler));
     }
 
+    @Operation(
+            summary = "Get all RatePlanFlatRates by RatePlan ID",
+            description = "Retrieves all RatePlanFlatRates associated with the specified RatePlan ID."
+    )
+    @GetMapping("/ratePlan/{ratePlanId}")
+    public ResponseEntity<PagedModel<EntityModel<RatePlanFlatRateDTO>>> getRatePlanFlatRatesByRatePlanId(
+            @PathVariable("ratePlanId") final Long ratePlanId,
+            @Parameter(hidden = true) @SortDefault(sort = "ratePlanFlatRateId") @PageableDefault(size = 20) final Pageable pageable) {
+        final Page<RatePlanFlatRateDTO> ratePlanFlatRateDTOs = ratePlanFlatRateService.findAllByRatePlanId(ratePlanId, pageable);
+        return ResponseEntity.ok(pagedResourcesAssembler.toModel(ratePlanFlatRateDTOs, ratePlanFlatRateAssembler));
+    }
+
     @GetMapping("/{ratePlanFlatRateId}")
     public ResponseEntity<EntityModel<RatePlanFlatRateDTO>> getRatePlanFlatRate(
             @PathVariable(name = "ratePlanFlatRateId") final Long ratePlanFlatRateId) {
@@ -103,7 +107,7 @@ public class RatePlanFlatRateResource {
     public ResponseEntity<Void> deleteRatePlanFlatRate(
             @PathVariable(name = "ratePlanFlatRateId") final Long ratePlanFlatRateId) {
         final ReferencedWarning referencedWarning = ratePlanFlatRateService.getReferencedWarning(ratePlanFlatRateId);
-        if (referencedWarning != null) {
+        if (referencedWarning != null && referencedWarning.hasWarnings()) { // Assuming hasWarnings() checks for any warnings
             throw new ReferencedException(referencedWarning);
         }
         ratePlanFlatRateService.delete(ratePlanFlatRateId);

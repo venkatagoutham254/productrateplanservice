@@ -17,13 +17,17 @@ import java.util.List;
 @Getter
 public class RatePlanFlatRateDTO {
 
-	private Long ratePlanFlatRateId;
+	@Setter
+    @Getter
+    private Long ratePlanFlatRateId;
 
 	@NotNull
 	@Size(max = 100)
 	private String ratePlanFlatDescription;
 
-	private String description;
+	@Setter
+    @Getter
+    private String description;
 
 	@NotNull
 	private UnitType unitType;
@@ -37,21 +41,17 @@ public class RatePlanFlatRateDTO {
 	@NotNull
 	private MaxLimitFrequency maxLimitFrequency;
 
-	private Long ratePlanId;
+	@Setter
+    @Getter
+    private Long ratePlanId;
 
-	private List<RatePlanFlatRateDetailsDTO> ratePlanFlatRateDetails;
+	@Setter
+    @Getter
+    private List<RatePlanFlatRateDetailsDTO> ratePlanFlatRateDetails;
 
 	// Getters and Setters
 
-	public Long getRatePlanFlatRateId() {
-		return ratePlanFlatRateId;
-	}
-
-	public void setRatePlanFlatRateId(Long ratePlanFlatRateId) {
-		this.ratePlanFlatRateId = ratePlanFlatRateId;
-	}
-
-	public @NotNull @Size(max = 100) String getRatePlanFlatDescription() {
+    public @NotNull @Size(max = 100) String getRatePlanFlatDescription() {
 		return ratePlanFlatDescription;
 	}
 
@@ -59,15 +59,7 @@ public class RatePlanFlatRateDTO {
 		this.ratePlanFlatDescription = ratePlanFlatDescription;
 	}
 
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	public @NotNull UnitType getUnitType() {
+    public @NotNull UnitType getUnitType() {
 		return unitType;
 	}
 
@@ -99,23 +91,7 @@ public class RatePlanFlatRateDTO {
 		this.maxLimitFrequency = maxLimitFrequency;
 	}
 
-	public Long getRatePlanId() {
-		return ratePlanId;
-	}
-
-	public void setRatePlanId(Long ratePlanId) {
-		this.ratePlanId = ratePlanId;
-	}
-
-	public List<RatePlanFlatRateDetailsDTO> getRatePlanFlatRateDetails() {
-		return ratePlanFlatRateDetails;
-	}
-
-	public void setRatePlanFlatRateDetails(List<RatePlanFlatRateDetailsDTO> ratePlanFlatRateDetails) {
-		this.ratePlanFlatRateDetails = ratePlanFlatRateDetails;
-	}
-
-	// Constructor
+    // Constructor
 	public RatePlanFlatRateDTO() {
 	}
 

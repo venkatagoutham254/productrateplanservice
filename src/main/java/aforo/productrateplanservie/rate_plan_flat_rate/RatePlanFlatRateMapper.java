@@ -26,7 +26,7 @@ public interface RatePlanFlatRateMapper {
     @AfterMapping
     default void afterUpdateRatePlanFlatRateDTO(RatePlanFlatRate ratePlanFlatRate,
                                                 @MappingTarget RatePlanFlatRateDTO ratePlanFlatRateDTO) {
-        // No need to set ratePlanId here since we're directly dealing with RatePlan
+        // Set ratePlanId based on the associated RatePlan entity
         ratePlanFlatRateDTO.setRatePlanId(ratePlanFlatRate.getRatePlan() != null
                 ? ratePlanFlatRate.getRatePlan().getRatePlanId()
                 : null);
@@ -35,8 +35,8 @@ public interface RatePlanFlatRateMapper {
     @Mapping(target = "ratePlanFlatRateId", ignore = true)
     @Mapping(target = "ratePlan", ignore = true) // Ignore the entire RatePlan to set it later
     void updateRatePlanFlatRate(RatePlanFlatRateDTO ratePlanFlatRateDTO,
-                                            @MappingTarget RatePlanFlatRate ratePlanFlatRate,
-                                            @Context RatePlanRepository ratePlanRepository);
+                                @MappingTarget RatePlanFlatRate ratePlanFlatRate,
+                                @Context RatePlanRepository ratePlanRepository);
 
     @AfterMapping
     default void afterUpdateRatePlanFlatRate(RatePlanFlatRateDTO ratePlanFlatRateDTO,
@@ -44,7 +44,7 @@ public interface RatePlanFlatRateMapper {
                                              @Context RatePlanRepository ratePlanRepository) {
         final RatePlan ratePlan = ratePlanFlatRateDTO.getRatePlanId() == null ? null
                 : ratePlanRepository.findById(ratePlanFlatRateDTO.getRatePlanId())
-                .orElseThrow(() -> new NotFoundException("ratePlan not found"));
+                .orElseThrow(() -> new NotFoundException("RatePlan not found"));
         ratePlanFlatRate.setRatePlan(ratePlan); // Set the RatePlan entity instead of ratePlanId
     }
 

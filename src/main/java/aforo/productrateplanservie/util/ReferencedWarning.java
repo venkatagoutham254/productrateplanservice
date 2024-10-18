@@ -1,27 +1,20 @@
 package aforo.productrateplanservie.util;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.ArrayList;
 import java.util.stream.Collectors;
+@Setter
+@Getter
 public class ReferencedWarning {
 	private String key = null;
 	private ArrayList<Object> params = new ArrayList<>();
 	public void addParam(final Object param) {
 		params.add(param);
 	}
-	public String getKey() {
-		return key;
-	}
-	public void setKey(String key) {
-		this.key = key;
-	}
-	public ArrayList<Object> getParams() {
-		return params;
-	}
 
 
-	public void setParams(ArrayList<Object> params) {
-		this.params = params;
-	}
-	public String toMessage() {
+    public String toMessage() {
 		String message = key;
 		if (!params.isEmpty()) {
 			message += "," + params.stream()
@@ -29,5 +22,10 @@ public class ReferencedWarning {
 			.collect(Collectors.joining(","));
 		}
 		return message;
+	}
+
+
+	public boolean hasWarnings() {
+		return params.size() > 0;
 	}
 }

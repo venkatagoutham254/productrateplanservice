@@ -4,7 +4,6 @@ import aforo.productrateplanservie.util.ReferencedWarning;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-
 public interface RatePlanFlatRateService {
 
     Page<RatePlanFlatRateDTO> findAll(String filter, Pageable pageable);
@@ -19,4 +18,6 @@ public interface RatePlanFlatRateService {
 
     ReferencedWarning getReferencedWarning(Long ratePlanFlatRateId);
 
+    // New method to find all flat rates by ratePlanId
+    Page<RatePlanFlatRateDTO> findAllByRatePlanId(Long ratePlanId, Pageable pageable);
 }
