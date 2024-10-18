@@ -11,7 +11,7 @@ public interface RatePlanFlatRateService {
 
     RatePlanFlatRateDTO get(Long ratePlanFlatRateId);
 
-    Long create(RatePlanFlatRateDTO ratePlanFlatRateDTO);
+    Long create(Long ratePlanId, RatePlanFlatRateDTO ratePlanFlatRateDTO);
 
     void update(Long ratePlanFlatRateId, RatePlanFlatRateDTO ratePlanFlatRateDTO);
 

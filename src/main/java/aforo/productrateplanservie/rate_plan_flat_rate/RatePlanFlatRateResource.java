@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -29,18 +30,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-
 @RestController
-@RequestMapping(value = "/api/ratePlanFlatRates", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/api/rateplans/flatrates", produces = MediaType.APPLICATION_JSON_VALUE)
 public class RatePlanFlatRateResource {
 
     private final RatePlanFlatRateService ratePlanFlatRateService;
     private final RatePlanFlatRateAssembler ratePlanFlatRateAssembler;
     private final PagedResourcesAssembler<RatePlanFlatRateDTO> pagedResourcesAssembler;
 
+    @Autowired
     public RatePlanFlatRateResource(final RatePlanFlatRateService ratePlanFlatRateService,
-            final RatePlanFlatRateAssembler ratePlanFlatRateAssembler,
-            final PagedResourcesAssembler<RatePlanFlatRateDTO> pagedResourcesAssembler) {
+                                    final RatePlanFlatRateAssembler ratePlanFlatRateAssembler,
+                                    final PagedResourcesAssembler<RatePlanFlatRateDTO> pagedResourcesAssembler) {
         this.ratePlanFlatRateService = ratePlanFlatRateService;
         this.ratePlanFlatRateAssembler = ratePlanFlatRateAssembler;
         this.pagedResourcesAssembler = pagedResourcesAssembler;
@@ -80,11 +81,12 @@ public class RatePlanFlatRateResource {
         return ResponseEntity.ok(ratePlanFlatRateAssembler.toModel(ratePlanFlatRateDTO));
     }
 
-    @PostMapping
+    @PostMapping("/{ratePlanId}")
     @ApiResponse(responseCode = "201")
     public ResponseEntity<EntityModel<SimpleValue<Long>>> createRatePlanFlatRate(
+            @PathVariable("ratePlanId") Long ratePlanId,
             @RequestBody @Valid final RatePlanFlatRateDTO ratePlanFlatRateDTO) {
-        final Long createdRatePlanFlatRateId = ratePlanFlatRateService.create(ratePlanFlatRateDTO);
+        final Long createdRatePlanFlatRateId = ratePlanFlatRateService.create(ratePlanId, ratePlanFlatRateDTO);
         return new ResponseEntity<>(ratePlanFlatRateAssembler.toSimpleModel(createdRatePlanFlatRateId), HttpStatus.CREATED);
     }
 
@@ -107,5 +109,4 @@ public class RatePlanFlatRateResource {
         ratePlanFlatRateService.delete(ratePlanFlatRateId);
         return ResponseEntity.noContent().build();
     }
-
 }

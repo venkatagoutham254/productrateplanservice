@@ -1,40 +1,47 @@
 package aforo.productrateplanservie.rate_plan_flat_rate;
 
+import aforo.productrateplanservie.rate_plan_flat_rate_details.RatePlanFlatRateDetailsDTO;
 import aforo.productrateplanservie.util.enums.FlatRateUnitCalculation;
 import aforo.productrateplanservie.util.enums.MaxLimitFrequency;
 import aforo.productrateplanservie.util.enums.UnitMeasurement;
 import aforo.productrateplanservie.util.enums.UnitType;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+import java.util.List;
+@Setter
+@Getter
 public class RatePlanFlatRateDTO {
 
-    private Long ratePlanFlatRateId;
+	private Long ratePlanFlatRateId;
 
-    @NotNull
-    @Size(max = 100)
-    private String ratePlanFlatDescription;
+	@NotNull
+	@Size(max = 100)
+	private String ratePlanFlatDescription;
 
-    private String description;
+	private String description;
 
-    @NotNull
-    @Size(max = 255)
-    private UnitType unitType;
+	@NotNull
+	private UnitType unitType;
 
-    @NotNull
-    @Size(max = 255)
-    private UnitMeasurement unitMeasurement;
+	@NotNull
+	private UnitMeasurement unitMeasurement;
 
-    @NotNull
-    @Size(max = 255)
-    private FlatRateUnitCalculation flatRateUnitCalculation;
+	@NotNull
+	private FlatRateUnitCalculation flatRateUnitCalculation;
 
-    @NotNull
-    @Size(max = 255)
-    private MaxLimitFrequency maxLimitFrequency;
+	@NotNull
+	private MaxLimitFrequency maxLimitFrequency;
 
-    @NotNull
-    private Long ratePlanId;
+	private Long ratePlanId;
+
+	private List<RatePlanFlatRateDetailsDTO> ratePlanFlatRateDetails;
+
+	// Getters and Setters
 
 	public Long getRatePlanFlatRateId() {
 		return ratePlanFlatRateId;
@@ -44,11 +51,11 @@ public class RatePlanFlatRateDTO {
 		this.ratePlanFlatRateId = ratePlanFlatRateId;
 	}
 
-	public String getRatePlanFlatDescription() {
+	public @NotNull @Size(max = 100) String getRatePlanFlatDescription() {
 		return ratePlanFlatDescription;
 	}
 
-	public void setRatePlanFlatDescription(String ratePlanFlatDescription) {
+	public void setRatePlanFlatDescription(@NotNull @Size(max = 100) String ratePlanFlatDescription) {
 		this.ratePlanFlatDescription = ratePlanFlatDescription;
 	}
 
@@ -60,35 +67,35 @@ public class RatePlanFlatRateDTO {
 		this.description = description;
 	}
 
-	public UnitType getUnitType() {
+	public @NotNull UnitType getUnitType() {
 		return unitType;
 	}
 
-	public void setUnitType(UnitType unitType) {
+	public void setUnitType(@NotNull UnitType unitType) {
 		this.unitType = unitType;
 	}
 
-	public UnitMeasurement getUnitMeasurement() {
+	public @NotNull UnitMeasurement getUnitMeasurement() {
 		return unitMeasurement;
 	}
 
-	public void setUnitMeasurement(UnitMeasurement unitMeasurement) {
+	public void setUnitMeasurement(@NotNull UnitMeasurement unitMeasurement) {
 		this.unitMeasurement = unitMeasurement;
 	}
 
-	public FlatRateUnitCalculation getFlatRateUnitCalculation() {
+	public @NotNull FlatRateUnitCalculation getFlatRateUnitCalculation() {
 		return flatRateUnitCalculation;
 	}
 
-	public void setFlatRateUnitCalculation(FlatRateUnitCalculation flatRateUnitCalculation) {
+	public void setFlatRateUnitCalculation(@NotNull FlatRateUnitCalculation flatRateUnitCalculation) {
 		this.flatRateUnitCalculation = flatRateUnitCalculation;
 	}
 
-	public MaxLimitFrequency getMaxLimitFrequency() {
+	public @NotNull MaxLimitFrequency getMaxLimitFrequency() {
 		return maxLimitFrequency;
 	}
 
-	public void setMaxLimitFrequency(MaxLimitFrequency maxLimitFrequency) {
+	public void setMaxLimitFrequency(@NotNull MaxLimitFrequency maxLimitFrequency) {
 		this.maxLimitFrequency = maxLimitFrequency;
 	}
 
@@ -100,11 +107,23 @@ public class RatePlanFlatRateDTO {
 		this.ratePlanId = ratePlanId;
 	}
 
-	public RatePlanFlatRateDTO(Long ratePlanFlatRateId, @NotNull @Size(max = 100) String ratePlanFlatDescription,
-			String description, @NotNull @Size(max = 255) UnitType unitType,
-			@NotNull @Size(max = 255) UnitMeasurement unitMeasurement, @NotNull @Size(max = 255) FlatRateUnitCalculation flatRateUnitCalculation,
-			@NotNull @Size(max = 255) MaxLimitFrequency maxLimitFrequency, @NotNull Long ratePlanId) {
-		super();
+	public List<RatePlanFlatRateDetailsDTO> getRatePlanFlatRateDetails() {
+		return ratePlanFlatRateDetails;
+	}
+
+	public void setRatePlanFlatRateDetails(List<RatePlanFlatRateDetailsDTO> ratePlanFlatRateDetails) {
+		this.ratePlanFlatRateDetails = ratePlanFlatRateDetails;
+	}
+
+	// Constructor
+	public RatePlanFlatRateDTO() {
+	}
+
+	public RatePlanFlatRateDTO(Long ratePlanFlatRateId, String ratePlanFlatDescription, String description,
+							   UnitType unitType, UnitMeasurement unitMeasurement,
+							   FlatRateUnitCalculation flatRateUnitCalculation,
+							   MaxLimitFrequency maxLimitFrequency, Long ratePlanId,
+							   List<RatePlanFlatRateDetailsDTO> ratePlanFlatRateDetails) {
 		this.ratePlanFlatRateId = ratePlanFlatRateId;
 		this.ratePlanFlatDescription = ratePlanFlatDescription;
 		this.description = description;
@@ -113,16 +132,6 @@ public class RatePlanFlatRateDTO {
 		this.flatRateUnitCalculation = flatRateUnitCalculation;
 		this.maxLimitFrequency = maxLimitFrequency;
 		this.ratePlanId = ratePlanId;
+		this.ratePlanFlatRateDetails = ratePlanFlatRateDetails;
 	}
-
-	public RatePlanFlatRateDTO() {
-		// TODO Auto-generated constructor stub
-	}
-
-	public void setRatePlan(Object ratePlan2) {
-		// TODO Auto-generated method stub
-		
-	}
-    
-
 }
