@@ -4,6 +4,9 @@ package aforo.productrateplanservie.rate_plan_flat_rate;
 import jakarta.persistence.*;
 import java.time.OffsetDateTime;
 import java.util.Set;
+
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -15,6 +18,8 @@ import aforo.productrateplanservie.util.enums.MaxLimitFrequency;
 import aforo.productrateplanservie.util.enums.UnitMeasurement;
 import aforo.productrateplanservie.util.enums.UnitType;
 
+@Setter
+@Getter
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 public class RatePlanFlatRate {
@@ -50,7 +55,7 @@ public class RatePlanFlatRate {
     @JoinColumn(name = "rate_plan_id", nullable = false)
     private RatePlan ratePlan;
 
-    @OneToMany(mappedBy = "ratePlanFlatRate", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "ratePlanFlatRate")
     private Set<RatePlanFlatRateDetails> ratePlanFlatRateDetails;
 
     @CreatedDate
@@ -61,93 +66,5 @@ public class RatePlanFlatRate {
     @Column(nullable = false)
     private OffsetDateTime lastUpdated;
 
-	public Long getRatePlanFlatRateId() {
-		return ratePlanFlatRateId;
-	}
 
-	public void setRatePlanFlatRateId(Long ratePlanFlatRateId) {
-		this.ratePlanFlatRateId = ratePlanFlatRateId;
-	}
-
-	public String getRatePlanFlatDescription() {
-		return ratePlanFlatDescription;
-	}
-
-	public void setRatePlanFlatDescription(String ratePlanFlatDescription) {
-		this.ratePlanFlatDescription = ratePlanFlatDescription;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	public UnitType getUnitType() {
-		return unitType;
-	}
-
-	public void setUnitType(UnitType unitType) {
-		this.unitType = unitType;
-	}
-
-	public UnitMeasurement getUnitMeasurement() {
-		return unitMeasurement;
-	}
-
-	public void setUnitMeasurement(UnitMeasurement unitMeasurement) {
-		this.unitMeasurement = unitMeasurement;
-	}
-
-	public FlatRateUnitCalculation getFlatRateUnitCalculation() {
-		return flatRateUnitCalculation;
-	}
-
-	public void setFlatRateUnitCalculation(FlatRateUnitCalculation flatRateUnitCalculation) {
-		this.flatRateUnitCalculation = flatRateUnitCalculation;
-	}
-
-	public MaxLimitFrequency getMaxLimitFrequency() {
-		return maxLimitFrequency;
-	}
-
-	public void setMaxLimitFrequency(MaxLimitFrequency maxLimitFrequency) {
-		this.maxLimitFrequency = maxLimitFrequency;
-	}
-
-	public RatePlan getRatePlan() {
-		return ratePlan;
-	}
-
-	public void setRatePlan(RatePlan ratePlan) {
-		this.ratePlan = ratePlan;
-	}
-
-	public Set<RatePlanFlatRateDetails> getRatePlanFlatRateDetails() {
-		return ratePlanFlatRateDetails;
-	}
-
-	public void setRatePlanFlatRateDetails(Set<RatePlanFlatRateDetails> ratePlanFlatRateDetails) {
-		this.ratePlanFlatRateDetails = ratePlanFlatRateDetails;
-	}
-
-	public OffsetDateTime getDateCreated() {
-		return dateCreated;
-	}
-
-	public void setDateCreated(OffsetDateTime dateCreated) {
-		this.dateCreated = dateCreated;
-	}
-
-	public OffsetDateTime getLastUpdated() {
-		return lastUpdated;
-	}
-
-	public void setLastUpdated(OffsetDateTime lastUpdated) {
-		this.lastUpdated = lastUpdated;
-	}
-
-  
 }
