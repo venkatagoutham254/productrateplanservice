@@ -6,7 +6,9 @@ import java.time.LocalDate;
 
 import aforo.productrateplanservie.util.enums.RatePlanType;
 import aforo.productrateplanservie.util.enums.Status;
+import lombok.Data;
 
+@Data
 public class RatePlanDTO {
     private Long ratePlanId;
 
@@ -33,78 +35,6 @@ public class RatePlanDTO {
 
     @NotNull
     private Long currencyId;
-
-	public Long getRatePlanId() {
-		return ratePlanId;
-	}
-
-	public void setRatePlanId(Long ratePlanId) {
-		this.ratePlanId = ratePlanId;
-	}
-
-	public String getRatePlanName() {
-		return ratePlanName;
-	}
-
-	public void setRatePlanName(String ratePlanName) {
-		this.ratePlanName = ratePlanName;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	public RatePlanType getRatePlanType() {
-		return ratePlanType;
-	}
-
-	public void setRatePlanType(RatePlanType ratePlanType) {
-		this.ratePlanType = ratePlanType;
-	}
-
-	public LocalDate getStartDate() {
-		return startDate;
-	}
-
-	public void setStartDate(LocalDate startDate) {
-		this.startDate = startDate;
-	}
-
-	public LocalDate getEndDate() {
-		return endDate;
-	}
-
-	public void setEndDate(LocalDate endDate) {
-		this.endDate = endDate;
-	}
-
-	public Status getStatus() {
-		return status;
-	}
-
-	public void setStatus(Status status) {
-		this.status = status;
-	}
-
-	public Long getProductId() {
-		return productId;
-	}
-
-	public void setProductId(Long productId) {
-		this.productId = productId;
-	}
-
-	public Long getCurrencyId() {
-		return currencyId;
-	}
-
-	public void setCurrencyId(Long currencyId) {
-		this.currencyId = currencyId;
-	}
 
 	public RatePlanDTO(Long ratePlanId, @NotNull @Size(max = 100) String ratePlanName, String description,
 			@NotNull RatePlanType ratePlanType, @NotNull LocalDate startDate, @NotNull LocalDate endDate,

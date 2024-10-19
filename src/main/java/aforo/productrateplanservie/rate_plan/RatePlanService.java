@@ -17,4 +17,6 @@ public interface RatePlanService {
 
     ReferencedWarning getReferencedWarning(Long ratePlanId);
 
+    Page<RatePlanDTO> getRatePlansByProductId(Long productId, String filter, Pageable pageable);
+
 }

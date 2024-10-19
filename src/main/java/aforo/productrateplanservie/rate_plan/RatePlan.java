@@ -58,19 +58,19 @@ public class RatePlan {
     @JoinColumn(name = "currency_id", nullable = false)
     private Currencies currency;
 
-    @OneToMany(mappedBy = "ratePlan")
+    @OneToMany(mappedBy = "ratePlan",cascade = CascadeType.REMOVE)
     private Set<RatePlanUsageBased> ratePlanRatePlanUsageBaseds;
 
-    @OneToMany(mappedBy = "ratePlan")
+    @OneToMany(mappedBy = "ratePlan",cascade = CascadeType.REMOVE)
     private Set<RatePlanTieredRate> ratePlanRatePlanTieredRates;
 
-    @OneToMany(mappedBy = "ratePlan")
+    @OneToMany(mappedBy = "ratePlan",cascade = CascadeType.REMOVE)
     private Set<RatePlanFlatRate> ratePlanRatePlanFlatRates;
 
-    @OneToMany(mappedBy = "ratePlan")
+    @OneToMany(mappedBy = "ratePlan",cascade = CascadeType.REMOVE)
     private Set<RatePlanSubscriptionRate> ratePlanRatePlanSubscriptionRates;
 
-    @OneToMany(mappedBy = "ratePlan")
+    @OneToMany(mappedBy = "ratePlan",cascade = CascadeType.REMOVE)
     private Set<RatePlanFreemiumRate> ratePlanRatePlanFreemiumRates;
 
     @CreatedDate
