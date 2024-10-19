@@ -37,7 +37,6 @@ public interface RatePlanFlatRateMapper {
     void updateRatePlanFlatRate(RatePlanFlatRateDTO ratePlanFlatRateDTO,
                                 @MappingTarget RatePlanFlatRate ratePlanFlatRate,
                                 @Context RatePlanRepository ratePlanRepository);
-
     @AfterMapping
     default void afterUpdateRatePlanFlatRate(RatePlanFlatRateDTO ratePlanFlatRateDTO,
                                              @MappingTarget RatePlanFlatRate ratePlanFlatRate,
