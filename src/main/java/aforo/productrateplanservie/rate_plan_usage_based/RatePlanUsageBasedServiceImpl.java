@@ -1,7 +1,12 @@
 package aforo.productrateplanservie.rate_plan_usage_based;
 
+import aforo.productrateplanservie.rate_plan.RatePlan;
 import aforo.productrateplanservie.rate_plan.RatePlanRepository;
+import aforo.productrateplanservie.rate_plan_tiered_rate.RatePlanTieredRate;
+import aforo.productrateplanservie.rate_plan_tiered_rate_details.RatePlanTieredRateDetails;
+import aforo.productrateplanservie.rate_plan_tiered_rate_details.RatePlanTieredRateDetailsDTO;
 import aforo.productrateplanservie.rate_plan_usage_based_rates.RatePlanUsageBasedRates;
+import aforo.productrateplanservie.rate_plan_usage_based_rates.RatePlanUsageBasedRatesDTO;
 import aforo.productrateplanservie.rate_plan_usage_based_rates.RatePlanUsageBasedRatesRepository;
 import aforo.productrateplanservie.util.NotFoundException;
 import aforo.productrateplanservie.util.ReferencedWarning;
@@ -59,11 +64,27 @@ public class RatePlanUsageBasedServiceImpl implements RatePlanUsageBasedService 
     }
 
     @Override
-    public Long create(final RatePlanUsageBasedDTO ratePlanUsageBasedDTO) {
-        final RatePlanUsageBased ratePlanUsageBased = new RatePlanUsageBased();
+    public Long create(Long ratePlanId, RatePlanUsageBasedDTO ratePlanUsageBasedDTO) {
+        RatePlan ratePlan = ratePlanRepository.findById(ratePlanId)
+                .orElseThrow(() -> new IllegalArgumentException("RatePlan with ID " + ratePlanId + " does not exist"));
+        RatePlanUsageBased ratePlanUsageBased = new RatePlanUsageBased();
         ratePlanUsageBasedMapper.updateRatePlanUsageBased(ratePlanUsageBasedDTO, ratePlanUsageBased, ratePlanRepository);
-        return (Long) ratePlanUsageBasedRepository.save(ratePlanUsageBased).getRatePlanUsageRateId();
+        ratePlanUsageBased.setRatePlan(ratePlan);
+        RatePlanUsageBased savedRatePlanUsageBased = ratePlanUsageBasedRepository.save(ratePlanUsageBased);
+
+        if (ratePlanUsageBasedDTO.getRatePlanUsageBasedRatesDTO() != null) {
+            for (RatePlanUsageBasedRatesDTO detailsDTO : ratePlanUsageBasedDTO.getRatePlanUsageBasedRatesDTO()) {
+                RatePlanUsageBasedRates details = ratePlanUsageBasedMapper.mapToRatePlanUsageBasedRates(detailsDTO);
+                details.setRatePlanUsageBased(savedRatePlanUsageBased); // Ensure the relationship is set
+                ratePlanUsageBasedRatesRepository.save(details); // Save the details object
+            }
+        }
+
+
+        // Save and return the ID of the newly created RatePlanUsageBased
+        return savedRatePlanUsageBased.getRatePlanUsageRateId();
     }
+
 
     @Override
     public void update(final Long ratePlanUsageRateId,
@@ -84,7 +105,7 @@ public class RatePlanUsageBasedServiceImpl implements RatePlanUsageBasedService 
         final ReferencedWarning referencedWarning = new ReferencedWarning();
         final RatePlanUsageBased ratePlanUsageBased = ratePlanUsageBasedRepository.findById(ratePlanUsageRateId)
                 .orElseThrow(NotFoundException::new);
-        final RatePlanUsageBasedRates ratePlanUsageRateRatePlanUsageBasedRates = ratePlanUsageBasedRatesRepository.findFirstByRatePlanUsageRate(ratePlanUsageBased);
+        final RatePlanUsageBasedRates ratePlanUsageRateRatePlanUsageBasedRates = ratePlanUsageBasedRatesRepository.findFirstByRatePlanUsageBased(ratePlanUsageBased);
         if (ratePlanUsageRateRatePlanUsageBasedRates != null) {
             referencedWarning.setKey("ratePlanUsageBased.ratePlanUsageBasedRates.ratePlanUsageRate.referenced");
             referencedWarning.addParam(ratePlanUsageRateRatePlanUsageBasedRates.getId());

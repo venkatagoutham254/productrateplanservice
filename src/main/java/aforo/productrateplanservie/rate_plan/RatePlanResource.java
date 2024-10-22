@@ -1,6 +1,8 @@
 package aforo.productrateplanservie.rate_plan;
 
 import aforo.productrateplanservie.model.SimpleValue;
+import aforo.productrateplanservie.util.ReferencedException;
+import aforo.productrateplanservie.util.ReferencedWarning;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -42,71 +44,70 @@ public class RatePlanResource {
         this.pagedResourcesAssembler = pagedResourcesAssembler;
     }
 
-    @Operation(parameters = {
-            @Parameter(name = "page", in = ParameterIn.QUERY, schema = @Schema(implementation = Integer.class)),
-            @Parameter(name = "size", in = ParameterIn.QUERY, schema = @Schema(implementation = Integer.class)),
-            @Parameter(name = "sort", in = ParameterIn.QUERY, schema = @Schema(implementation = String.class))})
-    @GetMapping("/ratePlans")
-    public ResponseEntity<PagedModel<EntityModel<RatePlanDTO>>> getAllRatePlans(
-            @RequestParam(name = "filter", required = false) final String filter,
-            @Parameter(hidden = true) @SortDefault(sort = "ratePlanId") @PageableDefault(size = 20) final Pageable pageable) {
-        final Page<RatePlanDTO> ratePlanDTOs = ratePlanService.findAll(filter, pageable);
-        return ResponseEntity.ok(pagedResourcesAssembler.toModel(ratePlanDTOs, ratePlanAssembler));
-    }
+	@Operation(parameters = {
+			@Parameter(name = "page", in = ParameterIn.QUERY, schema = @Schema(implementation = Integer.class)),
+			@Parameter(name = "size", in = ParameterIn.QUERY, schema = @Schema(implementation = Integer.class)),
+			@Parameter(name = "sort", in = ParameterIn.QUERY, schema = @Schema(implementation = String.class)) })
+	@GetMapping("/ratePlans")
+	public ResponseEntity<PagedModel<EntityModel<RatePlanDTO>>> getAllRatePlans(
+			@RequestParam(name = "filter", required = false) final String filter,
+			@Parameter(hidden = true) @SortDefault(sort = "ratePlanId") @PageableDefault(size = 20) final Pageable pageable) {
+		final Page<RatePlanDTO> ratePlanDTOs = ratePlanService.findAll(filter, pageable);
+		return ResponseEntity.ok(pagedResourcesAssembler.toModel(ratePlanDTOs, ratePlanAssembler));
+	}
+	@Operation(parameters = {
+			@Parameter(name = "page", in = ParameterIn.QUERY, schema = @Schema(implementation = Integer.class)),
+			@Parameter(name = "size", in = ParameterIn.QUERY, schema = @Schema(implementation = Integer.class)),
+			@Parameter(name = "sort", in = ParameterIn.QUERY, schema = @Schema(implementation = String.class))})
+	@GetMapping("/products/{productId}/ratePlans")
+	public ResponseEntity<PagedModel<EntityModel<RatePlanDTO>>> getAllRatePlansByProductId(
+			@RequestParam(name = "filter", required = false, defaultValue = "productId") final String filter,
+			@PathVariable("productId") Long productId,
+			@Parameter(hidden = true) @SortDefault(sort = "ratePlanId") @PageableDefault(size = 20) final Pageable pageable) {
 
-    @Operation(parameters = {
-            @Parameter(name = "page", in = ParameterIn.QUERY, schema = @Schema(implementation = Integer.class)),
-            @Parameter(name = "size", in = ParameterIn.QUERY, schema = @Schema(implementation = Integer.class)),
-            @Parameter(name = "sort", in = ParameterIn.QUERY, schema = @Schema(implementation = String.class))})
-    @GetMapping("/products/{productId}/ratePlans")
-    public ResponseEntity<PagedModel<EntityModel<RatePlanDTO>>> getAllRatePlansByProductId(
-            @RequestParam(name = "filter", required = false, defaultValue = "productId") final String filter,
-            @PathVariable("productId") Long productId,
-            @Parameter(hidden = true) @SortDefault(sort = "ratePlanId") @PageableDefault(size = 20) final Pageable pageable) {
+		Page<RatePlanDTO> ratePlanDTOs = ratePlanService.getRatePlansByProductId(productId, filter, pageable);
 
-        Page<RatePlanDTO> ratePlanDTOs = ratePlanService.getRatePlansByProductId(productId, filter, pageable);
-
-        return ResponseEntity.ok(pagedResourcesAssembler.toModel(ratePlanDTOs, ratePlanAssembler));
-    }
-
-    @GetMapping("ratePlans/{ratePlanId}")
-    public ResponseEntity<EntityModel<RatePlanDTO>> getRatePlan(
-            @PathVariable(name = "ratePlanId") final Long ratePlanId) {
-        final RatePlanDTO ratePlanDTO = ratePlanService.get(ratePlanId);
-        return ResponseEntity.ok(ratePlanAssembler.toModel(ratePlanDTO));
-    }
-
-    @PostMapping("/products/{productId}/ratePlans")
-    @ApiResponse(responseCode = "201")
-    public ResponseEntity<EntityModel<SimpleValue<Long>>> createRatePlan(
-            @PathVariable("productId") Long productId,
-            @RequestBody @Valid final CreateRatePlanRequest createRatePlanRequest) {
-        RatePlanDTO ratePlanDTO = CreateRatePlanMapper.toRatePlanDTO(createRatePlanRequest);
-        ratePlanDTO.setProductId(productId);
+		return ResponseEntity.ok(pagedResourcesAssembler.toModel(ratePlanDTOs, ratePlanAssembler));
+	}
 
 
-        final Long createdRatePlanId = ratePlanService.create(ratePlanDTO);
-        return new ResponseEntity<>(ratePlanAssembler.toSimpleModel(createdRatePlanId), HttpStatus.CREATED);
-    }
+	@GetMapping("ratePlans/{ratePlanId}")
+	public ResponseEntity<EntityModel<RatePlanDTO>> getRatePlan(
+			@PathVariable(name = "ratePlanId") final Long ratePlanId) {
+		final RatePlanDTO ratePlanDTO = ratePlanService.get(ratePlanId);
+		return ResponseEntity.ok(ratePlanAssembler.toModel(ratePlanDTO));
+	}
 
-    @PutMapping("/ratePlans/{ratePlanId}")
-    public ResponseEntity<EntityModel<SimpleValue<Long>>> updateRatePlan(
-            @PathVariable(name = "ratePlanId") final Long ratePlanId,
-            @RequestBody @Valid final CreateRatePlanRequest createRatePlanRequest) {
-        if (ratePlanService.get(ratePlanId).getRatePlanId() == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        RatePlanDTO ratePlanDTO1 = ratePlanService.get(ratePlanId);
-        if (ratePlanService.get(ratePlanId).getProductId() == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
 
-        RatePlanDTO ratePlanDTO = CreateRatePlanMapper.toRatePlanDTO(createRatePlanRequest);
-        ratePlanDTO.setProductId(ratePlanDTO1.getProductId());
+	@PostMapping("/products/{productId}/ratePlans")
+	@ApiResponse(responseCode = "201")
+	public ResponseEntity<EntityModel<SimpleValue<Long>>> createRatePlan(
+			@PathVariable("productId") Long productId,
+			@RequestBody @Valid final  CreateRatePlanRequest createRatePlanRequest) {
+		RatePlanDTO ratePlanDTO = CreateRatePlanMapper.toRatePlanDTO(createRatePlanRequest);
+		ratePlanDTO.setProductId(productId);
+		final Long createdRatePlanId = ratePlanService.create(ratePlanDTO);
+		return new ResponseEntity<>(ratePlanAssembler.toSimpleModel(createdRatePlanId), HttpStatus.CREATED);
+	}
 
-        ratePlanService.update(ratePlanId, ratePlanDTO);
-        return ResponseEntity.ok(ratePlanAssembler.toSimpleModel(ratePlanId));
-    }
+	@PutMapping("/ratePlans/{ratePlanId}")
+	public ResponseEntity<EntityModel<SimpleValue<Long>>> updateRatePlan(
+			@PathVariable(name = "ratePlanId") final Long ratePlanId,
+			@RequestBody @Valid final CreateRatePlanRequest createRatePlanRequest) {
+		if (ratePlanService.get(ratePlanId).getRatePlanId() == null) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
+		RatePlanDTO ratePlanDTO1 = ratePlanService.get(ratePlanId);
+		if (ratePlanService.get(ratePlanId).getProductId() == null) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
+
+		RatePlanDTO ratePlanDTO = CreateRatePlanMapper.toRatePlanDTO(createRatePlanRequest);
+		ratePlanDTO.setProductId(ratePlanDTO1.getProductId());
+
+		ratePlanService.update(ratePlanId, ratePlanDTO);
+		return ResponseEntity.ok(ratePlanAssembler.toSimpleModel(ratePlanId));
+	}
 
     @DeleteMapping("/ratePlans/{ratePlanId}")
     @ApiResponse(responseCode = "204")

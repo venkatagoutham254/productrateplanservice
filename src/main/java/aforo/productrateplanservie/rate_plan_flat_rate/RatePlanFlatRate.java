@@ -55,7 +55,7 @@ public class RatePlanFlatRate {
     @JoinColumn(name = "rate_plan_id", nullable = false)
     private RatePlan ratePlan;
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "ratePlanFlatRate")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "ratePlanFlatRate", cascade = CascadeType.REMOVE)
     private Set<RatePlanFlatRateDetails> ratePlanFlatRateDetails;
 
     @CreatedDate

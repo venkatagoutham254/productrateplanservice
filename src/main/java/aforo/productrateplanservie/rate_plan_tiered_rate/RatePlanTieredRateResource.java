@@ -1,6 +1,7 @@
 package aforo.productrateplanservie.rate_plan_tiered_rate;
 
 import aforo.productrateplanservie.model.SimpleValue;
+import aforo.productrateplanservie.rate_plan_subscription_rate.RatePlanSubscriptionRateDTO;
 import aforo.productrateplanservie.util.ReferencedException;
 import aforo.productrateplanservie.util.ReferencedWarning;
 import io.swagger.v3.oas.annotations.Operation;
@@ -80,13 +81,15 @@ public class RatePlanTieredRateResource {
         return ResponseEntity.ok(ratePlanTieredRateAssembler.toModel(ratePlanTieredRateDTO));
     }
 
-    @PostMapping
+    @PostMapping("/{ratePlanId}")
     @ApiResponse(responseCode = "201")
     public ResponseEntity<EntityModel<SimpleValue<Long>>> createRatePlanTieredRate(
+            @PathVariable("ratePlanId") Long ratePlanId,
             @RequestBody @Valid final RatePlanTieredRateDTO ratePlanTieredRateDTO) {
-        final Long createdRatePlanTieredRateId = ratePlanTieredRateService.create(ratePlanTieredRateDTO);
+        final Long createdRatePlanTieredRateId = ratePlanTieredRateService.create(ratePlanId,ratePlanTieredRateDTO);
         return new ResponseEntity<>(ratePlanTieredRateAssembler.toSimpleModel(createdRatePlanTieredRateId), HttpStatus.CREATED);
     }
+
 
     @PutMapping("/{ratePlanTieredRateId}")
     public ResponseEntity<EntityModel<SimpleValue<Long>>> updateRatePlanTieredRate(
@@ -94,6 +97,7 @@ public class RatePlanTieredRateResource {
             @RequestBody @Valid final RatePlanTieredRateDTO ratePlanTieredRateDTO) {
         ratePlanTieredRateService.update(ratePlanTieredRateId, ratePlanTieredRateDTO);
         return ResponseEntity.ok(ratePlanTieredRateAssembler.toSimpleModel(ratePlanTieredRateId));
+
     }
 
     @DeleteMapping("/{ratePlanTieredRateId}")

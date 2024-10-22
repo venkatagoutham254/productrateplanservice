@@ -1,6 +1,7 @@
 package aforo.productrateplanservie.rate_plan_usage_based;
 
 import aforo.productrateplanservie.model.SimpleValue;
+import aforo.productrateplanservie.rate_plan_tiered_rate.RatePlanTieredRateDTO;
 import aforo.productrateplanservie.util.ReferencedException;
 import aforo.productrateplanservie.util.ReferencedWarning;
 import io.swagger.v3.oas.annotations.Operation;
@@ -76,17 +77,19 @@ public class RatePlanUsageBasedResource {
     @GetMapping("/{ratePlanUsageRateId}")
     public ResponseEntity<EntityModel<RatePlanUsageBasedDTO>> getRatePlanUsageBased(
             @PathVariable(name = "ratePlanUsageRateId") final Long ratePlanUsageRateId) {
-        final RatePlanUsageBasedDTO ratePlanUsageBasedDTO = ratePlanUsageBasedService.get(ratePlanUsageRateId);
+        final RatePlanUsageBasedDTO ratePlanUsageBasedDTO = ratePlanUsageBasedService.get(ratePlanUsageRateId );
         return ResponseEntity.ok(ratePlanUsageBasedAssembler.toModel(ratePlanUsageBasedDTO));
     }
 
-    @PostMapping
+    @PostMapping("/{ratePlanId}")
     @ApiResponse(responseCode = "201")
     public ResponseEntity<EntityModel<SimpleValue<Long>>> createRatePlanUsageBased(
+            @PathVariable("ratePlanId") Long ratePlanId,
             @RequestBody @Valid final RatePlanUsageBasedDTO ratePlanUsageBasedDTO) {
-        final Long createdRatePlanUsageRateId = ratePlanUsageBasedService.create(ratePlanUsageBasedDTO);
+        final Long createdRatePlanUsageRateId = ratePlanUsageBasedService.create(ratePlanId,ratePlanUsageBasedDTO);
         return new ResponseEntity<>(ratePlanUsageBasedAssembler.toSimpleModel(createdRatePlanUsageRateId), HttpStatus.CREATED);
     }
+
 
     @PutMapping("/{ratePlanUsageRateId}")
     public ResponseEntity<EntityModel<SimpleValue<Long>>> updateRatePlanUsageBased(

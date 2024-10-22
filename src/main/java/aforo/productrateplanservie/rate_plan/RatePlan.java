@@ -73,6 +73,7 @@ public class RatePlan {
     @OneToMany(mappedBy = "ratePlan",cascade = CascadeType.REMOVE)
     private Set<RatePlanFreemiumRate> ratePlanRatePlanFreemiumRates;
 
+
     @CreatedDate
     @Column(nullable = false, updatable = false)
     private OffsetDateTime dateCreated;

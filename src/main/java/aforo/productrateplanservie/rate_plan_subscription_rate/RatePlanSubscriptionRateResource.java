@@ -31,7 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 
 @RestController
-@RequestMapping(value = "/api/ratePlanSubscriptionRates", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/api/rateplans/SubscriptionRates", produces = MediaType.APPLICATION_JSON_VALUE)
 public class RatePlanSubscriptionRateResource {
 
     private final RatePlanSubscriptionRateService ratePlanSubscriptionRateService;
@@ -81,11 +81,12 @@ public class RatePlanSubscriptionRateResource {
         return ResponseEntity.ok(ratePlanSubscriptionRateAssembler.toModel(ratePlanSubscriptionRateDTO));
     }
 
-    @PostMapping
+    @PostMapping("/{ratePlanId}")
     @ApiResponse(responseCode = "201")
     public ResponseEntity<EntityModel<SimpleValue<Long>>> createRatePlanSubscriptionRate(
+            @PathVariable("ratePlanId") Long ratePlanId,
             @RequestBody @Valid final RatePlanSubscriptionRateDTO ratePlanSubscriptionRateDTO) {
-        final Long createdRatePlanSubscriptionRateId = ratePlanSubscriptionRateService.create(ratePlanSubscriptionRateDTO);
+        final Long createdRatePlanSubscriptionRateId = ratePlanSubscriptionRateService.create(ratePlanId, ratePlanSubscriptionRateDTO);
         return new ResponseEntity<>(ratePlanSubscriptionRateAssembler.toSimpleModel(createdRatePlanSubscriptionRateId), HttpStatus.CREATED);
     }
 

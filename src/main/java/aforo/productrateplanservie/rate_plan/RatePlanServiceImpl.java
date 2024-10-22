@@ -18,6 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class RatePlanServiceImpl implements RatePlanService {
@@ -50,123 +51,123 @@ public class RatePlanServiceImpl implements RatePlanService {
         this.ratePlanFreemiumRateRepository = ratePlanFreemiumRateRepository;
     }
 
-    @Override
-    public Page<RatePlanDTO> findAll(final String filter, final Pageable pageable) {
-        Page<RatePlan> page;
-        if (filter != null) {
-            Long longFilter = null;
-            try {
-                longFilter = Long.parseLong(filter);
-            } catch (final NumberFormatException numberFormatException) {
-                // keep null - no parseable input
-            }
-            page = ratePlanRepository.findAllByRatePlanId(longFilter, pageable);
-        } else {
-            page = ratePlanRepository.findAll(pageable);
-        }
-        return new PageImpl<>(
-                page.getContent().stream()
-                        .map(ratePlan -> ratePlanMapper.updateRatePlanDTO(ratePlan, new RatePlanDTO())).toList(),
-                pageable, page.getTotalElements());
-    }
+	@Override
+	public Page<RatePlanDTO> findAll(final String filter, final Pageable pageable) {
+		Page<RatePlan> page;
+		if (filter != null) {
+			Long longFilter = null;
+			try {
+				longFilter = Long.parseLong(filter);
+			} catch (final NumberFormatException numberFormatException) {
+				// keep null - no parseable input
+			}
+			page = ratePlanRepository.findAllByRatePlanId(longFilter, pageable);
+		} else {
+			page = ratePlanRepository.findAll(pageable);
+		}
+		return new PageImpl<>(
+				page.getContent().stream()
+						.map(ratePlan -> ratePlanMapper.updateRatePlanDTO(ratePlan, new RatePlanDTO())).toList(),
+				pageable, page.getTotalElements());
+	}
+	@Override
+	public Page<RatePlanDTO> getRatePlansByProductId(Long productId, String filter, Pageable pageable) {
+		Page<RatePlan> page;
 
-    @Override
-    public Page<RatePlanDTO> getRatePlansByProductId(Long productId, String filter, Pageable pageable) {
-        Page<RatePlan> page;
+		if (filter != null && !filter.isEmpty()) {
+			// Parse filter and apply it
+			Long longFilter = null;
+			try {
+				longFilter = Long.parseLong(filter);
+			} catch (NumberFormatException e) {
+				// Keep null if parsing fails
+			}
+			page = ratePlanRepository.findByProductIdAndRatePlanId(productId, longFilter, pageable);
+		} else {
+			page = ratePlanRepository.findByProductId(productId, pageable);
+		}
 
-        if (filter != null && !filter.isEmpty()) {
-            // Parse filter and apply it
-            Long longFilter = null;
-            try {
-                longFilter = Long.parseLong(filter);
-            } catch (NumberFormatException e) {
-                // Keep null if parsing fails
-            }
-            page = ratePlanRepository.findByProductIdAndRatePlanId(productId, longFilter, pageable);
-        } else {
-            page = ratePlanRepository.findByProductId(productId, pageable);
-        }
+		return new PageImpl<>(
+				page.getContent().stream()
+						.map(ratePlan -> ratePlanMapper.updateRatePlanDTO(ratePlan, new RatePlanDTO()))
+						.toList(),
+				pageable, page.getTotalElements());
+	}
 
-        return new PageImpl<>(
-                page.getContent().stream()
-                        .map(ratePlan -> ratePlanMapper.updateRatePlanDTO(ratePlan, new RatePlanDTO()))
-                        .toList(),
-                pageable, page.getTotalElements());
-    }
+	@Override
+	public RatePlanDTO get(final Long ratePlanId) {
+		return ratePlanRepository.findById(ratePlanId)
+				.map(ratePlan -> ratePlanMapper.updateRatePlanDTO(ratePlan, new RatePlanDTO()))
+				.orElseThrow(NotFoundException::new);
+	}
 
-    @Override
-    public RatePlanDTO get(final Long ratePlanId) {
-        return ratePlanRepository.findById(ratePlanId)
-                .map(ratePlan -> ratePlanMapper.updateRatePlanDTO(ratePlan, new RatePlanDTO()))
-                .orElseThrow(NotFoundException::new);
-    }
+	@Override
+	public Long create(final RatePlanDTO ratePlanDTO) {
+		// invoke prodId and validate for ACTIVE status
+		final RatePlan ratePlan = new RatePlan();
+		ratePlanMapper.updateRatePlan(ratePlanDTO, ratePlan, productRepository, currenciesRepository);
+		return (Long) ratePlanRepository.save(ratePlan).getRatePlanId();
+	}
 
-    @Override
-    public Long create(final RatePlanDTO ratePlanDTO) {
-        // invoke prodId and validate for ACTIVE status
-        final RatePlan ratePlan = new RatePlan();
-        ratePlanMapper.updateRatePlan(ratePlanDTO, ratePlan, productRepository, currenciesRepository);
-        return (Long) ratePlanRepository.save(ratePlan).getRatePlanId();
-    }
+	@Override
+	public void update(final Long ratePlanId, final RatePlanDTO ratePlanDTO) {
+		// invoke prodId and validate for ACTIVE status
+		final RatePlan ratePlan = ratePlanRepository.findById(ratePlanId).orElseThrow(NotFoundException::new);
+		ratePlanMapper.updateRatePlan(ratePlanDTO, ratePlan, productRepository, currenciesRepository);
+		ratePlanRepository.save(ratePlan);
+	}
 
-    @Override
-    public void update(final Long ratePlanId, final RatePlanDTO ratePlanDTO) {
-        // invoke prodId and validate for ACTIVE status
-        final RatePlan ratePlan = ratePlanRepository.findById(ratePlanId).orElseThrow(NotFoundException::new);
-        ratePlanMapper.updateRatePlan(ratePlanDTO, ratePlan, productRepository, currenciesRepository);
-        ratePlanRepository.save(ratePlan);
-    }
+	@Override
+	@Transactional
+	public void delete(final Long ratePlanId) {
+		// List all the rate plan types for this rate plan
+		// List child entities for each rate plan type
+		// Delete child entities for each rate plan type
+		// Delete all the rate plan types for this rate plan
 
-    @Override
-    public void delete(final Long ratePlanId) {
-        // List all the rate plan types for this rate plan
-        // List child entities for each rate plan type
-        // Delete child entities for each rate plan type
-        // Delete all the rate plan types for this rate plan
+		// Delete rate plan
+		ratePlanRepository.deleteById(ratePlanId);
+	}
 
-        // Delete rate plan
-        ratePlanRepository.deleteById(ratePlanId);
-    }
-
-    @Override
-    public ReferencedWarning getReferencedWarning(final Long ratePlanId) {
-        final ReferencedWarning referencedWarning = new ReferencedWarning();
-        final RatePlan ratePlan = ratePlanRepository.findById(ratePlanId).orElseThrow(NotFoundException::new);
-        final RatePlanUsageBased ratePlanRatePlanUsageBased = ratePlanUsageBasedRepository
-                .findFirstByRatePlan(ratePlan);
-        if (ratePlanRatePlanUsageBased != null) {
-            referencedWarning.setKey("ratePlan.ratePlanUsageBased.ratePlan.referenced");
-            referencedWarning.addParam(ratePlanRatePlanUsageBased.getRatePlanUsageRateId());
-            return referencedWarning;
-        }
-        final RatePlanTieredRate ratePlanRatePlanTieredRate = ratePlanTieredRateRepository
-                .findFirstByRatePlan(ratePlan);
-        if (ratePlanRatePlanTieredRate != null) {
-            referencedWarning.setKey("ratePlan.ratePlanTieredRate.ratePlan.referenced");
-            referencedWarning.addParam(ratePlanRatePlanTieredRate.getRatePlanTieredRateId());
-            return referencedWarning;
-        }
-        final RatePlanFlatRate ratePlanRatePlanFlatRate = ratePlanFlatRateRepository.findFirstByRatePlan(ratePlan);
-        if (ratePlanRatePlanFlatRate != null) {
-            referencedWarning.setKey("ratePlan.ratePlanFlatRate.ratePlan.referenced");
-            referencedWarning.addParam(ratePlanRatePlanFlatRate.getRatePlanFlatRateId());
-            return referencedWarning;
-        }
-        final RatePlanSubscriptionRate ratePlanRatePlanSubscriptionRate = ratePlanSubscriptionRateRepository
-                .findFirstByRatePlan(ratePlan);
-        if (ratePlanRatePlanSubscriptionRate != null) {
-            referencedWarning.setKey("ratePlan.ratePlanSubscriptionRate.ratePlan.referenced");
-            referencedWarning.addParam(ratePlanRatePlanSubscriptionRate.getRatePlanSubscriptionRateId());
-            return referencedWarning;
-        }
-        final RatePlanFreemiumRate ratePlanRatePlanFreemiumRate = ratePlanFreemiumRateRepository
-                .findFirstByRatePlan(ratePlan);
-        if (ratePlanRatePlanFreemiumRate != null) {
-            referencedWarning.setKey("ratePlan.ratePlanFreemiumRate.ratePlan.referenced");
-            referencedWarning.addParam(ratePlanRatePlanFreemiumRate.getRatePlanFreemiumRateId());
-            return referencedWarning;
-        }
-        return null;
-    }
+	@Override
+	public ReferencedWarning getReferencedWarning(final Long ratePlanId) {
+		final ReferencedWarning referencedWarning = new ReferencedWarning();
+		final RatePlan ratePlan = ratePlanRepository.findById(ratePlanId).orElseThrow(NotFoundException::new);
+		final RatePlanUsageBased ratePlanRatePlanUsageBased = ratePlanUsageBasedRepository
+				.findFirstByRatePlan(ratePlan);
+		if (ratePlanRatePlanUsageBased != null) {
+			referencedWarning.setKey("ratePlan.ratePlanUsageBased.ratePlan.referenced");
+			referencedWarning.addParam(ratePlanRatePlanUsageBased.getRatePlanUsageRateId());
+			return referencedWarning;
+		}
+		final RatePlanTieredRate ratePlanRatePlanTieredRate = ratePlanTieredRateRepository
+				.findFirstByRatePlan(ratePlan);
+		if (ratePlanRatePlanTieredRate != null) {
+			referencedWarning.setKey("ratePlan.ratePlanTieredRate.ratePlan.referenced");
+			referencedWarning.addParam(ratePlanRatePlanTieredRate.getRatePlanTieredRateId());
+			return referencedWarning;
+		}
+		final RatePlanFlatRate ratePlanRatePlanFlatRate = ratePlanFlatRateRepository.findFirstByRatePlan(ratePlan);
+		if (ratePlanRatePlanFlatRate != null) {
+			referencedWarning.setKey("ratePlan.ratePlanFlatRate.ratePlan.referenced");
+			referencedWarning.addParam(ratePlanRatePlanFlatRate.getRatePlanFlatRateId());
+			return referencedWarning;
+		}
+		final RatePlanSubscriptionRate ratePlanRatePlanSubscriptionRate = ratePlanSubscriptionRateRepository
+				.findFirstByRatePlan(ratePlan);
+		if (ratePlanRatePlanSubscriptionRate != null) {
+			referencedWarning.setKey("ratePlan.ratePlanSubscriptionRate.ratePlan.referenced");
+			referencedWarning.addParam(ratePlanRatePlanSubscriptionRate.getRatePlanSubscriptionRateId());
+			return referencedWarning;
+		}
+		final RatePlanFreemiumRate ratePlanRatePlanFreemiumRate = ratePlanFreemiumRateRepository
+				.findFirstByRatePlan(ratePlan);
+		if (ratePlanRatePlanFreemiumRate != null) {
+			referencedWarning.setKey("ratePlan.ratePlanFreemiumRate.ratePlan.referenced");
+			referencedWarning.addParam(ratePlanRatePlanFreemiumRate.getRatePlanFreemiumRateId());
+			return referencedWarning;
+		}
+		return null;
+	}
 
 }

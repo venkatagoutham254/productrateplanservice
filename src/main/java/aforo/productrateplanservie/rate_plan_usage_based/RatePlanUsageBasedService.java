@@ -11,7 +11,7 @@ public interface RatePlanUsageBasedService {
 
     RatePlanUsageBasedDTO get(Long ratePlanUsageRateId);
 
-    Long create(RatePlanUsageBasedDTO ratePlanUsageBasedDTO);
+    Long create(Long ratePlanId, RatePlanUsageBasedDTO ratePlanUsageBasedDTO);
 
     void update(Long ratePlanUsageRateId, RatePlanUsageBasedDTO ratePlanUsageBasedDTO);
 

@@ -1,7 +1,9 @@
 package aforo.productrateplanservie.rate_plan_tiered_rate;
 
+import aforo.productrateplanservie.rate_plan.RatePlan;
 import aforo.productrateplanservie.rate_plan.RatePlanRepository;
 import aforo.productrateplanservie.rate_plan_tiered_rate_details.RatePlanTieredRateDetails;
+import aforo.productrateplanservie.rate_plan_tiered_rate_details.RatePlanTieredRateDetailsDTO;
 import aforo.productrateplanservie.rate_plan_tiered_rate_details.RatePlanTieredRateDetailsRepository;
 import aforo.productrateplanservie.util.NotFoundException;
 import aforo.productrateplanservie.util.ReferencedWarning;
@@ -9,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @Service
@@ -59,21 +62,38 @@ public class RatePlanTieredRateServiceImpl implements RatePlanTieredRateService 
     }
 
     @Override
-    public Long create(final RatePlanTieredRateDTO ratePlanTieredRateDTO) {
-        final RatePlanTieredRate ratePlanTieredRate = new RatePlanTieredRate();
+    @Transactional
+    public Long create(Long ratePlanId, RatePlanTieredRateDTO ratePlanTieredRateDTO) {
+        RatePlan ratePlan = ratePlanRepository.findById(ratePlanId)
+                .orElseThrow(() -> new NotFoundException("RatePlan not found with id: " + ratePlanId));
+        RatePlanTieredRate ratePlanTieredRate = new RatePlanTieredRate();
         ratePlanTieredRateMapper.updateRatePlanTieredRate(ratePlanTieredRateDTO, ratePlanTieredRate, ratePlanRepository);
-        return (Long) ratePlanTieredRateRepository.save(ratePlanTieredRate).getRatePlanTieredRateId();
+        ratePlanTieredRate.setRatePlan(ratePlan);
+
+        RatePlanTieredRate savedRatePlanTieredRate = ratePlanTieredRateRepository.save(ratePlanTieredRate);
+
+
+        if (ratePlanTieredRateDTO.getRatePlanTieredRateDetailsDTO() != null) {
+            for (RatePlanTieredRateDetailsDTO detailsDTO : ratePlanTieredRateDTO.getRatePlanTieredRateDetailsDTO()) {
+                RatePlanTieredRateDetails details = ratePlanTieredRateMapper.mapToRatePlanTieredRateDetails(detailsDTO);
+                details.setRatePlanTieredRate(savedRatePlanTieredRate); // Ensure the relationship is set
+                ratePlanTieredRateDetailsRepository.save(details); // Save the details object
+            }
+        }
+
+        return savedRatePlanTieredRate.getRatePlanTieredRateId();
     }
 
     @Override
     public void update(final Long ratePlanTieredRateId,
-            final RatePlanTieredRateDTO ratePlanTieredRateDTO) {
+                       final RatePlanTieredRateDTO ratePlanTieredRateDTO) {
         final RatePlanTieredRate ratePlanTieredRate = ratePlanTieredRateRepository.findById(ratePlanTieredRateId)
                 .orElseThrow(NotFoundException::new);
         ratePlanTieredRateMapper.updateRatePlanTieredRate(ratePlanTieredRateDTO, ratePlanTieredRate, ratePlanRepository);
         ratePlanTieredRateRepository.save(ratePlanTieredRate);
     }
 
+    @Transactional
     @Override
     public void delete(final Long ratePlanTieredRateId) {
         ratePlanTieredRateRepository.deleteById(ratePlanTieredRateId);

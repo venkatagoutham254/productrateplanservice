@@ -35,7 +35,7 @@ public class RatePlanUsageBasedRates {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "rate_plan_usage_rate_id", nullable = false)
-    private RatePlanUsageBased ratePlanUsageRate;
+    private RatePlanUsageBased ratePlanUsageBased;
 
     @CreatedDate
     @Column(nullable = false, updatable = false)
