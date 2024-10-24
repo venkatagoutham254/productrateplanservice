@@ -22,11 +22,7 @@ public class RatePlanTieredRateServiceImpl implements RatePlanTieredRateService 
     private final RatePlanTieredRateMapper ratePlanTieredRateMapper;
     private final RatePlanTieredRateDetailsRepository ratePlanTieredRateDetailsRepository;
 
-    public RatePlanTieredRateServiceImpl(
-            final RatePlanTieredRateRepository ratePlanTieredRateRepository,
-            final RatePlanRepository ratePlanRepository,
-            final RatePlanTieredRateMapper ratePlanTieredRateMapper,
-            final RatePlanTieredRateDetailsRepository ratePlanTieredRateDetailsRepository) {
+    public RatePlanTieredRateServiceImpl(final RatePlanTieredRateRepository ratePlanTieredRateRepository, final RatePlanRepository ratePlanRepository, final RatePlanTieredRateMapper ratePlanTieredRateMapper, final RatePlanTieredRateDetailsRepository ratePlanTieredRateDetailsRepository) {
         this.ratePlanTieredRateRepository = ratePlanTieredRateRepository;
         this.ratePlanRepository = ratePlanRepository;
         this.ratePlanTieredRateMapper = ratePlanTieredRateMapper;
@@ -47,25 +43,18 @@ public class RatePlanTieredRateServiceImpl implements RatePlanTieredRateService 
         } else {
             page = ratePlanTieredRateRepository.findAll(pageable);
         }
-        return new PageImpl<>(page.getContent()
-                .stream()
-                .map(ratePlanTieredRate -> ratePlanTieredRateMapper.updateRatePlanTieredRateDTO(ratePlanTieredRate, new RatePlanTieredRateDTO()))
-                .toList(),
-                pageable, page.getTotalElements());
+        return new PageImpl<>(page.getContent().stream().map(ratePlanTieredRate -> ratePlanTieredRateMapper.updateRatePlanTieredRateDTO(ratePlanTieredRate, new RatePlanTieredRateDTO())).toList(), pageable, page.getTotalElements());
     }
 
     @Override
     public RatePlanTieredRateDTO get(final Long ratePlanTieredRateId) {
-        return ratePlanTieredRateRepository.findById(ratePlanTieredRateId)
-                .map(ratePlanTieredRate -> ratePlanTieredRateMapper.updateRatePlanTieredRateDTO(ratePlanTieredRate, new RatePlanTieredRateDTO()))
-                .orElseThrow(NotFoundException::new);
+        return ratePlanTieredRateRepository.findById(ratePlanTieredRateId).map(ratePlanTieredRate -> ratePlanTieredRateMapper.updateRatePlanTieredRateDTO(ratePlanTieredRate, new RatePlanTieredRateDTO())).orElseThrow(NotFoundException::new);
     }
 
     @Override
     @Transactional
     public Long create(Long ratePlanId, RatePlanTieredRateDTO ratePlanTieredRateDTO) {
-        RatePlan ratePlan = ratePlanRepository.findById(ratePlanId)
-                .orElseThrow(() -> new NotFoundException("RatePlan not found with id: " + ratePlanId));
+        RatePlan ratePlan = ratePlanRepository.findById(ratePlanId).orElseThrow(() -> new NotFoundException("RatePlan not found with id: " + ratePlanId));
         RatePlanTieredRate ratePlanTieredRate = new RatePlanTieredRate();
         ratePlanTieredRateMapper.updateRatePlanTieredRate(ratePlanTieredRateDTO, ratePlanTieredRate, ratePlanRepository);
         ratePlanTieredRate.setRatePlan(ratePlan);
@@ -85,25 +74,43 @@ public class RatePlanTieredRateServiceImpl implements RatePlanTieredRateService 
     }
 
     @Override
-    public void update(final Long ratePlanTieredRateId,
-                       final RatePlanTieredRateDTO ratePlanTieredRateDTO) {
-        final RatePlanTieredRate ratePlanTieredRate = ratePlanTieredRateRepository.findById(ratePlanTieredRateId)
-                .orElseThrow(NotFoundException::new);
+    @Transactional
+    public void update(Long ratePlanTieredRateId, RatePlanTieredRateDTO ratePlanTieredRateDTO) {
+        RatePlanTieredRate ratePlanTieredRate = ratePlanTieredRateRepository.findById(ratePlanTieredRateId).orElseThrow(() -> new NotFoundException("RatePlanTieredRate not found with id: " + ratePlanTieredRateId));
+
+        // Update the RatePlanTieredRate itself
         ratePlanTieredRateMapper.updateRatePlanTieredRate(ratePlanTieredRateDTO, ratePlanTieredRate, ratePlanRepository);
-        ratePlanTieredRateRepository.save(ratePlanTieredRate);
+
+        RatePlanTieredRate updatedRatePlanTieredRate = ratePlanTieredRateRepository.save(ratePlanTieredRate);
+
+        // Handle the updating of RatePlanTieredRateDetails
+        if (ratePlanTieredRateDTO.getRatePlanTieredRateDetailsDTO() != null) {
+            // First, delete existing RatePlanTieredRateDetails
+            ratePlanTieredRateDetailsRepository.deleteAllByRatePlanTieredRate(updatedRatePlanTieredRate);
+
+            // Now, add the new RatePlanTieredRateDetails
+            for (RatePlanTieredRateDetailsDTO detailsDTO : ratePlanTieredRateDTO.getRatePlanTieredRateDetailsDTO()) {
+                RatePlanTieredRateDetails details = ratePlanTieredRateMapper.mapToRatePlanTieredRateDetails(detailsDTO);
+                details.setRatePlanTieredRate(updatedRatePlanTieredRate); // Set the relationship
+                ratePlanTieredRateDetailsRepository.save(details);
+            }
+        }
     }
+
 
     @Transactional
     @Override
     public void delete(final Long ratePlanTieredRateId) {
-        ratePlanTieredRateRepository.deleteById(ratePlanTieredRateId);
+        // Fetch the RatePlanTieredRate
+        RatePlanTieredRate ratePlanTieredRate = ratePlanTieredRateRepository.findById(ratePlanTieredRateId).orElseThrow(() -> new NotFoundException("RatePlanTieredRate not found with id: " + ratePlanTieredRateId));
+        ratePlanTieredRateRepository.delete(ratePlanTieredRate);
     }
+
 
     @Override
     public ReferencedWarning getReferencedWarning(final Long ratePlanTieredRateId) {
         final ReferencedWarning referencedWarning = new ReferencedWarning();
-        final RatePlanTieredRate ratePlanTieredRate = ratePlanTieredRateRepository.findById(ratePlanTieredRateId)
-                .orElseThrow(NotFoundException::new);
+        final RatePlanTieredRate ratePlanTieredRate = ratePlanTieredRateRepository.findById(ratePlanTieredRateId).orElseThrow(NotFoundException::new);
         final RatePlanTieredRateDetails ratePlanTieredRateRatePlanTieredRateDetails = ratePlanTieredRateDetailsRepository.findFirstByRatePlanTieredRate(ratePlanTieredRate);
         if (ratePlanTieredRateRatePlanTieredRateDetails != null) {
             referencedWarning.setKey("ratePlanTieredRate.ratePlanTieredRateDetails.ratePlanTieredRate.referenced");

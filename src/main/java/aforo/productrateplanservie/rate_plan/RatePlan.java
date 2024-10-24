@@ -61,7 +61,7 @@ public class RatePlan {
     @OneToMany(mappedBy = "ratePlan",cascade = CascadeType.REMOVE)
     private Set<RatePlanUsageBased> ratePlanRatePlanUsageBaseds;
 
-    @OneToMany(mappedBy = "ratePlan",cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "ratePlan",cascade = CascadeType.ALL)
     private Set<RatePlanTieredRate> ratePlanRatePlanTieredRates;
 
     @OneToMany(mappedBy = "ratePlan",cascade = CascadeType.REMOVE)

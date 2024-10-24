@@ -1,24 +1,21 @@
 package aforo.productrateplanservie.rate_plan_tiered_rate_details;
 
+import java.math.BigDecimal;
+
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.math.BigDecimal;
-@Setter
 @Getter
-
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class RatePlanTieredRateDetailsDTO {
-    // Getters and setters
     private Long tierNumber; // ID of the details entry
     private BigDecimal tierStart;
     private BigDecimal tierRate;
     private BigDecimal tierEnd;
 
-    // Constructor
-    public RatePlanTieredRateDetailsDTO(Long id, BigDecimal unitPriceFixed, BigDecimal subscriptionMaxUnitQuantity) {
-        this.tierNumber = tierNumber;
-        this.tierStart = tierStart;
-        this.tierRate = tierRate;
-        this.tierEnd = tierEnd;
-    }
+
 }

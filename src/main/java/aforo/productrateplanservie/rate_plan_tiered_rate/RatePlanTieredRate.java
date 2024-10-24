@@ -48,7 +48,7 @@ public class RatePlanTieredRate {
     @JoinColumn(name = "rate_plan_id", nullable = false)
     private RatePlan ratePlan;
 
-    @OneToMany(mappedBy = "ratePlanTieredRate", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "ratePlanTieredRate", cascade = CascadeType.REMOVE, fetch = FetchType.EAGER,orphanRemoval = true)
     private Set<RatePlanTieredRateDetails> ratePlanTieredRateDetails;
 
     @CreatedDate
