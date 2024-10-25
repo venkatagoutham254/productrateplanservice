@@ -102,10 +102,10 @@ public class RatePlanSubscriptionRateResource {
     @ApiResponse(responseCode = "204")
     public ResponseEntity<Void> deleteRatePlanSubscriptionRate(
             @PathVariable(name = "ratePlanSubscriptionRateId") final Long ratePlanSubscriptionRateId) {
-        final ReferencedWarning referencedWarning = ratePlanSubscriptionRateService.getReferencedWarning(ratePlanSubscriptionRateId);
-        if (referencedWarning != null) {
-            throw new ReferencedException(referencedWarning);
-        }
+//        final ReferencedWarning referencedWarning = ratePlanSubscriptionRateService.getReferencedWarning(ratePlanSubscriptionRateId);
+//        if (referencedWarning != null) {
+//            throw new ReferencedException(referencedWarning);
+//        }
         ratePlanSubscriptionRateService.delete(ratePlanSubscriptionRateId);
         return ResponseEntity.noContent().build();
     }

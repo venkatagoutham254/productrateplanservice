@@ -18,6 +18,6 @@ public interface RatePlanSubscriptionRateService {
 
     void delete(Long ratePlanSubscriptionRateId);
 
-    ReferencedWarning getReferencedWarning(Long ratePlanSubscriptionRateId);
+//    ReferencedWarning getReferencedWarning(Long ratePlanSubscriptionRateId);
 
 }

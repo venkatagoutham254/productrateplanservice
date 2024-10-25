@@ -14,6 +14,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Set;
+import java.util.stream.Collectors;
+
 
 @Service
 public class RatePlanSubscriptionRateServiceImpl implements RatePlanSubscriptionRateService {
@@ -57,10 +60,13 @@ public class RatePlanSubscriptionRateServiceImpl implements RatePlanSubscription
 
     @Override
     public RatePlanSubscriptionRateDTO get(final Long ratePlanSubscriptionRateId) {
-        return ratePlanSubscriptionRateRepository.findById(ratePlanSubscriptionRateId)
-                .map(ratePlanSubscriptionRate -> ratePlanSubscriptionRateMapper.updateRatePlanSubscriptionRateDTO(ratePlanSubscriptionRate, new RatePlanSubscriptionRateDTO()))
-                .orElseThrow(NotFoundException::new);
+        RatePlanSubscriptionRate ratePlanSubscriptionRate = ratePlanSubscriptionRateRepository.findById(ratePlanSubscriptionRateId)
+                .orElseThrow(() -> new NotFoundException("Rate Plan Subscription Rate not found with id: " + ratePlanSubscriptionRateId));
+
+        // Map details to DTO and return
+        return ratePlanSubscriptionRateMapper.updateRatePlanSubscriptionRateDTO(ratePlanSubscriptionRate, new RatePlanSubscriptionRateDTO());
     }
+
 
     @Override
     public Long create(Long ratePlanId, RatePlanSubscriptionRateDTO ratePlanSubscriptionRateDTO) {
@@ -84,33 +90,59 @@ public class RatePlanSubscriptionRateServiceImpl implements RatePlanSubscription
 
         return savedRatePlanSubscriptionRate.getRatePlanSubscriptionRateId();
     }
-        @Override
-        public void update ( final Long ratePlanSubscriptionRateId, RatePlanSubscriptionRateDTO
-        ratePlanSubscriptionRateDTO){
-            final RatePlanSubscriptionRate ratePlanSubscriptionRate = ratePlanSubscriptionRateRepository.findById(ratePlanSubscriptionRateId)
-                    .orElseThrow(NotFoundException::new);
-            ratePlanSubscriptionRateMapper.updateRatePlanSubscriptionRate(ratePlanSubscriptionRateDTO, ratePlanSubscriptionRate, ratePlanRepository);
-            ratePlanSubscriptionRateRepository.save(ratePlanSubscriptionRate);
+    @Override
+    @Transactional
+    public void update(final Long ratePlanSubscriptionRateId, RatePlanSubscriptionRateDTO ratePlanSubscriptionRateDTO) {
+        // Find the existing RatePlanSubscriptionRate
+        final RatePlanSubscriptionRate ratePlanSubscriptionRate = ratePlanSubscriptionRateRepository.findById(ratePlanSubscriptionRateId)
+                .orElseThrow(NotFoundException::new);
+
+        // Update main properties of RatePlanSubscriptionRate
+        ratePlanSubscriptionRateMapper.updateRatePlanSubscriptionRate(ratePlanSubscriptionRateDTO, ratePlanSubscriptionRate, ratePlanRepository);
+
+        // Delete existing details from the database to avoid duplication
+        ratePlanSubscriptionRateDetailsRepository.deleteAll(ratePlanSubscriptionRate.getRatePlanSubscriptionRateDetails());
+
+        // Clear existing details from the entity to re-add them properly
+        ratePlanSubscriptionRate.getRatePlanSubscriptionRateDetails().clear();
+
+        // Re-add or update all incoming details
+        for (RatePlanSubscriptionRateDetailsDTO detailsDTO : ratePlanSubscriptionRateDTO.getRatePlanSubscriptionRateDetailsDTO()) {
+            // Map details DTO to entity
+            RatePlanSubscriptionRateDetails detail = new RatePlanSubscriptionRateDetails();
+            detail.setRatePlanSubscriptionRate(ratePlanSubscriptionRate); // Link to parent
+            detail.setUnitPriceFixed(detailsDTO.getUnitPriceFixed());
+            detail.setSubscriptionMaxUnitQuantity(detailsDTO.getSubscriptionMaxUnitQuantity());
+
+            // Add the new or updated detail to the parent's collection
+            ratePlanSubscriptionRate.getRatePlanSubscriptionRateDetails().add(detail);
         }
 
-        @Override
+        // Save the updated RatePlanSubscriptionRate with new details
+        ratePlanSubscriptionRateRepository.save(ratePlanSubscriptionRate);
+    }
+
+
+
+
+    @Override
         @Transactional
         public void delete ( final Long ratePlanSubscriptionRateId){
             ratePlanSubscriptionRateRepository.deleteById(ratePlanSubscriptionRateId);
         }
 
-        @Override
-        public ReferencedWarning getReferencedWarning ( final Long ratePlanSubscriptionRateId){
-            final ReferencedWarning referencedWarning = new ReferencedWarning();
-            final RatePlanSubscriptionRate ratePlanSubscriptionRate = ratePlanSubscriptionRateRepository.findById(ratePlanSubscriptionRateId)
-                    .orElseThrow(NotFoundException::new);
-            final RatePlanSubscriptionRateDetails ratePlanSubscriptionRateRatePlanSubscriptionRateDetails = ratePlanSubscriptionRateDetailsRepository.findFirstByRatePlanSubscriptionRate(ratePlanSubscriptionRate);
-            if (ratePlanSubscriptionRateRatePlanSubscriptionRateDetails != null) {
-                referencedWarning.setKey("ratePlanSubscriptionRate.ratePlanSubscriptionRateDetails.ratePlanSubscriptionRate.referenced");
-                referencedWarning.addParam(ratePlanSubscriptionRateRatePlanSubscriptionRateDetails.getId());
-                return referencedWarning;
-            }
-            return null;
-        }
+//        @Override
+//        public ReferencedWarning getReferencedWarning ( final Long ratePlanSubscriptionRateId){
+//            final ReferencedWarning referencedWarning = new ReferencedWarning();
+//            final RatePlanSubscriptionRate ratePlanSubscriptionRate = ratePlanSubscriptionRateRepository.findById(ratePlanSubscriptionRateId)
+//                    .orElseThrow(NotFoundException::new);
+//            final RatePlanSubscriptionRateDetails ratePlanSubscriptionRateRatePlanSubscriptionRateDetails = ratePlanSubscriptionRateDetailsRepository.findFirstByRatePlanSubscriptionRate(ratePlanSubscriptionRate);
+//            if (ratePlanSubscriptionRateRatePlanSubscriptionRateDetails != null) {
+//                referencedWarning.setKey("ratePlanSubscriptionRate.ratePlanSubscriptionRateDetails.ratePlanSubscriptionRate.referenced");
+//                referencedWarning.addParam(ratePlanSubscriptionRateRatePlanSubscriptionRateDetails.getId());
+//                return referencedWarning;
+//            }
+//            return null;
+//        }
 
     }
