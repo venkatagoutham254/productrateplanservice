@@ -48,7 +48,7 @@ public class RatePlanUsageBased {
     @Column(nullable = false)
     private UnitCalculation unitCalculation;
 
-    @OneToMany(mappedBy = "ratePlanUsageBased", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "ratePlanUsageBased", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<RatePlanUsageBasedRates> RatePlanUsageBasedRates;
 
     @CreatedDate

@@ -17,6 +17,6 @@ public interface RatePlanUsageBasedService {
 
     void delete(Long ratePlanUsageRateId);
 
-    ReferencedWarning getReferencedWarning(Long ratePlanUsageRateId);
+//    ReferencedWarning getReferencedWarning(Long ratePlanUsageRateId);
 
 }

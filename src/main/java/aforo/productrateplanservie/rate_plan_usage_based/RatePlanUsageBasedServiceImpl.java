@@ -2,9 +2,6 @@ package aforo.productrateplanservie.rate_plan_usage_based;
 
 import aforo.productrateplanservie.rate_plan.RatePlan;
 import aforo.productrateplanservie.rate_plan.RatePlanRepository;
-import aforo.productrateplanservie.rate_plan_tiered_rate.RatePlanTieredRate;
-import aforo.productrateplanservie.rate_plan_tiered_rate_details.RatePlanTieredRateDetails;
-import aforo.productrateplanservie.rate_plan_tiered_rate_details.RatePlanTieredRateDetailsDTO;
 import aforo.productrateplanservie.rate_plan_usage_based_rates.RatePlanUsageBasedRates;
 import aforo.productrateplanservie.rate_plan_usage_based_rates.RatePlanUsageBasedRatesDTO;
 import aforo.productrateplanservie.rate_plan_usage_based_rates.RatePlanUsageBasedRatesRepository;
@@ -14,7 +11,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class RatePlanUsageBasedServiceImpl implements RatePlanUsageBasedService {
@@ -24,11 +24,7 @@ public class RatePlanUsageBasedServiceImpl implements RatePlanUsageBasedService 
     private final RatePlanUsageBasedMapper ratePlanUsageBasedMapper;
     private final RatePlanUsageBasedRatesRepository ratePlanUsageBasedRatesRepository;
 
-    public RatePlanUsageBasedServiceImpl(
-            final RatePlanUsageBasedRepository ratePlanUsageBasedRepository,
-            final RatePlanRepository ratePlanRepository,
-            final RatePlanUsageBasedMapper ratePlanUsageBasedMapper,
-            final RatePlanUsageBasedRatesRepository ratePlanUsageBasedRatesRepository) {
+    public RatePlanUsageBasedServiceImpl(final RatePlanUsageBasedRepository ratePlanUsageBasedRepository, final RatePlanRepository ratePlanRepository, final RatePlanUsageBasedMapper ratePlanUsageBasedMapper, final RatePlanUsageBasedRatesRepository ratePlanUsageBasedRatesRepository) {
         this.ratePlanUsageBasedRepository = ratePlanUsageBasedRepository;
         this.ratePlanRepository = ratePlanRepository;
         this.ratePlanUsageBasedMapper = ratePlanUsageBasedMapper;
@@ -36,6 +32,7 @@ public class RatePlanUsageBasedServiceImpl implements RatePlanUsageBasedService 
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Page<RatePlanUsageBasedDTO> findAll(final String filter, final Pageable pageable) {
         Page<RatePlanUsageBased> page;
         if (filter != null) {
@@ -49,24 +46,19 @@ public class RatePlanUsageBasedServiceImpl implements RatePlanUsageBasedService 
         } else {
             page = ratePlanUsageBasedRepository.findAll(pageable);
         }
-        return new PageImpl<>(page.getContent()
-                .stream()
-                .map(ratePlanUsageBased -> ratePlanUsageBasedMapper.updateRatePlanUsageBasedDTO(ratePlanUsageBased, new RatePlanUsageBasedDTO()))
-                .toList(),
-                pageable, page.getTotalElements());
+        return new PageImpl<>(page.getContent().stream().map(ratePlanUsageBased -> ratePlanUsageBasedMapper.updateRatePlanUsageBasedDTO(ratePlanUsageBased, new RatePlanUsageBasedDTO())).collect(Collectors.toList()), pageable, page.getTotalElements());
     }
 
     @Override
+    @Transactional(readOnly = true)
     public RatePlanUsageBasedDTO get(final Long ratePlanUsageRateId) {
-        return ratePlanUsageBasedRepository.findById(ratePlanUsageRateId)
-                .map(ratePlanUsageBased -> ratePlanUsageBasedMapper.updateRatePlanUsageBasedDTO(ratePlanUsageBased, new RatePlanUsageBasedDTO()))
-                .orElseThrow(NotFoundException::new);
+        return ratePlanUsageBasedRepository.findById(ratePlanUsageRateId).map(ratePlanUsageBased -> ratePlanUsageBasedMapper.updateRatePlanUsageBasedDTO(ratePlanUsageBased, new RatePlanUsageBasedDTO())).orElseThrow(NotFoundException::new);
     }
 
     @Override
+    @Transactional
     public Long create(Long ratePlanId, RatePlanUsageBasedDTO ratePlanUsageBasedDTO) {
-        RatePlan ratePlan = ratePlanRepository.findById(ratePlanId)
-                .orElseThrow(() -> new IllegalArgumentException("RatePlan with ID " + ratePlanId + " does not exist"));
+        RatePlan ratePlan = ratePlanRepository.findById(ratePlanId).orElseThrow(() -> new IllegalArgumentException("RatePlan with ID " + ratePlanId + " does not exist"));
         RatePlanUsageBased ratePlanUsageBased = new RatePlanUsageBased();
         ratePlanUsageBasedMapper.updateRatePlanUsageBased(ratePlanUsageBasedDTO, ratePlanUsageBased, ratePlanRepository);
         ratePlanUsageBased.setRatePlan(ratePlan);
@@ -75,43 +67,76 @@ public class RatePlanUsageBasedServiceImpl implements RatePlanUsageBasedService 
         if (ratePlanUsageBasedDTO.getRatePlanUsageBasedRatesDTO() != null) {
             for (RatePlanUsageBasedRatesDTO detailsDTO : ratePlanUsageBasedDTO.getRatePlanUsageBasedRatesDTO()) {
                 RatePlanUsageBasedRates details = ratePlanUsageBasedMapper.mapToRatePlanUsageBasedRates(detailsDTO);
-                details.setRatePlanUsageBased(savedRatePlanUsageBased); // Ensure the relationship is set
-                ratePlanUsageBasedRatesRepository.save(details); // Save the details object
+                details.setRatePlanUsageBased(savedRatePlanUsageBased);
+                ratePlanUsageBasedRatesRepository.save(details);
             }
         }
 
-
-        // Save and return the ID of the newly created RatePlanUsageBased
         return savedRatePlanUsageBased.getRatePlanUsageRateId();
     }
 
-
     @Override
-    public void update(final Long ratePlanUsageRateId,
-            final RatePlanUsageBasedDTO ratePlanUsageBasedDTO) {
-        final RatePlanUsageBased ratePlanUsageBased = ratePlanUsageBasedRepository.findById(ratePlanUsageRateId)
-                .orElseThrow(NotFoundException::new);
+    @Transactional
+    public void update(final Long ratePlanUsageRateId, final RatePlanUsageBasedDTO ratePlanUsageBasedDTO) {
+        RatePlanUsageBased ratePlanUsageBased = ratePlanUsageBasedRepository.findById(ratePlanUsageRateId).orElseThrow(NotFoundException::new);
         ratePlanUsageBasedMapper.updateRatePlanUsageBased(ratePlanUsageBasedDTO, ratePlanUsageBased, ratePlanRepository);
+
+        // Retrieve the IDs of existing rates
+        Set<Long> existingRatesIds = ratePlanUsageBased.getRatePlanUsageBasedRates().stream().map(RatePlanUsageBasedRates::getId).collect(Collectors.toSet());
+
+        Set<Long> updatedRatesIds = ratePlanUsageBasedDTO.getRatePlanUsageBasedRatesDTO().stream().map(RatePlanUsageBasedRatesDTO::getId).filter(id -> id != null) // Only keep IDs that are not null
+                .collect(Collectors.toSet());
+
+        // Identify rates to be removed
+        Set<Long> ratesToRemove = existingRatesIds.stream().filter(id -> !updatedRatesIds.contains(id)).collect(Collectors.toSet());
+
+        // First, delete the rates that are no longer needed
+        for (Long id : ratesToRemove) {
+            ratePlanUsageBasedRatesRepository.deleteById(id);
+        }
+
+        // Now update existing rates or add new ones
+        for (RatePlanUsageBasedRatesDTO detailsDTO : ratePlanUsageBasedDTO.getRatePlanUsageBasedRatesDTO()) {
+            RatePlanUsageBasedRates details;
+            if (detailsDTO.getId() != null && ratePlanUsageBasedRatesRepository.existsById(detailsDTO.getId())) {
+                details = ratePlanUsageBasedRatesRepository.findById(detailsDTO.getId()).orElseThrow(NotFoundException::new);
+                ratePlanUsageBasedMapper.updateRatePlanUsageBasedRatesFromDTO(detailsDTO, details);
+            } else {
+                details = ratePlanUsageBasedMapper.mapToRatePlanUsageBasedRates(detailsDTO);
+                details.setRatePlanUsageBased(ratePlanUsageBased);
+            }
+            ratePlanUsageBasedRatesRepository.save(details);
+        }
+
+        // Finally, save the main entity
         ratePlanUsageBasedRepository.save(ratePlanUsageBased);
     }
 
+
     @Override
+    @Transactional
     public void delete(final Long ratePlanUsageRateId) {
+        // Check if the RatePlanUsageBased exists
+        if (!ratePlanUsageBasedRepository.existsById(ratePlanUsageRateId)) {
+            throw new NotFoundException("RatePlanUsageBased with ID " + ratePlanUsageRateId + " does not exist");
+        }
+        // If it exists, proceed to delete
         ratePlanUsageBasedRepository.deleteById(ratePlanUsageRateId);
     }
 
-    @Override
-    public ReferencedWarning getReferencedWarning(final Long ratePlanUsageRateId) {
-        final ReferencedWarning referencedWarning = new ReferencedWarning();
-        final RatePlanUsageBased ratePlanUsageBased = ratePlanUsageBasedRepository.findById(ratePlanUsageRateId)
-                .orElseThrow(NotFoundException::new);
-        final RatePlanUsageBasedRates ratePlanUsageRateRatePlanUsageBasedRates = ratePlanUsageBasedRatesRepository.findFirstByRatePlanUsageBased(ratePlanUsageBased);
-        if (ratePlanUsageRateRatePlanUsageBasedRates != null) {
-            referencedWarning.setKey("ratePlanUsageBased.ratePlanUsageBasedRates.ratePlanUsageRate.referenced");
-            referencedWarning.addParam(ratePlanUsageRateRatePlanUsageBasedRates.getId());
-            return referencedWarning;
-        }
-        return null;
-    }
 
+//    @Override
+//    @Transactional(readOnly = true)
+//    public ReferencedWarning getReferencedWarning(final Long ratePlanUsageRateId) {
+//        ReferencedWarning referencedWarning = new ReferencedWarning();
+//        RatePlanUsageBased ratePlanUsageBased = ratePlanUsageBasedRepository.findById(ratePlanUsageRateId)
+//                .orElseThrow(NotFoundException::new);
+//        RatePlanUsageBasedRates ratePlanUsageRateRatePlanUsageBasedRates = ratePlanUsageBasedRatesRepository.findFirstByRatePlanUsageBased(ratePlanUsageBased);
+//        if (ratePlanUsageRateRatePlanUsageBasedRates != null) {
+//            referencedWarning.setKey("ratePlanUsageBased.ratePlanUsageBasedRates.ratePlanUsageRate.referenced");
+//            referencedWarning.addParam(ratePlanUsageRateRatePlanUsageBasedRates.getId());
+//            return referencedWarning;
+//        }
+//        return null;
+//    }
 }
