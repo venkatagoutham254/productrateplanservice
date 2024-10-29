@@ -10,8 +10,10 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
+
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
@@ -33,7 +35,7 @@ public class RatePlanFreemiumRateDetails {
     @Column(nullable = false, precision = 12, scale = 2)
     private BigDecimal freemiumMaxUnitQuantity;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "rate_plan_freemium_rate_id", nullable = false)
     private RatePlanFreemiumRate ratePlanFreemiumRate;
 
@@ -45,9 +47,5 @@ public class RatePlanFreemiumRateDetails {
     @Column(nullable = false)
     private OffsetDateTime lastUpdated;
 
-	public Object getId() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 }

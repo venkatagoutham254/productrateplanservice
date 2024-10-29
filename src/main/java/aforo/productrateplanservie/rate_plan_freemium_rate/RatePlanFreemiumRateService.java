@@ -11,12 +11,14 @@ public interface RatePlanFreemiumRateService {
 
     RatePlanFreemiumRateDTO get(Long ratePlanFreemiumRateId);
 
-    Long create(RatePlanFreemiumRateDTO ratePlanFreemiumRateDTO);
+    Long create(Long ratePlanId, RatePlanFreemiumRateDTO ratePlanFreemiumRateDTO);
 
+    //
     void update(Long ratePlanFreemiumRateId, RatePlanFreemiumRateDTO ratePlanFreemiumRateDTO);
 
+    //
     void delete(Long ratePlanFreemiumRateId);
 
-    ReferencedWarning getReferencedWarning(Long ratePlanFreemiumRateId);
+//    ReferencedWarning getReferencedWarning(Long ratePlanFreemiumRateId);
 
 }

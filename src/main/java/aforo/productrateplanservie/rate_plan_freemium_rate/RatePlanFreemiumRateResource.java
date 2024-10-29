@@ -38,73 +38,47 @@ public class RatePlanFreemiumRateResource {
     private final RatePlanFreemiumRateAssembler ratePlanFreemiumRateAssembler;
     private final PagedResourcesAssembler<RatePlanFreemiumRateDTO> pagedResourcesAssembler;
 
-    public RatePlanFreemiumRateResource(
-            final RatePlanFreemiumRateService ratePlanFreemiumRateService,
-            final RatePlanFreemiumRateAssembler ratePlanFreemiumRateAssembler,
-            final PagedResourcesAssembler<RatePlanFreemiumRateDTO> pagedResourcesAssembler) {
+    public RatePlanFreemiumRateResource(final RatePlanFreemiumRateService ratePlanFreemiumRateService, final RatePlanFreemiumRateAssembler ratePlanFreemiumRateAssembler, final PagedResourcesAssembler<RatePlanFreemiumRateDTO> pagedResourcesAssembler) {
         this.ratePlanFreemiumRateService = ratePlanFreemiumRateService;
         this.ratePlanFreemiumRateAssembler = ratePlanFreemiumRateAssembler;
         this.pagedResourcesAssembler = pagedResourcesAssembler;
     }
 
-    @Operation(
-            parameters = {
-                    @Parameter(
-                            name = "page",
-                            in = ParameterIn.QUERY,
-                            schema = @Schema(implementation = Integer.class)
-                    ),
-                    @Parameter(
-                            name = "size",
-                            in = ParameterIn.QUERY,
-                            schema = @Schema(implementation = Integer.class)
-                    ),
-                    @Parameter(
-                            name = "sort",
-                            in = ParameterIn.QUERY,
-                            schema = @Schema(implementation = String.class)
-                    )
-            }
-    )
+    @Operation(parameters = {@Parameter(name = "page", in = ParameterIn.QUERY, schema = @Schema(implementation = Integer.class)), @Parameter(name = "size", in = ParameterIn.QUERY, schema = @Schema(implementation = Integer.class)), @Parameter(name = "sort", in = ParameterIn.QUERY, schema = @Schema(implementation = String.class))})
     @GetMapping
-    public ResponseEntity<PagedModel<EntityModel<RatePlanFreemiumRateDTO>>> getAllRatePlanFreemiumRates(
-            @RequestParam(name = "filter", required = false) final String filter,
-            @Parameter(hidden = true) @SortDefault(sort = "ratePlanFreemiumRateId") @PageableDefault(size = 20) final Pageable pageable) {
+    public ResponseEntity<PagedModel<EntityModel<RatePlanFreemiumRateDTO>>> getAllRatePlanFreemiumRates(@RequestParam(name = "filter", required = false) final String filter, @Parameter(hidden = true) @SortDefault(sort = "ratePlanFreemiumRateId") @PageableDefault(size = 20) final Pageable pageable) {
         final Page<RatePlanFreemiumRateDTO> ratePlanFreemiumRateDTOs = ratePlanFreemiumRateService.findAll(filter, pageable);
         return ResponseEntity.ok(pagedResourcesAssembler.toModel(ratePlanFreemiumRateDTOs, ratePlanFreemiumRateAssembler));
     }
 
     @GetMapping("/{ratePlanFreemiumRateId}")
-    public ResponseEntity<EntityModel<RatePlanFreemiumRateDTO>> getRatePlanFreemiumRate(
-            @PathVariable(name = "ratePlanFreemiumRateId") final Long ratePlanFreemiumRateId) {
+    public ResponseEntity<EntityModel<RatePlanFreemiumRateDTO>> getRatePlanFreemiumRate(@PathVariable(name = "ratePlanFreemiumRateId") final Long ratePlanFreemiumRateId) {
         final RatePlanFreemiumRateDTO ratePlanFreemiumRateDTO = ratePlanFreemiumRateService.get(ratePlanFreemiumRateId);
         return ResponseEntity.ok(ratePlanFreemiumRateAssembler.toModel(ratePlanFreemiumRateDTO));
     }
 
-    @PostMapping
+    @PostMapping("/{ratePlanId}")
     @ApiResponse(responseCode = "201")
-    public ResponseEntity<EntityModel<SimpleValue<Long>>> createRatePlanFreemiumRate(
-            @RequestBody @Valid final RatePlanFreemiumRateDTO ratePlanFreemiumRateDTO) {
-        final Long createdRatePlanFreemiumRateId = ratePlanFreemiumRateService.create(ratePlanFreemiumRateDTO);
+    public ResponseEntity<EntityModel<SimpleValue<Long>>> createRatePlanFreemiumRate(@PathVariable("ratePlanId") Long ratePlanId, @RequestBody @Valid final RatePlanFreemiumRateDTO ratePlanFreemiumRateDTO) {
+
+        final Long createdRatePlanFreemiumRateId = ratePlanFreemiumRateService.create(ratePlanId, ratePlanFreemiumRateDTO);
         return new ResponseEntity<>(ratePlanFreemiumRateAssembler.toSimpleModel(createdRatePlanFreemiumRateId), HttpStatus.CREATED);
     }
 
+
     @PutMapping("/{ratePlanFreemiumRateId}")
-    public ResponseEntity<EntityModel<SimpleValue<Long>>> updateRatePlanFreemiumRate(
-            @PathVariable(name = "ratePlanFreemiumRateId") final Long ratePlanFreemiumRateId,
-            @RequestBody @Valid final RatePlanFreemiumRateDTO ratePlanFreemiumRateDTO) {
+    public ResponseEntity<EntityModel<SimpleValue<Long>>> updateRatePlanFreemiumRate(@PathVariable(name = "ratePlanFreemiumRateId") final Long ratePlanFreemiumRateId, @RequestBody @Valid final RatePlanFreemiumRateDTO ratePlanFreemiumRateDTO) {
         ratePlanFreemiumRateService.update(ratePlanFreemiumRateId, ratePlanFreemiumRateDTO);
         return ResponseEntity.ok(ratePlanFreemiumRateAssembler.toSimpleModel(ratePlanFreemiumRateId));
     }
 
     @DeleteMapping("/{ratePlanFreemiumRateId}")
     @ApiResponse(responseCode = "204")
-    public ResponseEntity<Void> deleteRatePlanFreemiumRate(
-            @PathVariable(name = "ratePlanFreemiumRateId") final Long ratePlanFreemiumRateId) {
-        final ReferencedWarning referencedWarning = ratePlanFreemiumRateService.getReferencedWarning(ratePlanFreemiumRateId);
-        if (referencedWarning != null) {
-            throw new ReferencedException(referencedWarning);
-        }
+    public ResponseEntity<Void> deleteRatePlanFreemiumRate(@PathVariable(name = "ratePlanFreemiumRateId") final Long ratePlanFreemiumRateId) {
+//        final ReferencedWarning referencedWarning = ratePlanFreemiumRateService.getReferencedWarning(ratePlanFreemiumRateId);
+//        if (referencedWarning != null) {
+//            throw new ReferencedException(referencedWarning);
+//        }
         ratePlanFreemiumRateService.delete(ratePlanFreemiumRateId);
         return ResponseEntity.noContent().build();
     }
