@@ -7,7 +7,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.Column;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.Data;
 
+@Data
 public class CurrenciesDTO {
 
     private Long currencyId;
@@ -29,55 +31,6 @@ public class CurrenciesDTO {
     
     @Column(nullable = false)
     private OffsetDateTime lastUpdated;
-    
-
-	public Long getCurrencyId() {
-		return currencyId;
-	}
-
-	public void setCurrencyId(Long currencyId) {
-		this.currencyId = currencyId;
-	}
-
-	public String getCurrencyCode() {
-		return currencyCode;
-	}
-
-	public void setCurrencyCode(String currencyCode) {
-		this.currencyCode = currencyCode;
-	}
-
-	public String getCurrencyName() {
-		return currencyName;
-	}
-
-	public void setCurrencyName(String currencyName) {
-		this.currencyName = currencyName;
-	}
-
-	public Boolean getIsActive() {
-		return isActive;
-	}
-
-	public void setIsActive(Boolean isActive) {
-		this.isActive = isActive;
-	}
-	
-	public OffsetDateTime getDateCreated() {
-	    return dateCreated;
-	}
-
-	public void setDateCreated(OffsetDateTime dateCreated) {
-	    this.dateCreated = dateCreated;
-	}
-
-	public OffsetDateTime getLastUpdated() {
-	    return lastUpdated;
-	}
-
-	public void setLastUpdated(OffsetDateTime lastUpdated) {
-	    this.lastUpdated = lastUpdated;
-	}
 
 	public CurrenciesDTO(Long currencyId, @NotNull @Size(max = 3) String currencyCode,
 			@NotNull @Size(max = 50) String currencyName, @NotNull Boolean isActive, OffsetDateTime dateCreated,OffsetDateTime lastUpdated ) {

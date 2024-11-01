@@ -31,7 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 
 @RestController
-@RequestMapping(value = "/api/currenciess", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/api/currencies", produces = MediaType.APPLICATION_JSON_VALUE)
 public class CurrenciesResource {
 
     private final CurrenciesService currenciesService;
@@ -83,16 +83,16 @@ public class CurrenciesResource {
     @PostMapping
     @ApiResponse(responseCode = "201")
     public ResponseEntity<EntityModel<SimpleValue<Long>>> createCurrencies(
-            @RequestBody @Valid final CurrenciesDTO currenciesDTO) {
-        final Long createdCurrencyId = currenciesService.create(currenciesDTO);
+            @RequestBody @Valid final CreateCurrenciesRequest createCurrenciesRequest) {
+        final Long createdCurrencyId = currenciesService.create(createCurrenciesRequest);
         return new ResponseEntity<>(currenciesAssembler.toSimpleModel(createdCurrencyId), HttpStatus.CREATED);
     }
 
     @PutMapping("/{currencyId}")
     public ResponseEntity<EntityModel<SimpleValue<Long>>> updateCurrencies(
             @PathVariable(name = "currencyId") final Long currencyId,
-            @RequestBody @Valid final CurrenciesDTO currenciesDTO) {
-        currenciesService.update(currencyId, currenciesDTO);
+            @RequestBody @Valid final CreateCurrenciesRequest createCurrenciesRequest) {
+        currenciesService.update(currencyId, createCurrenciesRequest);
         return ResponseEntity.ok(currenciesAssembler.toSimpleModel(currencyId));
     }
 

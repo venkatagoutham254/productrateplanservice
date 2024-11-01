@@ -11,9 +11,9 @@ public interface CurrenciesService {
 
     CurrenciesDTO get(Long currencyId);
 
-    Long create(CurrenciesDTO currenciesDTO);
+    Long create(CreateCurrenciesRequest createCurrenciesRequest);
 
-    void update(Long currencyId, CurrenciesDTO currenciesDTO);
+    void update(Long currencyId, CreateCurrenciesRequest createCurrenciesRequest);
 
     void delete(Long currencyId);
 

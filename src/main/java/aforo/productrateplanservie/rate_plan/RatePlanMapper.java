@@ -10,6 +10,8 @@ import org.mapstruct.*;
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING, unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface RatePlanMapper {
 
+	RatePlanDTO createRatePlanRequestToRatePlanDTO(CreateRatePlanRequest createRatePlanRequest);
+
 	@Mapping(target = "productId", source = "product.productId")
 	@Mapping(target = "currencyId", source = "currency.currencyId")
 	RatePlanDTO updateRatePlanDTO(RatePlan ratePlan, @MappingTarget RatePlanDTO ratePlanDTO);

@@ -13,6 +13,7 @@ import org.mapstruct.ReportingPolicy;
 )
 public interface CurrenciesMapper {
 
+    CurrenciesDTO createCurrenciesRequestToCurrenciesDTO(CreateCurrenciesRequest createCurrenciesRequest);
     CurrenciesDTO updateCurrenciesDTO(Currencies currencies,
             @MappingTarget CurrenciesDTO currenciesDTO);
 

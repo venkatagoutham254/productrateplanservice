@@ -37,6 +37,8 @@ public class RatePlanResource {
     private final RatePlanAssembler ratePlanAssembler;
     private final PagedResourcesAssembler<RatePlanDTO> pagedResourcesAssembler;
 
+
+
     public RatePlanResource(final RatePlanService ratePlanService, final RatePlanAssembler ratePlanAssembler,
                             final PagedResourcesAssembler<RatePlanDTO> pagedResourcesAssembler) {
         this.ratePlanService = ratePlanService;
@@ -84,9 +86,10 @@ public class RatePlanResource {
 	public ResponseEntity<EntityModel<SimpleValue<Long>>> createRatePlan(
 			@PathVariable("productId") Long productId,
 			@RequestBody @Valid final  CreateRatePlanRequest createRatePlanRequest) {
-		RatePlanDTO ratePlanDTO = CreateRatePlanMapper.toRatePlanDTO(createRatePlanRequest);
-		ratePlanDTO.setProductId(productId);
-		final Long createdRatePlanId = ratePlanService.create(ratePlanDTO);
+//		RatePlanDTO ratePlanDTO = CreateRatePlanMapper.toRatePlanDTO(createRatePlanRequest);
+//		ratePlanDTO.setProductId(productId);
+
+		final Long createdRatePlanId = ratePlanService.create(productId, createRatePlanRequest);
 		return new ResponseEntity<>(ratePlanAssembler.toSimpleModel(createdRatePlanId), HttpStatus.CREATED);
 	}
 
@@ -102,10 +105,10 @@ public class RatePlanResource {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
 
-		RatePlanDTO ratePlanDTO = CreateRatePlanMapper.toRatePlanDTO(createRatePlanRequest);
-		ratePlanDTO.setProductId(ratePlanDTO1.getProductId());
+//		RatePlanDTO ratePlanDTO = CreateRatePlanMapper.toRatePlanDTO(createRatePlanRequest);
+//		ratePlanDTO.setProductId(ratePlanDTO1.getProductId());
 
-		ratePlanService.update(ratePlanId, ratePlanDTO);
+		ratePlanService.update(ratePlanId, createRatePlanRequest);
 		return ResponseEntity.ok(ratePlanAssembler.toSimpleModel(ratePlanId));
 	}
 

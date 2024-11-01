@@ -9,6 +9,8 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
+
 
 @Service
 public class CurrenciesServiceImpl implements CurrenciesService {
@@ -18,7 +20,7 @@ public class CurrenciesServiceImpl implements CurrenciesService {
     private final RatePlanRepository ratePlanRepository;
 
     public CurrenciesServiceImpl(final CurrenciesRepository currenciesRepository,
-            final CurrenciesMapper currenciesMapper, final RatePlanRepository ratePlanRepository) {
+                                 final CurrenciesMapper currenciesMapper, final RatePlanRepository ratePlanRepository) {
         this.currenciesRepository = currenciesRepository;
         this.currenciesMapper = currenciesMapper;
         this.ratePlanRepository = ratePlanRepository;
@@ -53,18 +55,42 @@ public class CurrenciesServiceImpl implements CurrenciesService {
     }
 
     @Override
-    public Long create(final CurrenciesDTO currenciesDTO) {
+    public Long create(final CreateCurrenciesRequest createCurrenciesRequest) {
         final Currencies currencies = new Currencies();
+        CurrenciesDTO currenciesDTO = currenciesMapper.createCurrenciesRequestToCurrenciesDTO(createCurrenciesRequest);
         currenciesMapper.updateCurrencies(currenciesDTO, currencies);
         return currenciesRepository.save(currencies).getCurrencyId();
     }
 
     @Override
-    public void update(final Long currencyId, final CurrenciesDTO currenciesDTO) {
+    public void update(final Long currencyId, final CreateCurrenciesRequest createCurrenciesRequest) {
         final Currencies currencies = currenciesRepository.findById(currencyId)
                 .orElseThrow(NotFoundException::new);
-        currenciesMapper.updateCurrencies(currenciesDTO, currencies);
-        currenciesRepository.save(currencies);
+        CurrenciesDTO currenciesDTO = currenciesMapper.updateCurrenciesDTO(currencies, new CurrenciesDTO());
+
+        boolean isModified = false;
+
+        if (createCurrenciesRequest.getCurrencyCode() != null &&
+                !Objects.equals(currencies.getCurrencyCode(), createCurrenciesRequest.getCurrencyCode())) {
+            currenciesDTO.setCurrencyCode(createCurrenciesRequest.getCurrencyCode());
+            isModified = true;
+        }
+
+        if (createCurrenciesRequest.getCurrencyName() != null &&
+                !Objects.equals(currencies.getCurrencyName(), createCurrenciesRequest.getCurrencyName())) {
+            currenciesDTO.setCurrencyName(createCurrenciesRequest.getCurrencyName());
+            isModified = true;
+        }
+
+        if (createCurrenciesRequest.getIsActive() != null &&
+                !Objects.equals(currencies.getIsActive(), createCurrenciesRequest.getIsActive())) {
+            currenciesDTO.setIsActive(createCurrenciesRequest.getIsActive());
+            isModified = true;
+        }
+        if (isModified) {
+            currenciesMapper.updateCurrencies(currenciesDTO, currencies);
+            currenciesRepository.save(currencies);
+        }
     }
 
     @Override
@@ -85,5 +111,6 @@ public class CurrenciesServiceImpl implements CurrenciesService {
         }
         return null;
     }
+
 
 }

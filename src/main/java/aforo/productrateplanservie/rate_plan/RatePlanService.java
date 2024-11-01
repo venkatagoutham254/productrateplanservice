@@ -9,13 +9,13 @@ public interface RatePlanService {
 
     RatePlanDTO get(Long ratePlanId);
 
-    Long create(RatePlanDTO ratePlanDTO);
+    Long create(Long productId, CreateRatePlanRequest createRatePlanRequest);
 
-    void update(Long ratePlanId, RatePlanDTO ratePlanDTO);
+    void update(Long ratePlanId, CreateRatePlanRequest createRatePlanRequest);
 
     void delete(Long ratePlanId);
 
-    ReferencedWarning getReferencedWarning(Long ratePlanId);
+//    ReferencedWarning getReferencedWarning(Long ratePlanId);
 
     Page<RatePlanDTO> getRatePlansByProductId(Long productId, String filter, Pageable pageable);
 

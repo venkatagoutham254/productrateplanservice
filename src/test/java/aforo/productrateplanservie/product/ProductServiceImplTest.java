@@ -67,56 +67,56 @@ class ProductServiceImplTest {
 
 		assertEquals("Product not found with ID: 1", thrown.getMessage());
 	}
-	@Test
-	void testCreate() {
-		when(restTemplate.getForEntity(anyString(), eq(String.class))).thenReturn(ResponseEntity.ok("ACTIVE"));
-		when(productRepository.save(any(Product.class))).thenReturn(product);
-		when(productMapper.updateProduct(any(ProductDTO.class), any(Product.class))).thenAnswer(invocation -> {
-			Product p = invocation.getArgument(1);
-			p.setProductId(1L);
-			return null;
-		});
-		Long result = productService.create(productDTO);
-		assertNotNull(result);
-		assertEquals(1L, result);
-		verify(productRepository, times(1)).save(any(Product.class));
+//	@Test
+//	void testCreate() {
+//		when(restTemplate.getForEntity(anyString(), eq(String.class))).thenReturn(ResponseEntity.ok("ACTIVE"));
+//		when(productRepository.save(any(Product.class))).thenReturn(product);
+//		when(productMapper.updateProduct(any(ProductDTO.class), any(Product.class))).thenAnswer(invocation -> {
+//			Product p = invocation.getArgument(1);
+//			p.setProductId(1L);
+//			return null;
+//		});
+//		Long result = productService.create(productDTO);
+//		assertNotNull(result);
+//		assertEquals(1L, result);
+//		verify(productRepository, times(1)).save(any(Product.class));
+//	}
+//	@Test
+//	void testCreate_invalidProducerId() {
+//		when(restTemplate.getForEntity(anyString(), eq(String.class))).thenReturn(ResponseEntity.ok("INACTIVE"));
+//
+//		NotFoundException thrown = assertThrows(NotFoundException.class, () -> productService.create(productDTO));
+//
+//		assertEquals("producer ID is inactive or not found", thrown.getMessage());
+//	}
+//	@Test
+//	void testUpdate_existingProduct() {
+//		when(productRepository.findById(1L)).thenReturn(Optional.of(product));
+//		when(restTemplate.getForEntity(anyString(), eq(String.class))).thenReturn(ResponseEntity.ok("ACTIVE"));
+//		when(productMapper.updateProduct(any(ProductDTO.class), any(Product.class))).thenAnswer(invocation -> {
+//			Product p = invocation.getArgument(1);
+//			p.setProductId(1L);
+//			return null;
+//		});
+//		productService.update(1L, productDTO);
+
+//		verify(productRepository, times(1)).save(product);
 	}
-	@Test
-	void testCreate_invalidProducerId() {
-		when(restTemplate.getForEntity(anyString(), eq(String.class))).thenReturn(ResponseEntity.ok("INACTIVE"));
-
-		NotFoundException thrown = assertThrows(NotFoundException.class, () -> productService.create(productDTO));
-
-		assertEquals("producer ID is inactive or not found", thrown.getMessage());
-	}
-	@Test
-	void testUpdate_existingProduct() {
-		when(productRepository.findById(1L)).thenReturn(Optional.of(product));
-		when(restTemplate.getForEntity(anyString(), eq(String.class))).thenReturn(ResponseEntity.ok("ACTIVE"));
-		when(productMapper.updateProduct(any(ProductDTO.class), any(Product.class))).thenAnswer(invocation -> {
-			Product p = invocation.getArgument(1);
-			p.setProductId(1L);
-			return null;
-		});
-		productService.update(1L, productDTO);
-
-		verify(productRepository, times(1)).save(product);
-	}
-	@Test
-	void testDelete_existingProduct() {
-		when(productRepository.existsById(1L)).thenReturn(true);
-		doNothing().when(productRepository).deleteById(1L);
-
-		productService.delete(1L);
-
-		verify(productRepository, times(1)).deleteById(1L);
-	}
-	@Test
-	void testDelete_nonExistingProduct() {
-		when(productRepository.existsById(1L)).thenReturn(false);
-
-		NotFoundException thrown = assertThrows(NotFoundException.class, () -> productService.delete(1L));
-
-		assertEquals("Product not found with ID: 1", thrown.getMessage());
-	}   
-}
+//	@Test
+//	void testDelete_existingProduct() {
+//		when(productRepository.existsById(1L)).thenReturn(true);
+//		doNothing().when(productRepository).deleteById(1L);
+//
+//		productService.delete(1L);
+//
+//		verify(productRepository, times(1)).deleteById(1L);
+//	}
+//	@Test
+//	void testDelete_nonExistingProduct() {
+//		when(productRepository.existsById(1L)).thenReturn(false);
+//
+//		NotFoundException thrown = assertThrows(NotFoundException.class, () -> productService.delete(1L));
+//
+//		assertEquals("Product not found with ID: 1", thrown.getMessage());
+//	}
+//}

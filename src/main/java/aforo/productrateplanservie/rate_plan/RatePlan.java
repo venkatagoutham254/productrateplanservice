@@ -14,13 +14,14 @@ import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.Set;
 
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-@Getter
-@Setter
+@Data
+
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 public class RatePlan {
@@ -35,7 +36,7 @@ public class RatePlan {
 
     @Column(name = "\"description\"", columnDefinition = "longtext")
     private String description;
-    
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private RatePlanType ratePlanType;
@@ -45,7 +46,7 @@ public class RatePlan {
 
     @Column(nullable = false)
     private LocalDate endDate;
-    
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Status status;
@@ -84,75 +85,4 @@ public class RatePlan {
 
     // Getters and Setters
 
-    public Long getRatePlanId() {
-        return ratePlanId;
-    }
-
-    public void setRatePlanId(Long ratePlanId) {
-        this.ratePlanId = ratePlanId;
-    }
-
-    public String getRatePlanName() {
-        return ratePlanName;
-    }
-
-    public void setRatePlanName(String ratePlanName) {
-        this.ratePlanName = ratePlanName;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public RatePlanType getRatePlanType() {
-        return ratePlanType;
-    }
-
-    public void setRatePlanType(RatePlanType ratePlanType) {
-        this.ratePlanType = ratePlanType;
-    }
-
-    public LocalDate getStartDate() {
-        return startDate;
-    }
-
-    public void setStartDate(LocalDate startDate) {
-        this.startDate = startDate;
-    }
-
-    public LocalDate getEndDate() {
-        return endDate;
-    }
-
-    public void setEndDate(LocalDate endDate) {
-        this.endDate = endDate;
-    }
-
-    public Status getStatus() {
-        return status;
-    }
-
-    public void setStatus(Status status) {
-        this.status = status;
-    }
-
-    public Product getProduct() {
-        return product;
-    }
-
-    public void setProduct(Product product) {
-        this.product = product;
-    }
-
-    public Currencies getCurrency() {
-        return currency;
-    }
-
-    public void setCurrency(Currencies currency) {
-        this.currency = currency;
-    }
 }

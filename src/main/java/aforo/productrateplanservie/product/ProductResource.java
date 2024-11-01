@@ -1,9 +1,11 @@
 package aforo.productrateplanservie.product;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,7 +29,9 @@ import org.springframework.web.bind.annotation.RestController;
 import aforo.productrateplanservie.model.SimpleValue;
 import aforo.productrateplanservie.util.ReferencedException;
 import aforo.productrateplanservie.util.ReferencedWarning;
+
 @RestController
+@Tag(name = "products", description = "Operations related to products")
 @RequestMapping(value = "/api/products", produces = MediaType.APPLICATION_JSON_VALUE)
 public class ProductResource {
 	private final ProductService productService;
@@ -63,7 +67,8 @@ public class ProductResource {
 							schema = @Schema(implementation = String.class)
 							)
 			}
-			)
+	)
+
 	@GetMapping
 	public ResponseEntity<PagedModel<EntityModel<ProductDTO>>> getAllProducts(
 			@RequestParam(name = "filter", required = false) final String filter,
@@ -86,19 +91,20 @@ public class ProductResource {
 		final ProductDTO productDTO = productService.get(productId);
 		return ResponseEntity.ok(productAssembler.toModel(productDTO));
 	}
+
 	@PostMapping
 	@ApiResponse(responseCode = "201")
 	public ResponseEntity<EntityModel<SimpleValue<Long>>> createProduct(
-			@RequestBody @Valid final ProductDTO productDTO) {
-		final Long createdProductId = productService.create(productDTO);
+			@RequestBody @Valid final CreateProductRequest createProductRequest) {
+		final Long createdProductId = productService.create(createProductRequest);
 		return new ResponseEntity<>(productAssembler.toSimpleModel(createdProductId), HttpStatus.CREATED);
 	}
 
 	@PutMapping("/{productId}")
 	public ResponseEntity<EntityModel<SimpleValue<Long>>> updateProduct(
 			@PathVariable(name = "productId") final Long productId,
-			@RequestBody @Valid final ProductDTO productDTO) {
-		productService.update(productId, productDTO);
+			@RequestBody @Valid final CreateProductRequest createProductRequest) {
+		productService.update(productId, createProductRequest);
 		return ResponseEntity.ok(productAssembler.toSimpleModel(productId));
 	}
 	@DeleteMapping("/{productId}")

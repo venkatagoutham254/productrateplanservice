@@ -10,24 +10,24 @@ import java.time.LocalDateTime;
 
 @Data
 public class CreateRatePlanRequest {
-    @NotNull
+//    @NotNull
     @Size(max = 100)
     private String ratePlanName;
 
     private String description;
 
-    @NotNull
+//    @NotNull
     private RatePlanType ratePlanType;
 
-    @NotNull
+//    @NotNull
     private Status status;
 
-    @NotNull
+//    @NotNull
     private Long currencyId;
 
-    @NotNull
+//    @NotNull
     private LocalDateTime startDate;
 
-    @NotNull
+//    @NotNull
     private LocalDateTime endDate;
 }

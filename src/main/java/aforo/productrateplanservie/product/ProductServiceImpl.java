@@ -10,6 +10,9 @@ import aforo.productrateplanservie.rate_plan.RatePlan;
 import aforo.productrateplanservie.rate_plan.RatePlanRepository;
 import aforo.productrateplanservie.util.NotFoundException;
 import aforo.productrateplanservie.util.ReferencedWarning;
+
+import java.util.Objects;
+
 @Service
 public class ProductServiceImpl implements ProductService {
 	private final ProductRepository productRepository;
@@ -68,7 +71,7 @@ public class ProductServiceImpl implements ProductService {
 				.orElseThrow(() -> new NotFoundException("Product not found with ID: " + productId));
 	}
 	@Override
-	public Long create(final ProductDTO productDTO) {
+	public Long create(final CreateProductRequest createProductRequest) {
 		Long producerId = fetchProducerIdFromMicroservice();
 		Long organizationId = fetchOrganizationIdFromMicroservice();
 		Long divisionId = fetchDivisionIdFromMicroservice();
@@ -76,9 +79,12 @@ public class ProductServiceImpl implements ProductService {
 		validateId(organizationId, "organization");
 		validateId(divisionId, "division");
 		final Product product = new Product();
+		ProductDTO productDTO = productMapper.createProductRequestToProductDTO(createProductRequest);
 		productMapper.updateProduct(productDTO, product);
+
 		return productRepository.save(product).getProductId();
 	}
+
 	private void validateId(Long id, String entityType) {
 		if (id == null) {
 			throw new IllegalArgumentException(entityType + " ID cannot be null");
@@ -90,17 +96,59 @@ public class ProductServiceImpl implements ProductService {
 		}
 	}
 	@Override
-	public void update(final Long productId, final ProductDTO productDTO) {
-		Long producerId = fetchProducerIdFromMicroservice();
-		Long organizationId = fetchOrganizationIdFromMicroservice();
-		Long divisionId = fetchDivisionIdFromMicroservice();
-		validateId(producerId, "producer");
-		validateId(organizationId, "organization");
-		validateId(divisionId, "division");
+	public void update(final Long productId, final CreateProductRequest createProductRequest) {
+//		Long producerId = fetchProducerIdFromMicroservice();
+//		Long organizationId = fetchOrganizationIdFromMicroservice();
+//		Long divisionId = fetchDivisionIdFromMicroservice();
+//		validateId(producerId, "producer");
+//		validateId(organizationId, "organization");
+//		validateId(divisionId, "division");
 		final Product product = productRepository.findById(productId)
 				.orElseThrow(() -> new NotFoundException("Product not found with ID: " + productId));
-		productMapper.updateProduct(productDTO, product);
-		productRepository.save(product);
+		ProductDTO productDTO = productMapper.updateProductDTO(product, new ProductDTO());
+
+		boolean isModified = false;
+
+		if (createProductRequest.getProductName() != null &&
+				!Objects.equals(product.getProductName(), createProductRequest.getProductName())) {
+			productDTO.setProductName(createProductRequest.getProductName());
+			isModified = true;
+		}
+
+		if (createProductRequest.getProductDescription() != null &&
+		 !Objects.equals(product.getProductDescription(), createProductRequest.getProductDescription())) {
+			productDTO.setProductDescription(createProductRequest.getProductDescription());
+			isModified = true;
+		}
+
+		if (createProductRequest.getStatus() != null &&
+				!Objects.equals(product.getStatus(), createProductRequest.getStatus())) {
+			productDTO.setStatus(createProductRequest.getStatus());
+			isModified = true;
+		}
+
+		if (createProductRequest.getProducerId() != null &&
+				!Objects.equals(product.getProducerId(), createProductRequest.getProducerId())) {
+			productDTO.setProducerId(createProductRequest.getProducerId());
+			isModified = true;
+		}
+
+		if (createProductRequest.getOrganizationId() != null &&
+				!Objects.equals(product.getOrganizationId(), createProductRequest.getOrganizationId())) {
+			productDTO.setOrganizationId(createProductRequest.getOrganizationId());
+			isModified = true;
+		}
+
+		if (createProductRequest.getDivisionId() != null &&
+				!Objects.equals(product.getDivisionId(), createProductRequest.getDivisionId())) {
+			productDTO.setDivisionId(createProductRequest.getDivisionId());
+			isModified = true;
+		}
+
+		if (isModified) {
+			productMapper.updateProduct(productDTO, product);
+			productRepository.save(product);
+		}
 	}
 	/**
 	 * This method is a placeholder for fetching the Producer ID.

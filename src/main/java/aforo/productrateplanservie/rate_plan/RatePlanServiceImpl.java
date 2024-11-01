@@ -1,5 +1,6 @@
 package aforo.productrateplanservie.rate_plan;
 
+import aforo.productrateplanservie.currencies.Currencies;
 import aforo.productrateplanservie.currencies.CurrenciesRepository;
 import aforo.productrateplanservie.product.ProductRepository;
 import aforo.productrateplanservie.rate_plan_flat_rate.RatePlanFlatRate;
@@ -19,6 +20,8 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Objects;
 
 @Service
 public class RatePlanServiceImpl implements RatePlanService {
@@ -102,19 +105,59 @@ public class RatePlanServiceImpl implements RatePlanService {
 	}
 
 	@Override
-	public Long create(final RatePlanDTO ratePlanDTO) {
+	public Long create(Long productId, final CreateRatePlanRequest createRatePlanRequest) {
 		// invoke prodId and validate for ACTIVE status
 		final RatePlan ratePlan = new RatePlan();
+		RatePlanDTO ratePlanDTO = ratePlanMapper.createRatePlanRequestToRatePlanDTO(createRatePlanRequest);
+		ratePlanDTO.setProductId(productId);
+
 		ratePlanMapper.updateRatePlan(ratePlanDTO, ratePlan, productRepository, currenciesRepository);
 		return (Long) ratePlanRepository.save(ratePlan).getRatePlanId();
 	}
 
 	@Override
-	public void update(final Long ratePlanId, final RatePlanDTO ratePlanDTO) {
+	public void update(final Long ratePlanId, final CreateRatePlanRequest createRatePlanRequest) {
 		// invoke prodId and validate for ACTIVE status
 		final RatePlan ratePlan = ratePlanRepository.findById(ratePlanId).orElseThrow(NotFoundException::new);
-		ratePlanMapper.updateRatePlan(ratePlanDTO, ratePlan, productRepository, currenciesRepository);
-		ratePlanRepository.save(ratePlan);
+
+		RatePlanDTO ratePlanDTO = ratePlanMapper.updateRatePlanDTO(ratePlan, new RatePlanDTO());
+		boolean isModified = false;
+
+		// Check and update each field if it has changed
+		if (!Objects.equals(ratePlan.getRatePlanName(), createRatePlanRequest.getRatePlanName())) {
+			ratePlanDTO.setRatePlanName(createRatePlanRequest.getRatePlanName());
+			isModified = true;
+		}
+
+		if (createRatePlanRequest.getDescription() != null &&
+				!Objects.equals(ratePlan.getDescription(), createRatePlanRequest.getDescription())) {
+			ratePlanDTO.setDescription(createRatePlanRequest.getDescription());
+			isModified = true;
+		}
+
+		if (createRatePlanRequest.getRatePlanType() != null &&
+				!Objects.equals(ratePlan.getRatePlanType(), createRatePlanRequest.getRatePlanType())) {
+			ratePlanDTO.setRatePlanType(createRatePlanRequest.getRatePlanType());
+			isModified = true;
+		}
+
+		if (createRatePlanRequest.getStatus() != null &&
+				!Objects.equals(ratePlan.getStatus(), createRatePlanRequest.getStatus())) {
+			ratePlanDTO.setStatus(createRatePlanRequest.getStatus());
+			isModified = true;
+		}
+		Currencies currencies = ratePlan.getCurrency();
+		if (createRatePlanRequest.getCurrencyId() != null &&
+				!Objects.equals(currencies.getCurrencyId(), createRatePlanRequest.getCurrencyId())) {
+			ratePlanDTO.setCurrencyId(currencies.getCurrencyId());
+			isModified = true;
+		}
+
+		// Only save the RatePlan if any fields were modified
+		if (isModified) {
+			ratePlanMapper.updateRatePlan(ratePlanDTO, ratePlan, productRepository, currenciesRepository);
+			ratePlanRepository.save(ratePlan);
+		}
 	}
 
 	@Override
@@ -129,45 +172,46 @@ public class RatePlanServiceImpl implements RatePlanService {
 		ratePlanRepository.deleteById(ratePlanId);
 	}
 
-	@Override
-	public ReferencedWarning getReferencedWarning(final Long ratePlanId) {
-		final ReferencedWarning referencedWarning = new ReferencedWarning();
-		final RatePlan ratePlan = ratePlanRepository.findById(ratePlanId).orElseThrow(NotFoundException::new);
-		final RatePlanUsageBased ratePlanRatePlanUsageBased = ratePlanUsageBasedRepository
-				.findFirstByRatePlan(ratePlan);
-		if (ratePlanRatePlanUsageBased != null) {
-			referencedWarning.setKey("ratePlan.ratePlanUsageBased.ratePlan.referenced");
-			referencedWarning.addParam(ratePlanRatePlanUsageBased.getRatePlanUsageRateId());
-			return referencedWarning;
-		}
-		final RatePlanTieredRate ratePlanRatePlanTieredRate = ratePlanTieredRateRepository
-				.findFirstByRatePlan(ratePlan);
-		if (ratePlanRatePlanTieredRate != null) {
-			referencedWarning.setKey("ratePlan.ratePlanTieredRate.ratePlan.referenced");
-			referencedWarning.addParam(ratePlanRatePlanTieredRate.getRatePlanTieredRateId());
-			return referencedWarning;
-		}
-		final RatePlanFlatRate ratePlanRatePlanFlatRate = ratePlanFlatRateRepository.findFirstByRatePlan(ratePlan);
-		if (ratePlanRatePlanFlatRate != null) {
-			referencedWarning.setKey("ratePlan.ratePlanFlatRate.ratePlan.referenced");
-			referencedWarning.addParam(ratePlanRatePlanFlatRate.getRatePlanFlatRateId());
-			return referencedWarning;
-		}
-		final RatePlanSubscriptionRate ratePlanRatePlanSubscriptionRate = ratePlanSubscriptionRateRepository
-				.findFirstByRatePlan(ratePlan);
-		if (ratePlanRatePlanSubscriptionRate != null) {
-			referencedWarning.setKey("ratePlan.ratePlanSubscriptionRate.ratePlan.referenced");
-			referencedWarning.addParam(ratePlanRatePlanSubscriptionRate.getRatePlanSubscriptionRateId());
-			return referencedWarning;
-		}
-		final RatePlanFreemiumRate ratePlanRatePlanFreemiumRate = ratePlanFreemiumRateRepository
-				.findFirstByRatePlan(ratePlan);
-		if (ratePlanRatePlanFreemiumRate != null) {
-			referencedWarning.setKey("ratePlan.ratePlanFreemiumRate.ratePlan.referenced");
-			referencedWarning.addParam(ratePlanRatePlanFreemiumRate.getRatePlanFreemiumRateId());
-			return referencedWarning;
-		}
-		return null;
-	}
+//	@Override
+//	public ReferencedWarning getReferencedWarning(final Long ratePlanId) {
+//		final ReferencedWarning referencedWarning = new ReferencedWarning();
+//		final RatePlan ratePlan = ratePlanRepository.findById(ratePlanId).orElseThrow(NotFoundException::new);
+//		final RatePlanUsageBased ratePlanRatePlanUsageBased = ratePlanUsageBasedRepository
+//				.findFirstByRatePlan(ratePlan);
+//		if (ratePlanRatePlanUsageBased != null) {
+//			referencedWarning.setKey("ratePlan.ratePlanUsageBased.ratePlan.referenced");
+//			referencedWarning.addParam(ratePlanRatePlanUsageBased.getRatePlanUsageRateId());
+//			return referencedWarning;
+//		}
+//		final RatePlanTieredRate ratePlanRatePlanTieredRate = ratePlanTieredRateRepository
+//				.findFirstByRatePlan(ratePlan);
+//		if (ratePlanRatePlanTieredRate != null) {
+//			referencedWarning.setKey("ratePlan.ratePlanTieredRate.ratePlan.referenced");
+//			referencedWarning.addParam(ratePlanRatePlanTieredRate.getRatePlanTieredRateId());
+//			return referencedWarning;
+//		}
+//		final RatePlanFlatRate ratePlanRatePlanFlatRate = ratePlanFlatRateRepository.findFirstByRatePlan(ratePlan);
+//		if (ratePlanRatePlanFlatRate != null) {
+//			referencedWarning.setKey("ratePlan.ratePlanFlatRate.ratePlan.referenced");
+//			referencedWarning.addParam(ratePlanRatePlanFlatRate.getRatePlanFlatRateId());
+//			return referencedWarning;
+//		}
+//		final RatePlanSubscriptionRate ratePlanRatePlanSubscriptionRate = ratePlanSubscriptionRateRepository
+//				.findFirstByRatePlan(ratePlan);
+//		if (ratePlanRatePlanSubscriptionRate != null) {
+//			referencedWarning.setKey("ratePlan.ratePlanSubscriptionRate.ratePlan.referenced");
+//			referencedWarning.addParam(ratePlanRatePlanSubscriptionRate.getRatePlanSubscriptionRateId());
+//			return referencedWarning;
+//		}
+//		final RatePlanFreemiumRate ratePlanRatePlanFreemiumRate = ratePlanFreemiumRateRepository
+//				.findFirstByRatePlan(ratePlan);
+//		if (ratePlanRatePlanFreemiumRate != null) {
+//			referencedWarning.setKey("ratePlan.ratePlanFreemiumRate.ratePlan.referenced");
+//			referencedWarning.addParam(ratePlanRatePlanFreemiumRate.getRatePlanFreemiumRateId());
+//			return referencedWarning;
+//		}
+//		return null;
+//	}
+
 
 }
