@@ -1,7 +1,6 @@
 package aforo.productrateplanservie.product;
-import aforo.productrateplanservie.model.SimpleValue;
-import aforo.productrateplanservie.util.ReferencedException;
-import aforo.productrateplanservie.util.ReferencedWarning;
+import aforo.productrateplanservie.exception.ReferencedException;
+import aforo.productrateplanservie.exception.ReferencedWarning;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;

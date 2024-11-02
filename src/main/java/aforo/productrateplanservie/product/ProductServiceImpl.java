@@ -8,8 +8,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import aforo.productrateplanservie.rate_plan.RatePlan;
 import aforo.productrateplanservie.rate_plan.RatePlanRepository;
-import aforo.productrateplanservie.util.NotFoundException;
-import aforo.productrateplanservie.util.ReferencedWarning;
+import aforo.productrateplanservie.exception.NotFoundException;
+import aforo.productrateplanservie.exception.ReferencedWarning;
 
 import java.util.Objects;
 

@@ -1,8 +1,6 @@
 package aforo.productrateplanservie.rate_plan_freemium_rate;
 
 import aforo.productrateplanservie.model.SimpleValue;
-import aforo.productrateplanservie.util.ReferencedException;
-import aforo.productrateplanservie.util.ReferencedWarning;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;

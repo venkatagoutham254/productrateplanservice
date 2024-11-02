@@ -1,4 +1,4 @@
-package aforo.productrateplanservie.util;
+package aforo.productrateplanservie.exception;
 import lombok.Getter;
 import lombok.Setter;
 

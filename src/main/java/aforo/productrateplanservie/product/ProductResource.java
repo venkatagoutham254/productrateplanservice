@@ -27,8 +27,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import aforo.productrateplanservie.model.SimpleValue;
-import aforo.productrateplanservie.util.ReferencedException;
-import aforo.productrateplanservie.util.ReferencedWarning;
+import aforo.productrateplanservie.exception.ReferencedException;
+import aforo.productrateplanservie.exception.ReferencedWarning;
 
 @RestController
 @Tag(name = "products", description = "Operations related to products")

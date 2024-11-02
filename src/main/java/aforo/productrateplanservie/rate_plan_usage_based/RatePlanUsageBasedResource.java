@@ -1,9 +1,6 @@
 package aforo.productrateplanservie.rate_plan_usage_based;
 
 import aforo.productrateplanservie.model.SimpleValue;
-import aforo.productrateplanservie.rate_plan_tiered_rate.RatePlanTieredRateDTO;
-import aforo.productrateplanservie.util.ReferencedException;
-import aforo.productrateplanservie.util.ReferencedWarning;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;

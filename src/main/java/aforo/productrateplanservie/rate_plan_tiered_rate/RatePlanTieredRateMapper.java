@@ -4,7 +4,7 @@ import aforo.productrateplanservie.rate_plan.RatePlan;
 import aforo.productrateplanservie.rate_plan.RatePlanRepository;
 import aforo.productrateplanservie.rate_plan_tiered_rate_details.RatePlanTieredRateDetails;
 import aforo.productrateplanservie.rate_plan_tiered_rate_details.RatePlanTieredRateDetailsDTO;
-import aforo.productrateplanservie.util.NotFoundException;
+import aforo.productrateplanservie.exception.NotFoundException;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Context;
 import org.mapstruct.Mapper;

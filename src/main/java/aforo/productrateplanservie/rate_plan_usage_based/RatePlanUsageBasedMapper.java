@@ -4,7 +4,7 @@ import aforo.productrateplanservie.rate_plan.RatePlan;
 import aforo.productrateplanservie.rate_plan.RatePlanRepository;
 import aforo.productrateplanservie.rate_plan_usage_based_rates.RatePlanUsageBasedRates;
 import aforo.productrateplanservie.rate_plan_usage_based_rates.RatePlanUsageBasedRatesDTO;
-import aforo.productrateplanservie.util.NotFoundException;
+import aforo.productrateplanservie.exception.NotFoundException;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Context;
 import org.mapstruct.Mapper;
@@ -12,7 +12,6 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.ReportingPolicy;
 
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Mapper(

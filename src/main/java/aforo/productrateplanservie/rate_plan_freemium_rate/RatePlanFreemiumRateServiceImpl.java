@@ -5,8 +5,7 @@ import aforo.productrateplanservie.rate_plan.RatePlanRepository;
 import aforo.productrateplanservie.rate_plan_freemium_rate_details.RatePlanFreemiumRateDetails;
 import aforo.productrateplanservie.rate_plan_freemium_rate_details.RatePlanFreemiumRateDetailsDTO;
 import aforo.productrateplanservie.rate_plan_freemium_rate_details.RatePlanFreemiumRateDetailsRepository;
-import aforo.productrateplanservie.util.NotFoundException;
-import aforo.productrateplanservie.util.ReferencedWarning;
+import aforo.productrateplanservie.exception.NotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -14,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Set;
-import java.util.stream.Collectors;
 
 
 @Service

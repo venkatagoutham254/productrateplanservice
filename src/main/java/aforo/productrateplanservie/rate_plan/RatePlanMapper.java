@@ -4,7 +4,7 @@ import aforo.productrateplanservie.currencies.Currencies;
 import aforo.productrateplanservie.currencies.CurrenciesRepository;
 import aforo.productrateplanservie.product.Product;
 import aforo.productrateplanservie.product.ProductRepository;
-import aforo.productrateplanservie.util.NotFoundException;
+import aforo.productrateplanservie.exception.NotFoundException;
 import org.mapstruct.*;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING, unmappedTargetPolicy = ReportingPolicy.IGNORE)

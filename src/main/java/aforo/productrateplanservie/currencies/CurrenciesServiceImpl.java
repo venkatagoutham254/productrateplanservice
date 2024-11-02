@@ -2,8 +2,8 @@ package aforo.productrateplanservie.currencies;
 
 import aforo.productrateplanservie.rate_plan.RatePlan;
 import aforo.productrateplanservie.rate_plan.RatePlanRepository;
-import aforo.productrateplanservie.util.NotFoundException;
-import aforo.productrateplanservie.util.ReferencedWarning;
+import aforo.productrateplanservie.exception.NotFoundException;
+import aforo.productrateplanservie.exception.ReferencedWarning;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;

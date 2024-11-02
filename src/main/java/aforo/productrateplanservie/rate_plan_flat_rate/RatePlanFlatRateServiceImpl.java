@@ -5,15 +5,13 @@ import aforo.productrateplanservie.rate_plan.RatePlanRepository;
 import aforo.productrateplanservie.rate_plan_flat_rate_details.RatePlanFlatRateDetails;
 import aforo.productrateplanservie.rate_plan_flat_rate_details.RatePlanFlatRateDetailsDTO;
 import aforo.productrateplanservie.rate_plan_flat_rate_details.RatePlanFlatRateDetailsRepository;
-import aforo.productrateplanservie.util.NotFoundException;
-import aforo.productrateplanservie.util.ReferencedWarning;
+import aforo.productrateplanservie.exception.NotFoundException;
+import aforo.productrateplanservie.exception.ReferencedWarning;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 public class RatePlanFlatRateServiceImpl implements RatePlanFlatRateService {

@@ -2,20 +2,15 @@ package aforo.productrateplanservie.rate_plan_subscription_rate;
 
 import aforo.productrateplanservie.rate_plan.RatePlan;
 import aforo.productrateplanservie.rate_plan.RatePlanRepository;
-import aforo.productrateplanservie.rate_plan_flat_rate.RatePlanFlatRate;
 import aforo.productrateplanservie.rate_plan_subscription_rate_details.RatePlanSubscriptionRateDetails;
 import aforo.productrateplanservie.rate_plan_subscription_rate_details.RatePlanSubscriptionRateDetailsDTO;
 import aforo.productrateplanservie.rate_plan_subscription_rate_details.RatePlanSubscriptionRateDetailsRepository;
-import aforo.productrateplanservie.util.NotFoundException;
-import aforo.productrateplanservie.util.ReferencedWarning;
+import aforo.productrateplanservie.exception.NotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Set;
-import java.util.stream.Collectors;
 
 
 @Service

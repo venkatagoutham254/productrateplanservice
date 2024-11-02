@@ -1,6 +1,5 @@
 package aforo.productrateplanservie.rate_plan;
 
-import aforo.productrateplanservie.util.ReferencedWarning;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

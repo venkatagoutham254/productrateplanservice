@@ -1,6 +1,6 @@
 package aforo.productrateplanservie.currencies;
 
-import aforo.productrateplanservie.util.ReferencedWarning;
+import aforo.productrateplanservie.exception.ReferencedWarning;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

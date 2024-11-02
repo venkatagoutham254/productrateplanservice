@@ -12,10 +12,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 import aforo.productrateplanservie.rate_plan.RatePlanRepository;
-import aforo.productrateplanservie.util.NotFoundException;
+import aforo.productrateplanservie.exception.NotFoundException;
 class ProductServiceImplTest {
 	@Mock
 	private ProductRepository productRepository;
