@@ -3,8 +3,10 @@ package aforo.productrateplanservie.product;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
@@ -31,12 +33,13 @@ import aforo.productrateplanservie.exception.ReferencedException;
 import aforo.productrateplanservie.exception.ReferencedWarning;
 
 @RestController
-@Tag(name = "products", description = "Operations related to products")
-@RequestMapping(value = "/api/products", produces = MediaType.APPLICATION_JSON_VALUE)
+@Tag(name = "Products", description = "Operations related to Products")
+@RequestMapping(value = "/v1/api/products", produces = MediaType.APPLICATION_JSON_VALUE)
 public class ProductResource {
 	private final ProductService productService;
 	private final ProductAssembler productAssembler;
 	private final PagedResourcesAssembler<ProductDTO> pagedResourcesAssembler;
+
 	public ProductResource(final ProductService productService,
 			final ProductAssembler productAssembler,
 			final PagedResourcesAssembler<ProductDTO> pagedResourcesAssembler) {
@@ -85,6 +88,11 @@ public class ProductResource {
 
 		return ResponseEntity.ok(pagedModel);
 	}
+
+	@Operation(summary = "Get Product by ID",
+			description = "Returns a Product based on the provided ID")
+	@ApiResponse(responseCode = "200",
+			description = "Successfully retrieved the Product")
 	@GetMapping("/{productId}")
 	public ResponseEntity<EntityModel<ProductDTO>> getProduct(
 			@PathVariable(name = "productId") final Long productId) {
@@ -92,14 +100,56 @@ public class ProductResource {
 		return ResponseEntity.ok(productAssembler.toModel(productDTO));
 	}
 
+	@Operation(
+			summary = "Create new Product",
+			description = "Creates a new Product with the provided information"
+	)
+	@ApiResponses(value = {
+			@ApiResponse(
+					responseCode = "201",
+					description = "Product created successfully",
+					content = @Content(
+							mediaType = MediaType.APPLICATION_JSON_VALUE,
+							schema = @Schema(implementation = ApiResponse.class)
+					)
+			),
+			@ApiResponse(
+					responseCode = "400",
+					description = "Invalid input data",
+					content = @Content(
+							mediaType = MediaType.APPLICATION_JSON_VALUE,
+							schema = @Schema(implementation = ApiResponse.class)
+					)
+			)
+	})
 	@PostMapping
-	@ApiResponse(responseCode = "201")
 	public ResponseEntity<EntityModel<SimpleValue<Long>>> createProduct(
 			@RequestBody @Valid final CreateProductRequest createProductRequest) {
 		final Long createdProductId = productService.create(createProductRequest);
 		return new ResponseEntity<>(productAssembler.toSimpleModel(createdProductId), HttpStatus.CREATED);
 	}
 
+	@Operation(
+			summary = "Update existing Product",
+			description = "Updates an existing Product's information"
+	)
+	@ApiResponses(value = {
+			@ApiResponse(
+					responseCode = "200",
+					description = "Product updated successfully",
+					content = @Content(schema = @Schema(implementation = ApiResponse.class))
+			),
+			@ApiResponse(
+					responseCode = "404",
+					description = "Product not found",
+					content = @Content(schema = @Schema(implementation = ApiResponse.class))
+			),
+			@ApiResponse(
+					responseCode = "400",
+					description = "Invalid input data",
+					content = @Content(schema = @Schema(implementation = ApiResponse.class))
+			)
+	})
 	@PutMapping("/{productId}")
 	public ResponseEntity<EntityModel<SimpleValue<Long>>> updateProduct(
 			@PathVariable(name = "productId") final Long productId,
@@ -107,6 +157,23 @@ public class ProductResource {
 		productService.update(productId, createProductRequest);
 		return ResponseEntity.ok(productAssembler.toSimpleModel(productId));
 	}
+
+	@Operation(
+			summary = "Delete Product",
+			description = "Deletes an existing Product by ID"
+	)
+	@ApiResponses(value = {
+			@ApiResponse(
+					responseCode = "200",
+					description = "Product deleted successfully",
+					content = @Content(schema = @Schema(implementation = ApiResponse.class))
+			),
+			@ApiResponse(
+					responseCode = "404",
+					description = "Product not found",
+					content = @Content(schema = @Schema(implementation = ApiResponse.class))
+			)
+	})
 	@DeleteMapping("/{productId}")
 	@ApiResponse(responseCode = "204")
 	public ResponseEntity<Void> deleteProduct(

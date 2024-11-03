@@ -13,7 +13,11 @@ import io.swagger.v3.oas.models.responses.ApiResponse;
 import org.springdoc.core.customizers.OperationCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.info.License;
+import io.swagger.v3.oas.models.servers.Server;
 
+import java.util.List;
 
 @Configuration
 public class SwaggerConfig {
@@ -45,6 +49,22 @@ public class SwaggerConfig {
                             new Schema<MediaType>().$ref("ApiErrorResponse")))));
             return operation;
         };
+    }
+
+    @Bean
+    public OpenAPI openAPI() {
+        return new OpenAPI()
+                .info(new Info()
+                        .title("Your API Title")
+                        .description("Your API Description")
+                        .version("1.0")
+                        .license(new License()
+                                .name("Apache 2.0")
+                                .url("http://springdoc.org")))
+                .servers(List.of(
+                        new Server()
+                                .url("/")
+                                .description("Default Server URL")));
     }
 
 }
