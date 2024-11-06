@@ -71,7 +71,6 @@ public class ProductResource {
 							)
 			}
 	)
-
 	@GetMapping
 	public ResponseEntity<PagedModel<EntityModel<ProductDTO>>> getAllProducts(
 			@RequestParam(name = "filter", required = false) final String filter,
@@ -124,7 +123,7 @@ public class ProductResource {
 	})
 	@PostMapping
 	public ResponseEntity<EntityModel<SimpleValue<Long>>> createProduct(
-			@RequestBody @Valid final CreateProductRequest createProductRequest) {
+			@Valid @RequestBody final CreateProductRequest createProductRequest) {
 		final Long createdProductId = productService.create(createProductRequest);
 		return new ResponseEntity<>(productAssembler.toSimpleModel(createdProductId), HttpStatus.CREATED);
 	}
@@ -174,6 +173,7 @@ public class ProductResource {
 					content = @Content(schema = @Schema(implementation = ApiResponse.class))
 			)
 	})
+
 	@DeleteMapping("/{productId}")
 	@ApiResponse(responseCode = "204")
 	public ResponseEntity<Void> deleteProduct(
@@ -186,4 +186,3 @@ public class ProductResource {
 		return ResponseEntity.noContent().build();
 	}
 }
-

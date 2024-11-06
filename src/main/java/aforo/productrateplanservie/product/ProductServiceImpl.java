@@ -1,11 +1,9 @@
 package aforo.productrateplanservie.product;
+import aforo.productrateplanservie.exception.ValidationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 import aforo.productrateplanservie.rate_plan.RatePlan;
 import aforo.productrateplanservie.rate_plan.RatePlanRepository;
 import aforo.productrateplanservie.exception.NotFoundException;
@@ -18,14 +16,15 @@ public class ProductServiceImpl implements ProductService {
 	private final ProductRepository productRepository;
 	private final ProductMapper productMapper;
 	private final RatePlanRepository ratePlanRepository;
-	private final RestTemplate restTemplate;
+	private final ProducerClientServiceImpl producerClientServiceImpl;
 	public ProductServiceImpl(final ProductRepository productRepository,
-			final ProductMapper productMapper, final RatePlanRepository ratePlanRepository, final RestTemplate restTemplate) {
+                              final ProductMapper productMapper, final RatePlanRepository ratePlanRepository, ProducerClientServiceImpl producerClientServiceImpl) {
 		this.productRepository = productRepository;
 		this.productMapper = productMapper;
 		this.ratePlanRepository = ratePlanRepository;
-		this.restTemplate = restTemplate;
-	}
+        this.producerClientServiceImpl = producerClientServiceImpl;
+    }
+
 	@Override
 	public Page<ProductDTO> findAll(final String filter, final Long producerId,
 			final Long organizationId, final Long divisionId,
@@ -64,20 +63,19 @@ public class ProductServiceImpl implements ProductService {
 				pageable, page.getTotalElements()
 				);
 	}
+
 	@Override
 	public ProductDTO get(final Long productId) {
 		return productRepository.findById(productId)
 				.map(product -> productMapper.updateProductDTO(product, new ProductDTO()))
 				.orElseThrow(() -> new NotFoundException("Product not found with ID: " + productId));
 	}
+
 	@Override
 	public Long create(final CreateProductRequest createProductRequest) {
-		Long producerId = fetchProducerIdFromMicroservice();
-		Long organizationId = fetchOrganizationIdFromMicroservice();
-		Long divisionId = fetchDivisionIdFromMicroservice();
-		validateId(producerId, "producer");
-		validateId(organizationId, "organization");
-		validateId(divisionId, "division");
+		validateCreateRequest(createProductRequest);
+		validateProducerDetails(createProductRequest);
+
 		final Product product = new Product();
 		ProductDTO productDTO = productMapper.createProductRequestToProductDTO(createProductRequest);
 		productMapper.updateProduct(productDTO, product);
@@ -85,28 +83,27 @@ public class ProductServiceImpl implements ProductService {
 		return productRepository.save(product).getProductId();
 	}
 
-	private void validateId(Long id, String entityType) {
-		if (id == null) {
-			throw new IllegalArgumentException(entityType + " ID cannot be null");
+	private void validateCreateRequest(CreateProductRequest createProductRequest) {
+		if (createProductRequest.getProductName() == null) {
+			throw new ValidationException("ProducerName is required");
 		}
-		String url = String.format("http://localhost:8080/api/validate/%s/%d", entityType, id);
-		ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
-		if (response.getStatusCode() != HttpStatus.OK || response.getBody() == null || !"ACTIVE".equals(response.getBody())) {
-			throw new NotFoundException(entityType + " ID is inactive or not found");
+
+		if (createProductRequest.getProducerId() == null) {
+			throw new ValidationException("Producer ID is required");
+		}
+
+		if (createProductRequest.getOrganizationId() == null && createProductRequest.getDivisionId() == null) {
+			throw new ValidationException("Either organizationId or divisionId required");
 		}
 	}
+
 	@Override
 	public void update(final Long productId, final CreateProductRequest createProductRequest) {
-//		Long producerId = fetchProducerIdFromMicroservice();
-//		Long organizationId = fetchOrganizationIdFromMicroservice();
-//		Long divisionId = fetchDivisionIdFromMicroservice();
-//		validateId(producerId, "producer");
-//		validateId(organizationId, "organization");
-//		validateId(divisionId, "division");
+
 		final Product product = productRepository.findById(productId)
 				.orElseThrow(() -> new NotFoundException("Product not found with ID: " + productId));
+		validateProducerDetails(createProductRequest);
 		ProductDTO productDTO = productMapper.updateProductDTO(product, new ProductDTO());
-
 		boolean isModified = false;
 
 		if (createProductRequest.getProductName() != null &&
@@ -227,4 +224,19 @@ public class ProductServiceImpl implements ProductService {
 		}
 		return null;
 	}
+
+	private void validateProducerDetails(CreateProductRequest createProductRequest) {
+		if (createProductRequest.getProducerId() != null) {
+			producerClientServiceImpl.validateProducerId(createProductRequest.getProducerId());
+
+			if (createProductRequest.getOrganizationId() != null) {
+				producerClientServiceImpl.validateOrganizationId(createProductRequest.getOrganizationId());
+			}
+
+			if (createProductRequest.getDivisionId() != null) {
+				producerClientServiceImpl.validateDivisionId(createProductRequest.getDivisionId());
+			}
+		}
+	}
+
 }
