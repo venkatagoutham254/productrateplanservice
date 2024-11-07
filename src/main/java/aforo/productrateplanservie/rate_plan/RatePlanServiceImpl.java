@@ -12,16 +12,20 @@ import aforo.productrateplanservie.rate_plan_usage_based.RatePlanUsageBasedRepos
 import aforo.productrateplanservie.exception.NotFoundException;
 import aforo.productrateplanservie.validation.RatePlanValidator;
 import aforo.productrateplanservie.validation.ValidationResult;
+import aforo.productrateplanservie.rate_plan_flat_rate.RatePlanFlatRate;
+import aforo.productrateplanservie.rate_plan_freemium_rate.RatePlanFreemiumRate;
+import aforo.productrateplanservie.rate_plan_subscription_rate.RatePlanSubscriptionRate;
+import aforo.productrateplanservie.rate_plan_tiered_rate.RatePlanTieredRate;
+import aforo.productrateplanservie.rate_plan_usage_based.RatePlanUsageBased;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 public class RatePlanServiceImpl implements RatePlanService {
@@ -82,7 +86,6 @@ public class RatePlanServiceImpl implements RatePlanService {
         Page<RatePlan> page;
 
         if (filter != null && !filter.isEmpty()) {
-            // Parse filter and apply it
             Long longFilter = null;
             try {
                 longFilter = Long.parseLong(filter);
@@ -130,9 +133,6 @@ public class RatePlanServiceImpl implements RatePlanService {
     public void update(final Long ratePlanId, final CreateRatePlanRequest createRatePlanRequest) {
         final RatePlan ratePlan = ratePlanRepository.findById(ratePlanId).orElseThrow(() -> new NotFoundException("ratePlanId not found with ID: " + ratePlanId));
 
-//        if (createRatePlanRequest.getStartDate() != null || createRatePlanRequest.getEndDate()!= null) {
-//            throw new ValidationException("Can not update StartDate or EndDate: ");
-//        }
         RatePlanDTO ratePlanDTO = ratePlanMapper.updateRatePlanDTO(ratePlan, new RatePlanDTO());
         boolean isModified = false;
 
@@ -179,55 +179,19 @@ public class RatePlanServiceImpl implements RatePlanService {
     @Transactional
     public void delete(final Long ratePlanId) {
         final RatePlan ratePlan = ratePlanRepository.findById(ratePlanId).orElseThrow(() -> new NotFoundException("ratePlanId not found with ID: " + ratePlanId));
-        // List all the rate plan types for this rate plan
-        // List child entities for each rate plan type
-        // Delete child entities for each rate plan type
-        // Delete all the rate plan types for this rate plan
-
-        // Delete rate plan
         ratePlanRepository.deleteById(ratePlanId);
     }
 
-//	@Override
-//	public ReferencedWarning getReferencedWarning(final Long ratePlanId) {
-//		final ReferencedWarning referencedWarning = new ReferencedWarning();
-//		final RatePlan ratePlan = ratePlanRepository.findById(ratePlanId).orElseThrow(NotFoundException::new);
-//		final RatePlanUsageBased ratePlanRatePlanUsageBased = ratePlanUsageBasedRepository
-//				.findFirstByRatePlan(ratePlan);
-//		if (ratePlanRatePlanUsageBased != null) {
-//			referencedWarning.setKey("ratePlan.ratePlanUsageBased.ratePlan.referenced");
-//			referencedWarning.addParam(ratePlanRatePlanUsageBased.getRatePlanUsageRateId());
-//			return referencedWarning;
-//		}
-//		final RatePlanTieredRate ratePlanRatePlanTieredRate = ratePlanTieredRateRepository
-//				.findFirstByRatePlan(ratePlan);
-//		if (ratePlanRatePlanTieredRate != null) {
-//			referencedWarning.setKey("ratePlan.ratePlanTieredRate.ratePlan.referenced");
-//			referencedWarning.addParam(ratePlanRatePlanTieredRate.getRatePlanTieredRateId());
-//			return referencedWarning;
-//		}
-//		final RatePlanFlatRate ratePlanRatePlanFlatRate = ratePlanFlatRateRepository.findFirstByRatePlan(ratePlan);
-//		if (ratePlanRatePlanFlatRate != null) {
-//			referencedWarning.setKey("ratePlan.ratePlanFlatRate.ratePlan.referenced");
-//			referencedWarning.addParam(ratePlanRatePlanFlatRate.getRatePlanFlatRateId());
-//			return referencedWarning;
-//		}
-//		final RatePlanSubscriptionRate ratePlanRatePlanSubscriptionRate = ratePlanSubscriptionRateRepository
-//				.findFirstByRatePlan(ratePlan);
-//		if (ratePlanRatePlanSubscriptionRate != null) {
-//			referencedWarning.setKey("ratePlan.ratePlanSubscriptionRate.ratePlan.referenced");
-//			referencedWarning.addParam(ratePlanRatePlanSubscriptionRate.getRatePlanSubscriptionRateId());
-//			return referencedWarning;
-//		}
-//		final RatePlanFreemiumRate ratePlanRatePlanFreemiumRate = ratePlanFreemiumRateRepository
-//				.findFirstByRatePlan(ratePlan);
-//		if (ratePlanRatePlanFreemiumRate != null) {
-//			referencedWarning.setKey("ratePlan.ratePlanFreemiumRate.ratePlan.referenced");
-//			referencedWarning.addParam(ratePlanRatePlanFreemiumRate.getRatePlanFreemiumRateId());
-//			return referencedWarning;
-//		}
-//		return null;
-//	}
-
-
+    @Override
+    public Optional<Long> getSelectedRatePlanTypeId(Long ratePlanId, String ratePlanType) {
+        return ratePlanRepository.findById(ratePlanId)
+                .flatMap(ratePlan -> switch (ratePlanType) {
+                    case "FLAT_RATE" -> ratePlanFlatRateRepository.findFirstByRatePlan(ratePlan).map(RatePlanFlatRate::getRatePlanFlatRateId);
+                    case "FREEMIUM" -> ratePlanFreemiumRateRepository.findFirstByRatePlan(ratePlan).map(RatePlanFreemiumRate::getRatePlanFreemiumRateId);
+                    case "SUBSCRIPTION" -> ratePlanSubscriptionRateRepository.findFirstByRatePlan(ratePlan).map(RatePlanSubscriptionRate::getRatePlanSubscriptionRateId);
+                    case "TIERED" -> ratePlanTieredRateRepository.findFirstByRatePlan(ratePlan).map(RatePlanTieredRate::getRatePlanTieredRateId);
+                    case "USAGE_BASED" -> ratePlanUsageBasedRepository.findFirstByRatePlan(ratePlan).map(RatePlanUsageBased::getRatePlanUsageRateId);
+                    default -> Optional.empty();
+                });
+    }
 }

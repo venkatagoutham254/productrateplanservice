@@ -13,6 +13,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Service
 public class RatePlanFlatRateServiceImpl implements RatePlanFlatRateService {
 
@@ -62,26 +64,21 @@ public class RatePlanFlatRateServiceImpl implements RatePlanFlatRateService {
     @Override
     @Transactional
     public Long create(Long ratePlanId, RatePlanFlatRateDTO ratePlanFlatRateDTO) {
-        // Ensure the RatePlan exists
         RatePlan ratePlan = ratePlanRepository.findById(ratePlanId)
                 .orElseThrow(() -> new NotFoundException("RatePlan not found with id: " + ratePlanId));
 
-        // Create a new RatePlanFlatRate
         RatePlanFlatRate ratePlanFlatRate = new RatePlanFlatRate();
         ratePlanFlatRateMapper.updateRatePlanFlatRate(ratePlanFlatRateDTO, ratePlanFlatRate, ratePlanRepository);
 
-        // Set the associated RatePlan
         ratePlanFlatRate.setRatePlan(ratePlan);
 
-        // Save the RatePlanFlatRate first
         RatePlanFlatRate savedRatePlanFlatRate = ratePlanFlatRateRepository.save(ratePlanFlatRate);
 
-        // Save RatePlanFlatRateDetails if present
         if (ratePlanFlatRateDTO.getRatePlanFlatRateDetails() != null) {
             for (RatePlanFlatRateDetailsDTO detailsDTO : ratePlanFlatRateDTO.getRatePlanFlatRateDetails()) {
                 RatePlanFlatRateDetails details = ratePlanFlatRateMapper.mapToRatePlanFlatRateDetails(detailsDTO);
-                details.setRatePlanFlatRate(savedRatePlanFlatRate); // Ensure the relationship is set
-                ratePlanFlatRateDetailsRepository.save(details); // Save the details object
+                details.setRatePlanFlatRate(savedRatePlanFlatRate);
+                ratePlanFlatRateDetailsRepository.save(details);
             }
         }
 
@@ -91,26 +88,20 @@ public class RatePlanFlatRateServiceImpl implements RatePlanFlatRateService {
     @Override
     @Transactional
     public void update(Long ratePlanFlatRateId, RatePlanFlatRateDTO ratePlanFlatRateDTO) {
-        // Fetch the existing RatePlanFlatRate
         RatePlanFlatRate ratePlanFlatRate = ratePlanFlatRateRepository.findById(ratePlanFlatRateId)
                 .orElseThrow(() -> new NotFoundException("RatePlanFlatRate not found with id: " + ratePlanFlatRateId));
 
-        // Update the RatePlanFlatRate fields using the DTO
         ratePlanFlatRateMapper.updateRatePlanFlatRate(ratePlanFlatRateDTO, ratePlanFlatRate, ratePlanRepository);
 
-        // Save the updated RatePlanFlatRate
         RatePlanFlatRate updatedRatePlanFlatRate = ratePlanFlatRateRepository.save(ratePlanFlatRate);
 
-        // Remove old details and save new details if provided
         if (ratePlanFlatRateDTO.getRatePlanFlatRateDetails() != null) {
-            // Remove existing RatePlanFlatRateDetails
             ratePlanFlatRateDetailsRepository.deleteAllByRatePlanFlatRate(updatedRatePlanFlatRate);
 
-            // Add the new RatePlanFlatRateDetails
             for (RatePlanFlatRateDetailsDTO detailsDTO : ratePlanFlatRateDTO.getRatePlanFlatRateDetails()) {
                 RatePlanFlatRateDetails details = ratePlanFlatRateMapper.mapToRatePlanFlatRateDetails(detailsDTO);
-                details.setRatePlanFlatRate(updatedRatePlanFlatRate); // Ensure the relationship is set
-                ratePlanFlatRateDetailsRepository.save(details); // Save the details object
+                details.setRatePlanFlatRate(updatedRatePlanFlatRate);
+                ratePlanFlatRateDetailsRepository.save(details);
             }
         }
     }
@@ -118,14 +109,11 @@ public class RatePlanFlatRateServiceImpl implements RatePlanFlatRateService {
     @Override
     @Transactional
     public void delete(Long ratePlanFlatRateId) {
-        // Fetch the RatePlanFlatRate
         RatePlanFlatRate ratePlanFlatRate = ratePlanFlatRateRepository.findById(ratePlanFlatRateId)
                 .orElseThrow(() -> new NotFoundException("RatePlanFlatRate not found with id: " + ratePlanFlatRateId));
 
-        // Delete associated RatePlanFlatRateDetails
         ratePlanFlatRateDetailsRepository.deleteAllByRatePlanFlatRate(ratePlanFlatRate);
 
-        // Delete the RatePlanFlatRate
         ratePlanFlatRateRepository.delete(ratePlanFlatRate);
     }
 
@@ -134,8 +122,6 @@ public class RatePlanFlatRateServiceImpl implements RatePlanFlatRateService {
         final ReferencedWarning referencedWarning = new ReferencedWarning();
         final RatePlanFlatRate ratePlanFlatRate = ratePlanFlatRateRepository.findById(ratePlanFlatRateId)
                 .orElseThrow(() -> new NotFoundException("RatePlanFlatRate not found with id: " + ratePlanFlatRateId));
-        // Assume implementation for retrieving referenced warnings
-        // Example: Check if the RatePlanFlatRate is referenced elsewhere and populate referencedWarning accordingly
         return referencedWarning;
     }
 
@@ -148,4 +134,22 @@ public class RatePlanFlatRateServiceImpl implements RatePlanFlatRateService {
                 .toList(),
                 pageable, page.getTotalElements());
     }
+
+
+    public Optional<RatePlanFlatRateDTO> findFirstByRatePlanId(Long ratePlanId) {
+        Optional<RatePlan> ratePlanOpt = ratePlanRepository.findById(ratePlanId);
+        if (ratePlanOpt.isEmpty()) {
+            System.out.println("RatePlan not found with id: " + ratePlanId);
+            return Optional.empty();
+        }
+        System.out.println("RatePlan found: " + ratePlanOpt.get());
+
+        Optional<RatePlanFlatRate> ratePlanFlatRateOpt = ratePlanFlatRateRepository.findFirstByRatePlan(ratePlanOpt.get());
+        if (ratePlanFlatRateOpt.isEmpty()) {
+            System.out.println("RatePlanFlatRate not found for ratePlanId: " + ratePlanId);
+            return Optional.empty();
+        }
+        return ratePlanFlatRateOpt.map(ratePlanFlatRate -> ratePlanFlatRateMapper.updateRatePlanFlatRateDTO(ratePlanFlatRate, new RatePlanFlatRateDTO()));
+    }
+
 }

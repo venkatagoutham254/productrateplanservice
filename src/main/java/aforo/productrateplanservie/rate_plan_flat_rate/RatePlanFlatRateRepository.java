@@ -5,10 +5,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.Optional;
+
 public interface RatePlanFlatRateRepository extends JpaRepository<RatePlanFlatRate, Long> {
 
     Page<RatePlanFlatRate> findAllByRatePlanFlatRateId(Long ratePlanFlatRateId, Pageable pageable);
-    RatePlanFlatRate findFirstByRatePlan(RatePlan ratePlan);
+
+    Optional<RatePlanFlatRate> findFirstByRatePlan(RatePlan ratePlan);
 
     // New method to find all flat rates by ratePlanId
     Page<RatePlanFlatRate> findAllByRatePlan_RatePlanId(Long ratePlanId, Pageable pageable);

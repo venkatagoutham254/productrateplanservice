@@ -6,12 +6,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface RatePlanFreemiumRateRepository extends JpaRepository<RatePlanFreemiumRate, Long> {
 
-    Page<RatePlanFreemiumRate> findAllByRatePlanFreemiumRateId(Long ratePlanFreemiumRateId,
-                                                               Pageable pageable);
+    Page<RatePlanFreemiumRate> findAllByRatePlanFreemiumRateId(Long ratePlanFreemiumRateId, Pageable pageable);
 
-    RatePlanFreemiumRate findFirstByRatePlan(RatePlan ratePlan);
-
+    Optional<RatePlanFreemiumRate> findFirstByRatePlan(RatePlan ratePlan);
 }

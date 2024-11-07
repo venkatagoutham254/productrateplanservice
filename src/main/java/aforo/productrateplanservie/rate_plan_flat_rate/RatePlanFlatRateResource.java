@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @Tag(name = "RatePlanFlatRates", description = "Operations related to RatePlanFlatRates")
-@RequestMapping(value = "/v1/api/rateplans/flatrates", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/v1/api/rateplans", produces = MediaType.APPLICATION_JSON_VALUE)
 public class RatePlanFlatRateResource {
 
     private final RatePlanFlatRateService ratePlanFlatRateService;
@@ -87,7 +87,7 @@ public class RatePlanFlatRateResource {
         return ResponseEntity.ok(ratePlanFlatRateAssembler.toModel(ratePlanFlatRateDTO));
     }
 
-    @PostMapping("/{ratePlanId}")
+    @PostMapping("/{ratePlanId}/flat_rate")
     @ApiResponse(responseCode = "201")
     public ResponseEntity<EntityModel<SimpleValue<Long>>> createRatePlanFlatRate(
             @PathVariable("ratePlanId") Long ratePlanId,

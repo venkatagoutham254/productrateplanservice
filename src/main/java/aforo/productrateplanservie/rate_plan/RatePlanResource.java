@@ -28,20 +28,22 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Optional;
+
 @RestController
 @Tag(name = "RatePlans", description = "Operations related to RatePlans")
 @RequestMapping(value = "/v1/api", produces = MediaType.APPLICATION_JSON_VALUE)
 public class RatePlanResource {
-    private final RatePlanService ratePlanService;
-    private final RatePlanAssembler ratePlanAssembler;
-    private final PagedResourcesAssembler<RatePlanDTO> pagedResourcesAssembler;
+	private final RatePlanService ratePlanService;
+	private final RatePlanAssembler ratePlanAssembler;
+	private final PagedResourcesAssembler<RatePlanDTO> pagedResourcesAssembler;
 
-    public RatePlanResource(final RatePlanService ratePlanService, final RatePlanAssembler ratePlanAssembler,
-                            final PagedResourcesAssembler<RatePlanDTO> pagedResourcesAssembler) {
-        this.ratePlanService = ratePlanService;
-        this.ratePlanAssembler = ratePlanAssembler;
-        this.pagedResourcesAssembler = pagedResourcesAssembler;
-    }
+	public RatePlanResource(final RatePlanService ratePlanService, final RatePlanAssembler ratePlanAssembler,
+							final PagedResourcesAssembler<RatePlanDTO> pagedResourcesAssembler) {
+		this.ratePlanService = ratePlanService;
+		this.ratePlanAssembler = ratePlanAssembler;
+		this.pagedResourcesAssembler = pagedResourcesAssembler;
+	}
 
 	@Operation(parameters = {
 			@Parameter(name = "page", in = ParameterIn.QUERY, schema = @Schema(implementation = Integer.class)),
@@ -52,7 +54,6 @@ public class RatePlanResource {
 			@RequestParam(name = "filter", required = false) final String filter,
 			@Parameter(hidden = true) @SortDefault(sort = "ratePlanId") @PageableDefault(size = 20) final Pageable pageable) {
 		final Page<RatePlanDTO> ratePlanDTOs = ratePlanService.findAll(filter, pageable);
-
 		return ResponseEntity.ok(pagedResourcesAssembler.toModel(ratePlanDTOs, ratePlanAssembler));
 	}
 
@@ -66,15 +67,13 @@ public class RatePlanResource {
 			@PathVariable("productId") Long productId,
 			@Parameter(hidden = true) @SortDefault(sort = "ratePlanId") @PageableDefault(size = 20) final Pageable pageable) {
 		Page<RatePlanDTO> ratePlanDTOs = ratePlanService.getRatePlansByProductId(productId, filter, pageable);
-
 		return ResponseEntity.ok(pagedResourcesAssembler.toModel(ratePlanDTOs, ratePlanAssembler));
 	}
 
-	@GetMapping("ratePlans/{ratePlanId}")
+	@GetMapping("/ratePlans/{ratePlanId}")
 	public ResponseEntity<EntityModel<RatePlanDTO>> getRatePlan(
 			@PathVariable(name = "ratePlanId") final Long ratePlanId) {
 		final RatePlanDTO ratePlanDTO = ratePlanService.get(ratePlanId);
-
 		return ResponseEntity.ok(ratePlanAssembler.toModel(ratePlanDTO));
 	}
 
@@ -82,9 +81,8 @@ public class RatePlanResource {
 	@ApiResponse(responseCode = "201")
 	public ResponseEntity<EntityModel<SimpleValue<Long>>> createRatePlan(
 			@PathVariable("productId") Long productId,
-			@RequestBody @Valid final  CreateRatePlanRequest createRatePlanRequest) {
+			@RequestBody @Valid final CreateRatePlanRequest createRatePlanRequest) {
 		final Long createdRatePlanId = ratePlanService.create(productId, createRatePlanRequest);
-
 		return new ResponseEntity<>(ratePlanAssembler.toSimpleModel(createdRatePlanId), HttpStatus.CREATED);
 	}
 
@@ -93,22 +91,24 @@ public class RatePlanResource {
 			@PathVariable(name = "ratePlanId") final Long ratePlanId,
 			@RequestBody @Valid final CreateRatePlanRequest createRatePlanRequest) {
 		ratePlanService.update(ratePlanId, createRatePlanRequest);
-
 		return ResponseEntity.ok(ratePlanAssembler.toSimpleModel(ratePlanId));
 	}
 
-    @DeleteMapping("/ratePlans/{ratePlanId}")
-    @ApiResponse(responseCode = "204")
-    public ResponseEntity<Void> deleteRatePlan(@PathVariable(name = "ratePlanId") final Long ratePlanId) {
-//    Commented out the referenced warning as we enabled the CASCADE.REMOVE at entity level
-//    final ReferencedWarning referencedWarning = ratePlanService.getReferencedWarning(ratePlanId);
-//
-//    if (referencedWarning != null) {
-//        throw new ReferencedException(referencedWarning);
-//    }
+	@DeleteMapping("/ratePlans/{ratePlanId}")
+	@ApiResponse(responseCode = "204")
+	public ResponseEntity<Void> deleteRatePlan(@PathVariable(name = "ratePlanId") final Long ratePlanId) {
+		ratePlanService.delete(ratePlanId);
+		return ResponseEntity.noContent().build();
+	}
 
-        ratePlanService.delete(ratePlanId);
-        return ResponseEntity.noContent().build();
-    }
+	@GetMapping("/ratePlans/{ratePlanId}/type/{ratePlanType}")
+	public ResponseEntity<EntityModel<SimpleValue<Long>>> getSelectedRatePlanTypeId(
+			@PathVariable("ratePlanId") Long ratePlanId,
+			@PathVariable("ratePlanType") String ratePlanType) {
+		Optional<Long> selectedRatePlanTypeId = ratePlanService.getSelectedRatePlanTypeId(ratePlanId, ratePlanType);
+		return selectedRatePlanTypeId
+				.map(typeId -> ResponseEntity.ok(EntityModel.of(new SimpleValue<>(typeId))))
+				.orElseGet(() -> ResponseEntity.notFound().build());
+	}
 
 }
