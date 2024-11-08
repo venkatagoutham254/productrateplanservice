@@ -84,16 +84,8 @@ public class ProductServiceImpl implements ProductService {
 	}
 
 	private void validateCreateRequest(CreateProductRequest createProductRequest) {
-		if (createProductRequest.getProductName() == null) {
+		if (createProductRequest.getProductName().trim().isEmpty()) {
 			throw new ValidationException("ProducerName is required");
-		}
-
-		if (createProductRequest.getProducerId() == null) {
-			throw new ValidationException("Producer ID is required");
-		}
-
-		if (createProductRequest.getOrganizationId() == null && createProductRequest.getDivisionId() == null) {
-			throw new ValidationException("Either organizationId or divisionId required");
 		}
 	}
 
@@ -106,13 +98,13 @@ public class ProductServiceImpl implements ProductService {
 		ProductDTO productDTO = productMapper.updateProductDTO(product, new ProductDTO());
 		boolean isModified = false;
 
-		if (createProductRequest.getProductName() != null &&
+		if (createProductRequest.getProductName() != null && !createProductRequest.getProductName().trim().isEmpty() &&
 				!Objects.equals(product.getProductName(), createProductRequest.getProductName())) {
 			productDTO.setProductName(createProductRequest.getProductName());
 			isModified = true;
 		}
 
-		if (createProductRequest.getProductDescription() != null &&
+		if (createProductRequest.getProductDescription() != null && !createProductRequest.getProductDescription().trim().isEmpty() &&
 		 !Objects.equals(product.getProductDescription(), createProductRequest.getProductDescription())) {
 			productDTO.setProductDescription(createProductRequest.getProductDescription());
 			isModified = true;
@@ -147,60 +139,7 @@ public class ProductServiceImpl implements ProductService {
 			productRepository.save(product);
 		}
 	}
-	/**
-	 * This method is a placeholder for fetching the Producer ID.
-	 * 
-	 * Currently, it returns a dummy Producer ID (123L). Once the Producer 
-	 * microservice is developed and available, this method should be 
-	 * updated to make an API call to that microservice and dynamically fetch 
-	 * the Producer ID.
-	 * 
-	 * Future Enhancement:
-	 * - Implement logic to call the Producer microservice and retrieve the
-	 *   actual Producer ID based on business logic or requirements.
-	 * - Handle any exceptions or errors that may occur during the API call.
-	 * 
-	 * @return Long - the dummy Producer ID (for now)
-	 */
-	private Long fetchProducerIdFromMicroservice() {
-		return 123L; // Dummy Producer ID; update this to dynamically fetch as needed
-	}
-	/**
-	 * This method is a placeholder for fetching the Producer ID.
-	 * 
-	 * Currently, it returns a dummy Producer ID (123L). Once the Producer 
-	 * microservice is developed and available, this method should be 
-	 * updated to make an API call to that microservice and dynamically fetch 
-	 * the Producer ID.
-	 * 
-	 * Future Enhancement:
-	 * - Implement logic to call the Producer microservice and retrieve the
-	 *   actual Organization ID based on business logic or requirements.
-	 * - Handle any exceptions or errors that may occur during the API call.
-	 * 
-	 * @return Long - the dummy Producer ID (for now)
-	 */
-	private Long fetchOrganizationIdFromMicroservice() {
-		return 456L; // Dummy Organization ID; update this to dynamically fetch as needed
-	}
-	/**
-	 * This method is a placeholder for fetching the Producer ID.
-	 * 
-	 * Currently, it returns a dummy Producer ID (123L). Once the Producer 
-	 * microservice is developed and available, this method should be 
-	 * updated to make an API call to that microservice and dynamically fetch 
-	 * the Producer ID.
-	 * 
-	 * Future Enhancement:
-	 * - Implement logic to call the Producer microservice and retrieve the
-	 *   actual Division ID based on business logic or requirements.
-	 * - Handle any exceptions or errors that may occur during the API call.
-	 * 
-	 * @return Long - the dummy Producer ID (for now)
-	 */
-	private Long fetchDivisionIdFromMicroservice() {
-		return 101L; // Dummy Division ID; update this to dynamically fetch as needed
-	}
+
 	@Override
 	public void delete(final Long productId) {
 		// Ensure the product exists before attempting to delete it
@@ -227,14 +166,20 @@ public class ProductServiceImpl implements ProductService {
 
 	private void validateProducerDetails(CreateProductRequest createProductRequest) {
 		if (createProductRequest.getProducerId() != null) {
-			producerClientServiceImpl.validateProducerId(createProductRequest.getProducerId());
+			if (!producerClientServiceImpl.validateProducerId(createProductRequest.getProducerId())) {
+				throw new ValidationException("Producer ID not found");
+			};
 
 			if (createProductRequest.getOrganizationId() != null) {
-				producerClientServiceImpl.validateOrganizationId(createProductRequest.getOrganizationId());
+				if (!producerClientServiceImpl.validateOrganizationId(createProductRequest.getOrganizationId())) {
+					throw new ValidationException("Organization ID not found");
+				};
 			}
 
 			if (createProductRequest.getDivisionId() != null) {
-				producerClientServiceImpl.validateDivisionId(createProductRequest.getDivisionId());
+				if (!producerClientServiceImpl.validateDivisionId(createProductRequest.getDivisionId())) {
+					throw new ValidationException("Division ID not found");
+				};
 			}
 		}
 	}

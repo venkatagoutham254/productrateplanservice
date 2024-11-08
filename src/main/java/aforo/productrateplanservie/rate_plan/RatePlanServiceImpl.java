@@ -75,6 +75,7 @@ public class RatePlanServiceImpl implements RatePlanService {
         } else {
             page = ratePlanRepository.findAll(pageable);
         }
+
         return new PageImpl<>(
                 page.getContent().stream()
                         .map(ratePlan -> ratePlanMapper.updateRatePlanDTO(ratePlan, new RatePlanDTO())).toList(),
@@ -106,15 +107,19 @@ public class RatePlanServiceImpl implements RatePlanService {
 
     @Override
     public RatePlanDTO get(final Long ratePlanId) {
+
         return ratePlanRepository.findById(ratePlanId)
                 .map(ratePlan -> ratePlanMapper.updateRatePlanDTO(ratePlan, new RatePlanDTO()))
                 .orElseThrow(NotFoundException::new);
     }
 
     @Override
-    public Long create(Long productId, @Valid final CreateRatePlanRequest createRatePlanRequest) {
+    public Long create(Long productId,  final CreateRatePlanRequest createRatePlanRequest) {
+
+
         productRepository.findById(productId).orElseThrow(() -> new NotFoundException("productId not found with ID: " + productId));
         final ValidationResult validationResult = ratePlanValidator.validate(createRatePlanRequest);
+
         if (!validationResult.isValid()) {
             throw new ValidationException("Invalid rate plan request: " +
                     String.join(", ", validationResult.getErrors()));
@@ -125,6 +130,7 @@ public class RatePlanServiceImpl implements RatePlanService {
         ratePlanDTO.setProductId(productId);
 
         ratePlanMapper.updateRatePlan(ratePlanDTO, ratePlan, productRepository, currenciesRepository);
+
         return (Long) ratePlanRepository.save(ratePlan).getRatePlanId();
     }
 
@@ -136,12 +142,13 @@ public class RatePlanServiceImpl implements RatePlanService {
         RatePlanDTO ratePlanDTO = ratePlanMapper.updateRatePlanDTO(ratePlan, new RatePlanDTO());
         boolean isModified = false;
 
-        if (!Objects.equals(ratePlan.getRatePlanName(), createRatePlanRequest.getRatePlanName())) {
+        if (createRatePlanRequest.getRatePlanName() != null && !createRatePlanRequest.getRatePlanName().trim().isEmpty() &&
+                !Objects.equals(ratePlan.getRatePlanName(), createRatePlanRequest.getRatePlanName())) {
             ratePlanDTO.setRatePlanName(createRatePlanRequest.getRatePlanName());
             isModified = true;
         }
 
-        if (createRatePlanRequest.getDescription() != null &&
+        if (createRatePlanRequest.getDescription() != null && !createRatePlanRequest.getDescription().trim().isEmpty() &&
                 !Objects.equals(ratePlan.getDescription(), createRatePlanRequest.getDescription())) {
             ratePlanDTO.setDescription(createRatePlanRequest.getDescription());
             isModified = true;

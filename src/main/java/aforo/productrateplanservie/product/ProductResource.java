@@ -96,6 +96,7 @@ public class ProductResource {
 	public ResponseEntity<EntityModel<ProductDTO>> getProduct(
 			@PathVariable(name = "productId") final Long productId) {
 		final ProductDTO productDTO = productService.get(productId);
+
 		return ResponseEntity.ok(productAssembler.toModel(productDTO));
 	}
 
@@ -125,6 +126,7 @@ public class ProductResource {
 	public ResponseEntity<EntityModel<SimpleValue<Long>>> createProduct(
 			@Valid @RequestBody final CreateProductRequest createProductRequest) {
 		final Long createdProductId = productService.create(createProductRequest);
+
 		return new ResponseEntity<>(productAssembler.toSimpleModel(createdProductId), HttpStatus.CREATED);
 	}
 
@@ -152,8 +154,9 @@ public class ProductResource {
 	@PutMapping("/{productId}")
 	public ResponseEntity<EntityModel<SimpleValue<Long>>> updateProduct(
 			@PathVariable(name = "productId") final Long productId,
-			@RequestBody @Valid final CreateProductRequest createProductRequest) {
+			@RequestBody final CreateProductRequest createProductRequest) {
 		productService.update(productId, createProductRequest);
+
 		return ResponseEntity.ok(productAssembler.toSimpleModel(productId));
 	}
 
@@ -183,6 +186,7 @@ public class ProductResource {
 			throw new ReferencedException(referencedWarning);
 		}
 		productService.delete(productId);
+
 		return ResponseEntity.noContent().build();
 	}
 }

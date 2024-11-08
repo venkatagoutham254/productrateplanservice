@@ -85,16 +85,18 @@ public class CurrenciesResource {
     @PostMapping
     @ApiResponse(responseCode = "201")
     public ResponseEntity<EntityModel<SimpleValue<Long>>> createCurrencies(
-            @RequestBody @Valid final CreateCurrenciesRequest createCurrenciesRequest) {
+            @Valid @RequestBody final CreateCurrenciesRequest createCurrenciesRequest) {
         final Long createdCurrencyId = currenciesService.create(createCurrenciesRequest);
+
         return new ResponseEntity<>(currenciesAssembler.toSimpleModel(createdCurrencyId), HttpStatus.CREATED);
     }
 
     @PutMapping("/{currencyId}")
     public ResponseEntity<EntityModel<SimpleValue<Long>>> updateCurrencies(
             @PathVariable(name = "currencyId") final Long currencyId,
-            @RequestBody @Valid final CreateCurrenciesRequest createCurrenciesRequest) {
+            @RequestBody final CreateCurrenciesRequest createCurrenciesRequest) {
         currenciesService.update(currencyId, createCurrenciesRequest);
+
         return ResponseEntity.ok(currenciesAssembler.toSimpleModel(currencyId));
     }
 
@@ -107,6 +109,7 @@ public class CurrenciesResource {
             throw new ReferencedException(referencedWarning);
         }
         currenciesService.delete(currencyId);
+
         return ResponseEntity.noContent().build();
     }
 

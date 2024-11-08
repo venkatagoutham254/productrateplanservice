@@ -1,5 +1,7 @@
 package aforo.productrateplanservie.currencies;
 
+import aforo.productrateplanservie.exception.ValidationException;
+import aforo.productrateplanservie.product.CreateProductRequest;
 import aforo.productrateplanservie.rate_plan.RatePlan;
 import aforo.productrateplanservie.rate_plan.RatePlanRepository;
 import aforo.productrateplanservie.exception.NotFoundException;
@@ -40,6 +42,7 @@ public class CurrenciesServiceImpl implements CurrenciesService {
         } else {
             page = currenciesRepository.findAll(pageable);
         }
+
         return new PageImpl<>(page.getContent()
                 .stream()
                 .map(currencies -> currenciesMapper.updateCurrenciesDTO(currencies, new CurrenciesDTO()))
@@ -56,10 +59,22 @@ public class CurrenciesServiceImpl implements CurrenciesService {
 
     @Override
     public Long create(final CreateCurrenciesRequest createCurrenciesRequest) {
+        validateCreateRequest(createCurrenciesRequest);
         final Currencies currencies = new Currencies();
         CurrenciesDTO currenciesDTO = currenciesMapper.createCurrenciesRequestToCurrenciesDTO(createCurrenciesRequest);
         currenciesMapper.updateCurrencies(currenciesDTO, currencies);
+
         return currenciesRepository.save(currencies).getCurrencyId();
+    }
+
+    private void validateCreateRequest(CreateCurrenciesRequest createCurrenciesRequest) {
+        if (createCurrenciesRequest.getCurrencyName().trim().isEmpty()) {
+            throw new ValidationException("CurrencyName is required");
+        }
+
+        if (createCurrenciesRequest.getCurrencyCode().trim().isEmpty()) {
+            throw new ValidationException("CurrencyCode is required");
+        }
     }
 
     @Override
@@ -70,13 +85,13 @@ public class CurrenciesServiceImpl implements CurrenciesService {
 
         boolean isModified = false;
 
-        if (createCurrenciesRequest.getCurrencyCode() != null &&
+        if (createCurrenciesRequest.getCurrencyCode() != null && !createCurrenciesRequest.getCurrencyCode().trim().isEmpty() &&
                 !Objects.equals(currencies.getCurrencyCode(), createCurrenciesRequest.getCurrencyCode())) {
             currenciesDTO.setCurrencyCode(createCurrenciesRequest.getCurrencyCode());
             isModified = true;
         }
 
-        if (createCurrenciesRequest.getCurrencyName() != null &&
+        if (createCurrenciesRequest.getCurrencyName() != null && !createCurrenciesRequest.getCurrencyName().trim().isEmpty() &&
                 !Objects.equals(currencies.getCurrencyName(), createCurrenciesRequest.getCurrencyName())) {
             currenciesDTO.setCurrencyName(createCurrenciesRequest.getCurrencyName());
             isModified = true;
@@ -111,6 +126,4 @@ public class CurrenciesServiceImpl implements CurrenciesService {
         }
         return null;
     }
-
-
 }

@@ -28,7 +28,7 @@ public class ProducerServiceClient {
             return true;
         } catch (WebClientResponseException.NotFound e) {
             return false;
-        } catch (Exception e) {
+        } catch (WebClientResponseException.InternalServerError e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to validate producerId");
         }
     }

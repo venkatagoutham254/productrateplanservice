@@ -25,19 +25,16 @@ public class RatePlanValidator {
             return ValidationResult.invalid(errors);
         }
 
-        // Rate plan name validation
         if (request.getRatePlanName() == null || request.getRatePlanName().trim().isEmpty()) {
             errors.add("Rate plan name is required");
         } else if (request.getRatePlanName().length() > 100) {
             errors.add("Rate plan name cannot exceed 100 characters");
         }
 
-        // Description validation
         if (request.getDescription() != null && request.getDescription().length() > 1000) {
             errors.add("Description cannot exceed 1000 characters");
         }
 
-        // Required fields validation
         if (request.getRatePlanType() == null) {
             errors.add("Rate plan type is required");
         }

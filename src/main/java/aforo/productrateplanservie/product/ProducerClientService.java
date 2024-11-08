@@ -1,7 +1,7 @@
 package aforo.productrateplanservie.product;
 
 public interface ProducerClientService {
-    void validateProducerId(Long producerId);
-    void validateOrganizationId(Long organizationId);
-    void validateDivisionId(Long divisionId);
+    boolean validateProducerId(Long producerId);
+    boolean validateOrganizationId(Long organizationId);
+    boolean validateDivisionId(Long divisionId);
 }

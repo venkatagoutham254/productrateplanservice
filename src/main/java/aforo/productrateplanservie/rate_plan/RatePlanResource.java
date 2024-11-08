@@ -54,6 +54,7 @@ public class RatePlanResource {
 			@RequestParam(name = "filter", required = false) final String filter,
 			@Parameter(hidden = true) @SortDefault(sort = "ratePlanId") @PageableDefault(size = 20) final Pageable pageable) {
 		final Page<RatePlanDTO> ratePlanDTOs = ratePlanService.findAll(filter, pageable);
+
 		return ResponseEntity.ok(pagedResourcesAssembler.toModel(ratePlanDTOs, ratePlanAssembler));
 	}
 
@@ -67,6 +68,7 @@ public class RatePlanResource {
 			@PathVariable("productId") Long productId,
 			@Parameter(hidden = true) @SortDefault(sort = "ratePlanId") @PageableDefault(size = 20) final Pageable pageable) {
 		Page<RatePlanDTO> ratePlanDTOs = ratePlanService.getRatePlansByProductId(productId, filter, pageable);
+
 		return ResponseEntity.ok(pagedResourcesAssembler.toModel(ratePlanDTOs, ratePlanAssembler));
 	}
 
@@ -74,6 +76,7 @@ public class RatePlanResource {
 	public ResponseEntity<EntityModel<RatePlanDTO>> getRatePlan(
 			@PathVariable(name = "ratePlanId") final Long ratePlanId) {
 		final RatePlanDTO ratePlanDTO = ratePlanService.get(ratePlanId);
+
 		return ResponseEntity.ok(ratePlanAssembler.toModel(ratePlanDTO));
 	}
 
@@ -81,16 +84,18 @@ public class RatePlanResource {
 	@ApiResponse(responseCode = "201")
 	public ResponseEntity<EntityModel<SimpleValue<Long>>> createRatePlan(
 			@PathVariable("productId") Long productId,
-			@RequestBody @Valid final CreateRatePlanRequest createRatePlanRequest) {
+			@Valid @RequestBody final CreateRatePlanRequest createRatePlanRequest) {
 		final Long createdRatePlanId = ratePlanService.create(productId, createRatePlanRequest);
+
 		return new ResponseEntity<>(ratePlanAssembler.toSimpleModel(createdRatePlanId), HttpStatus.CREATED);
 	}
 
 	@PutMapping("/ratePlans/{ratePlanId}")
 	public ResponseEntity<EntityModel<SimpleValue<Long>>> updateRatePlan(
 			@PathVariable(name = "ratePlanId") final Long ratePlanId,
-			@RequestBody @Valid final CreateRatePlanRequest createRatePlanRequest) {
+			@RequestBody final CreateRatePlanRequest createRatePlanRequest) {
 		ratePlanService.update(ratePlanId, createRatePlanRequest);
+
 		return ResponseEntity.ok(ratePlanAssembler.toSimpleModel(ratePlanId));
 	}
 
@@ -98,6 +103,7 @@ public class RatePlanResource {
 	@ApiResponse(responseCode = "204")
 	public ResponseEntity<Void> deleteRatePlan(@PathVariable(name = "ratePlanId") final Long ratePlanId) {
 		ratePlanService.delete(ratePlanId);
+
 		return ResponseEntity.noContent().build();
 	}
 
@@ -106,9 +112,9 @@ public class RatePlanResource {
 			@PathVariable("ratePlanId") Long ratePlanId,
 			@PathVariable("ratePlanType") String ratePlanType) {
 		Optional<Long> selectedRatePlanTypeId = ratePlanService.getSelectedRatePlanTypeId(ratePlanId, ratePlanType);
+
 		return selectedRatePlanTypeId
 				.map(typeId -> ResponseEntity.ok(EntityModel.of(new SimpleValue<>(typeId))))
 				.orElseGet(() -> ResponseEntity.notFound().build());
 	}
-
 }
