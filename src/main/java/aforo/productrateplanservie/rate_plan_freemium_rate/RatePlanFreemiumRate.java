@@ -7,6 +7,7 @@ import aforo.productrateplanservie.util.enums.UnitMeasurement;
 import aforo.productrateplanservie.util.enums.UnitType;
 import jakarta.persistence.*;
 import java.time.OffsetDateTime;
+import java.util.HashSet;
 import java.util.Set;
 import lombok.Data;
 import org.springframework.data.annotation.CreatedDate;
@@ -44,7 +45,7 @@ public class RatePlanFreemiumRate {
     @JoinColumn(name = "rate_plan_id", nullable = false)
     private RatePlan ratePlan;
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "ratePlanFreemiumRate")
-    private Set<RatePlanFreemiumRateDetails> ratePlanFreemiumRateDetails;
+    private Set<RatePlanFreemiumRateDetails> ratePlanFreemiumRateDetails = new HashSet<>();
 
     @CreatedDate
     @Column(nullable = false, updatable = false)

@@ -83,6 +83,12 @@ public class RatePlan {
     @Column(nullable = false)
     private OffsetDateTime lastUpdated;
 
-    // Getters and Setters
+   public RatePlan(Long ratePlanId)
+   {
+       this.ratePlanId=ratePlanId;
+   }
 
+    public RatePlan() {
+
+    }
 }

@@ -10,10 +10,10 @@ public interface RatePlanFreemiumRateService {
 
     RatePlanFreemiumRateDTO get(Long ratePlanFreemiumRateId);
 
-    Long create(Long ratePlanId, RatePlanFreemiumRateDTO ratePlanFreemiumRateDTO);
+    Long create(Long ratePlanId, RatePlanFreemiumRateCreateRequestDTO ratePlanFreemiumRateCreateRequestDTO);
 
     //
-    void update(Long ratePlanFreemiumRateId, RatePlanFreemiumRateDTO ratePlanFreemiumRateDTO);
+    void update( Long ratePlanId,Long ratePlanFreemiumRateId, RatePlanFreemiumRateUpdateRequestDTO updateDTO);
 
     //
     void delete(Long ratePlanFreemiumRateId);

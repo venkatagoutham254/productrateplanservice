@@ -86,4 +86,29 @@ public interface RatePlanFreemiumRateMapper {
         detailsDTO.setLastUpdated(details.getLastUpdated());
         return detailsDTO;
     }
+
+    @Mapping(target = "ratePlanFreemiumRateId", ignore = true)
+    @Mapping(target = "ratePlan", ignore = true)
+    RatePlanFreemiumRate toEntity(RatePlanFreemiumRateCreateRequestDTO dto);
+
+    default RatePlanFreemiumRate mapToEntity(RatePlanFreemiumRateCreateRequestDTO dto, RatePlan ratePlan) {
+        // Use MapStruct to map basic fields
+        RatePlanFreemiumRate ratePlanFreemiumRate = toEntity(dto);
+
+        // Set ratePlan manually
+        ratePlanFreemiumRate.setRatePlan(ratePlan);
+
+        // Map and set nested RatePlanFreemiumRateDetails
+        Set<RatePlanFreemiumRateDetails> details = dto.getRatePlanFreemiumRateDetailsDTO().stream()
+                .map(detailDto -> {
+                    RatePlanFreemiumRateDetails detail = new RatePlanFreemiumRateDetails();
+                    detail.setFreemiumMaxUnitQuantity(detailDto.getFreemiumMaxUnitQuantity());
+                    detail.setRatePlanFreemiumRate(ratePlanFreemiumRate);
+                    return detail;
+                })
+                .collect(Collectors.toSet());
+
+        ratePlanFreemiumRate.setRatePlanFreemiumRateDetails(details);
+        return ratePlanFreemiumRate;
+    }
 }

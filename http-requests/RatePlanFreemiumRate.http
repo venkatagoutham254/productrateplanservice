@@ -1,0 +1,48 @@
+### Create RatePlanFreemiumRate
+POST http://localhost:8082/v1/api/rateplans/10000/FREEMIUM
+Content-Type: application/json
+
+{
+  "freemiumRateDescription": "Freemium Rate Plan Description",
+  "description": "Optional detailed description",
+  "unitType": "DATA_STORAGE",
+  "unitMeasurement": "GB",
+  "unitBillingFrequency": "MONTHLY",
+  "unitFreePriceFixedFrequency": "YEARLY",
+  "ratePlanFreemiumRateDetailsDTO": [
+    {
+      "freemiumMaxUnitQuantity": 1000
+    }
+  ]
+}
+
+### Get All RatePlanFreemiumRates with Paging
+GET http://localhost:8082/v1/api/rateplans/FREEMIUM?page=0&size=10&sort=ratePlanFreemiumRateId,asc
+Content-Type: application/json
+
+### Get Specific RatePlanFreemiumRate by ID
+GET http://localhost:8082/v1/api/rateplans/10003
+Content-Type: application/json
+
+### Update RatePlanFreemiumRate
+PUT http://localhost:8082/v1/api/rateplans/10000/FREEMIUM/10003
+Content-Type: application/json
+
+{
+  "freemiumRateDescription": "Updated Freemium Rate Plan",
+  "description": "Updated description",
+  "unitType": "DATA_STORAGE",
+  "unitMeasurement": "MB",
+  "unitBillingFrequency": "DAILY",
+  "unitFreePriceFixedFrequency": "MONTHLY",
+  "ratePlanFreemiumRateDetailsDTO": [
+    {
+      "id": 1,
+      "freemiumMaxUnitQuantity": 2000
+    }
+  ]
+}
+
+### Delete RatePlanFreemiumRate by ID
+DELETE http://localhost:8082/v1/api/rateplans/FREEMIUM/10003
+Content-Type: application/json

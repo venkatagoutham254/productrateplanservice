@@ -5,4 +5,4 @@ services:
     - MYSQL_DATABASE=productrateplanservie
     - MYSQL_ROOT_PASSWORD=P4ssword!
     ports:
-    - 3307:3306
+    - 3312:3306
