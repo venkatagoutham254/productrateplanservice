@@ -22,9 +22,8 @@ public interface RatePlanFreemiumRateMapper {
     @Mapping(target = "freemiumRateDescription", source = "freemiumRateDescription")
     @Mapping(target = "description", source = "description")
     @Mapping(target = "ratePlan", ignore = true) // Set manually after mapping
-    @Mapping(target = "ratePlanFreemiumRateDetails", ignore = true)
-    // Handle manually
-    void updateRatePlanFreemiumRate(RatePlanFreemiumRateDTO ratePlanFreemiumRateDTO, @MappingTarget RatePlanFreemiumRate ratePlanFreemiumRate, @Context RatePlan ratePlan);
+    @Mapping(target = "ratePlanFreemiumRateDetails", ignore = true) // Handle manually in after-mapping
+    void updateRatePlanFreemiumRate(RatePlanFreemiumRateDTO ratePlanFreemiumRateDTO, @MappingTarget RatePlanFreemiumRate ratePlanFreemiumRate);
 
     // After-mapping logic to set RatePlan and update nested details
     @AfterMapping
@@ -32,14 +31,20 @@ public interface RatePlanFreemiumRateMapper {
         ratePlanFreemiumRate.setRatePlan(ratePlan);
 
         if (ratePlanFreemiumRateDTO.getRatePlanFreemiumRateDetailsDTO() != null) {
-            Set<RatePlanFreemiumRateDetails> updatedDetails = ratePlanFreemiumRateDTO.getRatePlanFreemiumRateDetailsDTO().stream().map(this::mapDetailDTOToEntity).peek(detail -> detail.setRatePlanFreemiumRate(ratePlanFreemiumRate)).collect(Collectors.toSet());
+            Set<RatePlanFreemiumRateDetails> updatedDetails = ratePlanFreemiumRateDTO.getRatePlanFreemiumRateDetailsDTO().stream()
+                    .map(this::mapDetailDTOToEntity)
+                    .peek(detail -> detail.setRatePlanFreemiumRate(ratePlanFreemiumRate))
+                    .collect(Collectors.toSet());
 
             // Update the existing details with the provided DTOs
             Set<RatePlanFreemiumRateDetails> existingDetails = ratePlanFreemiumRate.getRatePlanFreemiumRateDetails();
 
             // Update or add new details
             for (RatePlanFreemiumRateDetails newDetail : updatedDetails) {
-                RatePlanFreemiumRateDetails existingDetail = existingDetails.stream().filter(d -> d.getId() != null && d.getId().equals(newDetail.getId())).findFirst().orElse(null);
+                RatePlanFreemiumRateDetails existingDetail = existingDetails.stream()
+                        .filter(d -> d.getId() != null && d.getId().equals(newDetail.getId()))
+                        .findFirst()
+                        .orElse(null);
 
                 if (existingDetail != null) {
                     existingDetail.setFreemiumMaxUnitQuantity(newDetail.getFreemiumMaxUnitQuantity());
@@ -50,7 +55,8 @@ public interface RatePlanFreemiumRateMapper {
             }
 
             // Remove any orphaned details not included in the DTO
-            existingDetails.removeIf(existingDetail -> updatedDetails.stream().noneMatch(d -> d.getId() != null && d.getId().equals(existingDetail.getId())));
+            existingDetails.removeIf(existingDetail -> updatedDetails.stream()
+                    .noneMatch(d -> d.getId() != null && d.getId().equals(existingDetail.getId())));
 
             // Assign updated set back to the entity
             ratePlanFreemiumRate.setRatePlanFreemiumRateDetails(existingDetails);
@@ -58,7 +64,7 @@ public interface RatePlanFreemiumRateMapper {
     }
 
     // Mapping from Entity to DTO, ratePlanId is set after mapping
-    @Mapping(target = "ratePlanId", ignore = true)
+    @Mapping(target = "ratePlanId", ignore = true) // Set manually after mapping
     @Mapping(target = "ratePlanFreemiumRateDetailsDTO", source = "ratePlanFreemiumRateDetails")
     RatePlanFreemiumRateDTO updateRatePlanFreemiumRateDTO(RatePlanFreemiumRate ratePlanFreemiumRate, @MappingTarget RatePlanFreemiumRateDTO ratePlanFreemiumRateDTO);
 
@@ -87,11 +93,12 @@ public interface RatePlanFreemiumRateMapper {
         return detailsDTO;
     }
 
+    // Mapping from Create DTO to Entity
     @Mapping(target = "ratePlanFreemiumRateId", ignore = true)
     @Mapping(target = "ratePlan", ignore = true)
-    RatePlanFreemiumRate toEntity(RatePlanFreemiumRateCreateRequestDTO dto);
+    RatePlanFreemiumRate toEntity(CreateRatePlanFreemiumRateRequest dto);
 
-    default RatePlanFreemiumRate mapToEntity(RatePlanFreemiumRateCreateRequestDTO dto, RatePlan ratePlan) {
+    default RatePlanFreemiumRate mapToEntity(CreateRatePlanFreemiumRateRequest dto, RatePlan ratePlan) {
         // Use MapStruct to map basic fields
         RatePlanFreemiumRate ratePlanFreemiumRate = toEntity(dto);
 

@@ -28,7 +28,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-
 @RestController
 @Tag(name = "RatePlanFreemiumRates", description = "Operations related to RatePlanFreemiumRates")
 @RequestMapping(value = "/v1/api/rateplans", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -45,49 +44,42 @@ public class RatePlanFreemiumRateResource {
     }
 
     @Operation(parameters = {@Parameter(name = "page", in = ParameterIn.QUERY, schema = @Schema(implementation = Integer.class)), @Parameter(name = "size", in = ParameterIn.QUERY, schema = @Schema(implementation = Integer.class)), @Parameter(name = "sort", in = ParameterIn.QUERY, schema = @Schema(implementation = String.class))})
-    @GetMapping("/FREEMIUM")
+    @GetMapping("/freemium")
     public ResponseEntity<PagedModel<EntityModel<RatePlanFreemiumRateDTO>>> getAllRatePlanFreemiumRates(@RequestParam(name = "filter", required = false) final String filter, @Parameter(hidden = true) @SortDefault(sort = "ratePlanFreemiumRateId") @PageableDefault(size = 20) final Pageable pageable) {
         final Page<RatePlanFreemiumRateDTO> ratePlanFreemiumRateDTOs = ratePlanFreemiumRateService.findAll(filter, pageable);
         return ResponseEntity.ok(pagedResourcesAssembler.toModel(ratePlanFreemiumRateDTOs, ratePlanFreemiumRateAssembler));
     }
 
-    @GetMapping("/{ratePlanFreemiumRateId}")
+    @GetMapping("/freemium/{ratePlanFreemiumRateId}")
     public ResponseEntity<EntityModel<RatePlanFreemiumRateDTO>> getRatePlanFreemiumRate(@PathVariable(name = "ratePlanFreemiumRateId") final Long ratePlanFreemiumRateId) {
         final RatePlanFreemiumRateDTO ratePlanFreemiumRateDTO = ratePlanFreemiumRateService.get(ratePlanFreemiumRateId);
         return ResponseEntity.ok(ratePlanFreemiumRateAssembler.toModel(ratePlanFreemiumRateDTO));
     }
 
-    @PostMapping("/{ratePlanId}/FREEMIUM")
+    @PostMapping("/{ratePlanId}/freemium")
     @ApiResponse(responseCode = "201")
     public ResponseEntity<EntityModel<SimpleValue<Long>>> createRatePlanFreemiumRate(
             @PathVariable("ratePlanId") Long ratePlanId,
-            @RequestBody @Valid final RatePlanFreemiumRateCreateRequestDTO ratePlanFreemiumRateCreateRequestDTO) {
+            @RequestBody @Valid final CreateRatePlanFreemiumRateRequest ratePlanFreemiumRateCreateRequestDTO) {
 
         final Long createdRatePlanFreemiumRateId = ratePlanFreemiumRateService.create(ratePlanId, ratePlanFreemiumRateCreateRequestDTO);
         return new ResponseEntity<>(ratePlanFreemiumRateAssembler.toSimpleModel(createdRatePlanFreemiumRateId), HttpStatus.CREATED);
     }
 
-
-    @PutMapping("/{ratePlanId}/FREEMIUM/{ratePlanFreemiumRateId}")
+    @PutMapping("/{ratePlanId}/freemium/{ratePlanFreemiumRateId}")
     public ResponseEntity<EntityModel<SimpleValue<Long>>> updateRatePlanFreemiumRate(
             @PathVariable("ratePlanId") Long ratePlanId,
             @PathVariable("ratePlanFreemiumRateId") Long ratePlanFreemiumRateId,
-            @RequestBody @Valid RatePlanFreemiumRateUpdateRequestDTO ratePlanFreemiumRateUpdateRequestDTO) {
+            @RequestBody @Valid UpdateRatePlanFreemiumRateRequest ratePlanFreemiumRateUpdateRequestDTO) {
 
         ratePlanFreemiumRateService.update(ratePlanId, ratePlanFreemiumRateId, ratePlanFreemiumRateUpdateRequestDTO);
         return ResponseEntity.ok(ratePlanFreemiumRateAssembler.toSimpleModel(ratePlanFreemiumRateId));
     }
 
-
-    @DeleteMapping("/FREEMIUM/{ratePlanFreemiumRateId}")
+    @DeleteMapping("/freemium/{ratePlanFreemiumRateId}")
     @ApiResponse(responseCode = "204")
     public ResponseEntity<Void> deleteRatePlanFreemiumRate(@PathVariable(name = "ratePlanFreemiumRateId") final Long ratePlanFreemiumRateId) {
-//        final ReferencedWarning referencedWarning = ratePlanFreemiumRateService.getReferencedWarning(ratePlanFreemiumRateId);
-//        if (referencedWarning != null) {
-//            throw new ReferencedException(referencedWarning);
-//        }
         ratePlanFreemiumRateService.delete(ratePlanFreemiumRateId);
         return ResponseEntity.noContent().build();
     }
-
 }

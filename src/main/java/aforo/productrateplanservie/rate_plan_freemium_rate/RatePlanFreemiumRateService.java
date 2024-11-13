@@ -1,8 +1,8 @@
 package aforo.productrateplanservie.rate_plan_freemium_rate;
 
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-
 
 public interface RatePlanFreemiumRateService {
 
@@ -10,14 +10,11 @@ public interface RatePlanFreemiumRateService {
 
     RatePlanFreemiumRateDTO get(Long ratePlanFreemiumRateId);
 
-    Long create(Long ratePlanId, RatePlanFreemiumRateCreateRequestDTO ratePlanFreemiumRateCreateRequestDTO);
+    Long create(Long ratePlanId, @Valid CreateRatePlanFreemiumRateRequest ratePlanFreemiumRateCreateRequestDTO);
 
-    //
-    void update( Long ratePlanId,Long ratePlanFreemiumRateId, RatePlanFreemiumRateUpdateRequestDTO updateDTO);
+    void update(Long ratePlanId, Long ratePlanFreemiumRateId, @Valid UpdateRatePlanFreemiumRateRequest updateDTO);
 
-    //
     void delete(Long ratePlanFreemiumRateId);
 
 //    ReferencedWarning getReferencedWarning(Long ratePlanFreemiumRateId);
-
 }
