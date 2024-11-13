@@ -31,7 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @Tag(name = "RatePlanUsageBased", description = "Operations related to RatePlanUsageBased")
-@RequestMapping(value = "/v1/api/ratePlanUsageBaseds", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/v1/api/rateplans", produces = MediaType.APPLICATION_JSON_VALUE)
 public class RatePlanUsageBasedResource {
 
     private final RatePlanUsageBasedService ratePlanUsageBasedService;
@@ -39,8 +39,8 @@ public class RatePlanUsageBasedResource {
     private final PagedResourcesAssembler<RatePlanUsageBasedDTO> pagedResourcesAssembler;
 
     public RatePlanUsageBasedResource(final RatePlanUsageBasedService ratePlanUsageBasedService,
-            final RatePlanUsageBasedAssembler ratePlanUsageBasedAssembler,
-            final PagedResourcesAssembler<RatePlanUsageBasedDTO> pagedResourcesAssembler) {
+                                      final RatePlanUsageBasedAssembler ratePlanUsageBasedAssembler,
+                                      final PagedResourcesAssembler<RatePlanUsageBasedDTO> pagedResourcesAssembler) {
         this.ratePlanUsageBasedService = ratePlanUsageBasedService;
         this.ratePlanUsageBasedAssembler = ratePlanUsageBasedAssembler;
         this.pagedResourcesAssembler = pagedResourcesAssembler;
@@ -65,7 +65,7 @@ public class RatePlanUsageBasedResource {
                     )
             }
     )
-    @GetMapping
+    @GetMapping("/usage_based")
     public ResponseEntity<PagedModel<EntityModel<RatePlanUsageBasedDTO>>> getAllRatePlanUsageBaseds(
             @RequestParam(name = "filter", required = false) final String filter,
             @Parameter(hidden = true) @SortDefault(sort = "ratePlanUsageRateId") @PageableDefault(size = 20) final Pageable pageable) {
@@ -73,32 +73,37 @@ public class RatePlanUsageBasedResource {
         return ResponseEntity.ok(pagedResourcesAssembler.toModel(ratePlanUsageBasedDTOs, ratePlanUsageBasedAssembler));
     }
 
-    @GetMapping("/{ratePlanUsageRateId}")
+    @GetMapping("/usage_based/{ratePlanUsageRateId}")
     public ResponseEntity<EntityModel<RatePlanUsageBasedDTO>> getRatePlanUsageBased(
             @PathVariable(name = "ratePlanUsageRateId") final Long ratePlanUsageRateId) {
         final RatePlanUsageBasedDTO ratePlanUsageBasedDTO = ratePlanUsageBasedService.get(ratePlanUsageRateId );
         return ResponseEntity.ok(ratePlanUsageBasedAssembler.toModel(ratePlanUsageBasedDTO));
     }
 
-    @PostMapping("/{ratePlanId}")
+    @PostMapping("/{ratePlanId}/usage_based")
     @ApiResponse(responseCode = "201")
     public ResponseEntity<EntityModel<SimpleValue<Long>>> createRatePlanUsageBased(
             @PathVariable("ratePlanId") Long ratePlanId,
-            @RequestBody @Valid final RatePlanUsageBasedDTO ratePlanUsageBasedDTO) {
-        final Long createdRatePlanUsageRateId = ratePlanUsageBasedService.create(ratePlanId,ratePlanUsageBasedDTO);
+            @RequestBody @Valid final CreateRatePlanUsageBasedRequest ratePlanUsageBasedCreateRequestDTO) {
+
+        final Long createdRatePlanUsageRateId = ratePlanUsageBasedService.create(ratePlanId, ratePlanUsageBasedCreateRequestDTO);
         return new ResponseEntity<>(ratePlanUsageBasedAssembler.toSimpleModel(createdRatePlanUsageRateId), HttpStatus.CREATED);
     }
 
 
-    @PutMapping("/{ratePlanUsageRateId}")
+    @PutMapping("/{ratePlanId}/usage_based/{ratePlanUsageRateId}")
+    @Operation(summary = "Partially update an existing RatePlanUsageBased entry", description = "Only provided fields will be updated")
+    @ApiResponse(responseCode = "200", description = "Successfully updated RatePlanUsageBased entry")
     public ResponseEntity<EntityModel<SimpleValue<Long>>> updateRatePlanUsageBased(
-            @PathVariable(name = "ratePlanUsageRateId") final Long ratePlanUsageRateId,
-            @RequestBody @Valid final RatePlanUsageBasedDTO ratePlanUsageBasedDTO) {
-        ratePlanUsageBasedService.update(ratePlanUsageRateId, ratePlanUsageBasedDTO);
+            @PathVariable("ratePlanId") Long ratePlanId,
+            @PathVariable("ratePlanUsageRateId") Long ratePlanUsageRateId,
+            @RequestBody @Valid UpdateRatePlanUsageBasedRequest updateDTO) {
+
+        ratePlanUsageBasedService.update(ratePlanId, ratePlanUsageRateId, updateDTO);
         return ResponseEntity.ok(ratePlanUsageBasedAssembler.toSimpleModel(ratePlanUsageRateId));
     }
 
-    @DeleteMapping("/{ratePlanUsageRateId}")
+    @DeleteMapping("/usage_based/{ratePlanUsageRateId}")
     @ApiResponse(responseCode = "204")
     public ResponseEntity<Void> deleteRatePlanUsageBased(
             @PathVariable(name = "ratePlanUsageRateId") final Long ratePlanUsageRateId) {

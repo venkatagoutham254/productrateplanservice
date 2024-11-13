@@ -1,10 +1,11 @@
 package aforo.productrateplanservie.rate_plan_usage_based;
 
 import aforo.productrateplanservie.rate_plan.RatePlan;
-import aforo.productrateplanservie.rate_plan.RatePlanRepository;
+import aforo.productrateplanservie.rate_plan_usage_based_rates.CreateRatePlanUsageBasedRatesRequest;
 import aforo.productrateplanservie.rate_plan_usage_based_rates.RatePlanUsageBasedRates;
 import aforo.productrateplanservie.rate_plan_usage_based_rates.RatePlanUsageBasedRatesDTO;
 import aforo.productrateplanservie.exception.NotFoundException;
+import aforo.productrateplanservie.rate_plan_usage_based_rates.UpdateRatePlanUsageBasedRatesRequest;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Context;
 import org.mapstruct.Mapper;
@@ -20,7 +21,27 @@ import java.util.stream.Collectors;
 )
 public interface RatePlanUsageBasedMapper {
 
-    @Mapping(target = "ratePlanId", ignore = true)
+    // Map create request DTO to entity for RatePlanUsageBased
+    @Mapping(target = "ratePlanUsageRateId", ignore = true)
+    @Mapping(target = "ratePlan", ignore = true) // Set manually in the service
+    @Mapping(target = "ratePlanUsageBasedRates", ignore = true) // Managed in the service
+    RatePlanUsageBased toEntity(CreateRatePlanUsageBasedRequest dto);
+
+    // Map create request DTO to entity for RatePlanUsageBasedRates
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "ratePlanUsageBased", ignore = true) // Set manually in the service
+    RatePlanUsageBasedRates toEntity(CreateRatePlanUsageBasedRatesRequest dto);
+
+    // Map RatePlanUsageBased entity to DTO
+    @Mapping(target = "ratePlanId", source = "ratePlan.ratePlanId")
+    @Mapping(target = "ratePlanUsageBasedRatesDTO", source = "ratePlanUsageBasedRates")
+    RatePlanUsageBasedDTO toDto(RatePlanUsageBased ratePlanUsageBased);
+
+    // Additional mapping for nested RatePlanUsageBasedRates entity to DTO
+    RatePlanUsageBasedRatesDTO mapToRatePlanUsageBasedRatesDTO(RatePlanUsageBasedRates details);
+
+    // Update RatePlanUsageBasedDTO with data from RatePlanUsageBased entity
+    @Mapping(target = "ratePlanId", source = "ratePlan.ratePlanId")
     @Mapping(target = "ratePlanUsageBasedRatesDTO", source = "ratePlanUsageBasedRates")
     RatePlanUsageBasedDTO updateRatePlanUsageBasedDTO(RatePlanUsageBased ratePlanUsageBased,
                                                       @MappingTarget RatePlanUsageBasedDTO ratePlanUsageBasedDTO);
@@ -36,27 +57,9 @@ public interface RatePlanUsageBasedMapper {
         );
     }
 
-    @Mapping(target = "ratePlanUsageRateId", ignore = true)
-    @Mapping(target = "ratePlan", ignore = true)
-    void updateRatePlanUsageBased(RatePlanUsageBasedDTO ratePlanUsageBasedDTO,
-                                  @MappingTarget RatePlanUsageBased ratePlanUsageBased,
-                                  @Context RatePlanRepository ratePlanRepository);
+    // Method for partial update of RatePlanUsageBased entity
+    void updateRatePlanUsageBased(UpdateRatePlanUsageBasedRequest dto, @MappingTarget RatePlanUsageBased entity);
 
-    @AfterMapping
-    default void afterUpdateRatePlanUsageBased(RatePlanUsageBasedDTO ratePlanUsageBasedDTO,
-                                               @MappingTarget RatePlanUsageBased ratePlanUsageBased,
-                                               @Context RatePlanRepository ratePlanRepository) {
-        final RatePlan ratePlan = ratePlanUsageBasedDTO.getRatePlanId() == null ? null : ratePlanRepository.findById(ratePlanUsageBasedDTO.getRatePlanId())
-                .orElseThrow(() -> new NotFoundException("RatePlan not found"));
-        ratePlanUsageBased.setRatePlan(ratePlan);
-    }
-
-    RatePlanUsageBasedRatesDTO mapToRatePlanUsageBasedRatesDTO(RatePlanUsageBasedRates details);
-
-    RatePlanUsageBasedRates mapToRatePlanUsageBasedRates(RatePlanUsageBasedRatesDTO detailsDTO);
-
-    // Ensure this method is void and explicitly map the fields to avoid ambiguity
-    @Mapping(target = "unitRate", source = "detailsDTO.unitRate")
-    @Mapping(target = "id", source = "detailsDTO.id")
-    void updateRatePlanUsageBasedRatesFromDTO(RatePlanUsageBasedRatesDTO detailsDTO, @MappingTarget RatePlanUsageBasedRates details);
+    // Method for partial update of nested RatePlanUsageBasedRates entity
+    void updateRatePlanUsageBasedRates(UpdateRatePlanUsageBasedRatesRequest dto, @MappingTarget RatePlanUsageBasedRates entity);
 }

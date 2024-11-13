@@ -3,15 +3,18 @@ package aforo.productrateplanservie.rate_plan_usage_based;
 import aforo.productrateplanservie.rate_plan.RatePlan;
 import aforo.productrateplanservie.rate_plan.RatePlanRepository;
 import aforo.productrateplanservie.rate_plan_usage_based_rates.RatePlanUsageBasedRates;
-import aforo.productrateplanservie.rate_plan_usage_based_rates.RatePlanUsageBasedRatesDTO;
 import aforo.productrateplanservie.rate_plan_usage_based_rates.RatePlanUsageBasedRatesRepository;
 import aforo.productrateplanservie.exception.NotFoundException;
+import aforo.productrateplanservie.rate_plan_usage_based_rates.UpdateRatePlanUsageBasedRatesRequest;
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -56,59 +59,104 @@ public class RatePlanUsageBasedServiceImpl implements RatePlanUsageBasedService 
 
     @Override
     @Transactional
-    public Long create(Long ratePlanId, RatePlanUsageBasedDTO ratePlanUsageBasedDTO) {
-        RatePlan ratePlan = ratePlanRepository.findById(ratePlanId).orElseThrow(() -> new IllegalArgumentException("RatePlan with ID " + ratePlanId + " does not exist"));
-        RatePlanUsageBased ratePlanUsageBased = new RatePlanUsageBased();
-        ratePlanUsageBasedMapper.updateRatePlanUsageBased(ratePlanUsageBasedDTO, ratePlanUsageBased, ratePlanRepository);
+    public Long create(Long ratePlanId, CreateRatePlanUsageBasedRequest request) {
+        // Retrieve the RatePlan entity by ID
+        RatePlan ratePlan = ratePlanRepository.findById(ratePlanId)
+                .orElseThrow(() -> new NotFoundException("RatePlan with ID " + ratePlanId + " not found"));
+
+        // Map the create request DTO to entity
+        RatePlanUsageBased ratePlanUsageBased = ratePlanUsageBasedMapper.toEntity(request);
         ratePlanUsageBased.setRatePlan(ratePlan);
+
+        // Save RatePlanUsageBased entity
         RatePlanUsageBased savedRatePlanUsageBased = ratePlanUsageBasedRepository.save(ratePlanUsageBased);
 
-        if (ratePlanUsageBasedDTO.getRatePlanUsageBasedRatesDTO() != null) {
-            for (RatePlanUsageBasedRatesDTO detailsDTO : ratePlanUsageBasedDTO.getRatePlanUsageBasedRatesDTO()) {
-                RatePlanUsageBasedRates details = ratePlanUsageBasedMapper.mapToRatePlanUsageBasedRates(detailsDTO);
-                details.setRatePlanUsageBased(savedRatePlanUsageBased);
-                ratePlanUsageBasedRatesRepository.save(details);
-            }
+        // Save each nested RatePlanUsageBasedRates entity if provided
+        if (request.getRatePlanUsageBasedRatesDTO() != null) {
+            request.getRatePlanUsageBasedRatesDTO().forEach(rateRequest -> {
+                RatePlanUsageBasedRates rate = ratePlanUsageBasedMapper.toEntity(rateRequest);
+                rate.setRatePlanUsageBased(savedRatePlanUsageBased);
+                ratePlanUsageBasedRatesRepository.save(rate);
+            });
         }
 
         return savedRatePlanUsageBased.getRatePlanUsageRateId();
     }
 
-    @Override
+
     @Transactional
-    public void update(final Long ratePlanUsageRateId, final RatePlanUsageBasedDTO ratePlanUsageBasedDTO) {
-        RatePlanUsageBased ratePlanUsageBased = ratePlanUsageBasedRepository.findById(ratePlanUsageRateId).orElseThrow(NotFoundException::new);
-        ratePlanUsageBasedMapper.updateRatePlanUsageBased(ratePlanUsageBasedDTO, ratePlanUsageBased, ratePlanRepository);
-
-        // Retrieve the IDs of existing rates
-        Set<Long> existingRatesIds = ratePlanUsageBased.getRatePlanUsageBasedRates().stream().map(RatePlanUsageBasedRates::getId).collect(Collectors.toSet());
-
-        Set<Long> updatedRatesIds = ratePlanUsageBasedDTO.getRatePlanUsageBasedRatesDTO().stream().map(RatePlanUsageBasedRatesDTO::getId).filter(id -> id != null) // Only keep IDs that are not null
-                .collect(Collectors.toSet());
-
-        // Identify rates to be removed
-        Set<Long> ratesToRemove = existingRatesIds.stream().filter(id -> !updatedRatesIds.contains(id)).collect(Collectors.toSet());
-
-        // First, delete the rates that are no longer needed
-        for (Long id : ratesToRemove) {
-            ratePlanUsageBasedRatesRepository.deleteById(id);
+    @Override
+    public void update(Long ratePlanId, Long ratePlanUsageRateId, @Valid UpdateRatePlanUsageBasedRequest updateDTO) {
+        // Check if RatePlan exists
+        if (!ratePlanRepository.existsById(ratePlanId)) {
+            throw new EntityNotFoundException("RatePlan with id " + ratePlanId + " not found");
         }
 
-        // Now update existing rates or add new ones
-        for (RatePlanUsageBasedRatesDTO detailsDTO : ratePlanUsageBasedDTO.getRatePlanUsageBasedRatesDTO()) {
-            RatePlanUsageBasedRates details;
-            if (detailsDTO.getId() != null && ratePlanUsageBasedRatesRepository.existsById(detailsDTO.getId())) {
-                details = ratePlanUsageBasedRatesRepository.findById(detailsDTO.getId()).orElseThrow(NotFoundException::new);
-                ratePlanUsageBasedMapper.updateRatePlanUsageBasedRatesFromDTO(detailsDTO, details);
-            } else {
-                details = ratePlanUsageBasedMapper.mapToRatePlanUsageBasedRates(detailsDTO);
-                details.setRatePlanUsageBased(ratePlanUsageBased);
+        // Retrieve the existing RatePlanUsageBased entity
+        RatePlanUsageBased existingRatePlanUsageBased = ratePlanUsageBasedRepository.findById(ratePlanUsageRateId)
+                .orElseThrow(() -> new EntityNotFoundException("RatePlanUsageBased with id " + ratePlanUsageRateId + " not found"));
+
+        boolean isModified = false;
+
+        // Check and update fields only if there is a change
+        if (updateDTO.getRatePlanUsageDescription() != null &&
+                !Objects.equals(existingRatePlanUsageBased.getRatePlanUsageDescription(), updateDTO.getRatePlanUsageDescription())) {
+            existingRatePlanUsageBased.setRatePlanUsageDescription(updateDTO.getRatePlanUsageDescription());
+            isModified = true;
+        }
+
+        if (updateDTO.getDescription() != null &&
+                !Objects.equals(existingRatePlanUsageBased.getDescription(), updateDTO.getDescription())) {
+            existingRatePlanUsageBased.setDescription(updateDTO.getDescription());
+            isModified = true;
+        }
+
+        if (updateDTO.getUnitType() != null &&
+                !Objects.equals(existingRatePlanUsageBased.getUnitType(), updateDTO.getUnitType())) {
+            existingRatePlanUsageBased.setUnitType(updateDTO.getUnitType());
+            isModified = true;
+        }
+
+        if (updateDTO.getUnitMeasurement() != null &&
+                !Objects.equals(existingRatePlanUsageBased.getUnitMeasurement(), updateDTO.getUnitMeasurement())) {
+            existingRatePlanUsageBased.setUnitMeasurement(updateDTO.getUnitMeasurement());
+            isModified = true;
+        }
+
+        if (updateDTO.getUnitCalculation() != null &&
+                !Objects.equals(existingRatePlanUsageBased.getUnitCalculation(), updateDTO.getUnitCalculation())) {
+            existingRatePlanUsageBased.setUnitCalculation(updateDTO.getUnitCalculation());
+            isModified = true;
+        }
+
+        // Check and update nested RatePlanUsageBasedRates if provided
+        if (updateDTO.getRatePlanUsageBasedRatesDTO() != null) {
+            isModified |= updateRatePlanUsageBasedRates(existingRatePlanUsageBased, updateDTO.getRatePlanUsageBasedRatesDTO());
+        }
+
+        // Apply updates to the entity only if modifications were made
+        if (isModified) {
+            ratePlanUsageBasedRepository.save(existingRatePlanUsageBased);
+        }
+    }
+
+    // Helper method to handle partial update of RatePlanUsageBasedRates
+    private boolean updateRatePlanUsageBasedRates(RatePlanUsageBased ratePlanUsageBased, Set<UpdateRatePlanUsageBasedRatesRequest> ratesDTO) {
+        boolean isModified = false;
+        Set<RatePlanUsageBasedRates> existingRates = ratePlanUsageBased.getRatePlanUsageBasedRates();
+
+        for (UpdateRatePlanUsageBasedRatesRequest rateDTO : ratesDTO) {
+            RatePlanUsageBasedRates rate = existingRates.stream()
+                    .filter(r -> r.getId().equals(rateDTO.getId()))
+                    .findFirst()
+                    .orElseThrow(() -> new EntityNotFoundException("RatePlanUsageBasedRates not found for ID: " + rateDTO.getId()));
+
+            if (rateDTO.getUnitRate() != null && !Objects.equals(rate.getUnitRate(), rateDTO.getUnitRate())) {
+                rate.setUnitRate(rateDTO.getUnitRate());
+                isModified = true;
             }
-            ratePlanUsageBasedRatesRepository.save(details);
         }
-
-        // Finally, save the main entity
-        ratePlanUsageBasedRepository.save(ratePlanUsageBased);
+        return isModified;
     }
 
 
