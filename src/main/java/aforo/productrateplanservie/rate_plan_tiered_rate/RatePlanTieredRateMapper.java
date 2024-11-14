@@ -2,9 +2,11 @@ package aforo.productrateplanservie.rate_plan_tiered_rate;
 
 import aforo.productrateplanservie.rate_plan.RatePlan;
 import aforo.productrateplanservie.rate_plan.RatePlanRepository;
+import aforo.productrateplanservie.rate_plan_tiered_rate_details.CreateRatePlanTieredRateDetailsRequest;
 import aforo.productrateplanservie.rate_plan_tiered_rate_details.RatePlanTieredRateDetails;
 import aforo.productrateplanservie.rate_plan_tiered_rate_details.RatePlanTieredRateDetailsDTO;
 import aforo.productrateplanservie.exception.NotFoundException;
+import aforo.productrateplanservie.rate_plan_tiered_rate_details.UpdateRatePlanTieredRateDetailsRequest;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Context;
 import org.mapstruct.Mapper;
@@ -73,4 +75,20 @@ public interface RatePlanTieredRateMapper {
         }
         return null;  // Handle other cases or throw an exception if necessary
     }
+
+    // Map CreateRatePlanTieredRateRequest to RatePlanTieredRate entity
+    @Mapping(target = "ratePlan", ignore = true) // We set ratePlan separately in the service
+    RatePlanTieredRate mapToRatePlanTieredRate(CreateRatePlanTieredRateRequest createRequest);
+
+    // Map CreateRatePlanTieredRateDetailsRequest to RatePlanTieredRateDetails entity
+    @Mapping(target = "ratePlanTieredRate", ignore = true) // We set ratePlanTieredRate separately in the service
+    RatePlanTieredRateDetails mapToRatePlanTieredRateDetails(CreateRatePlanTieredRateDetailsRequest detailsRequest);
+
+    // Map UpdateRatePlanTieredRateRequest to existing RatePlanTieredRate entity
+    void updateRatePlanTieredRate(UpdateRatePlanTieredRateRequest updateRequest,
+                                  @MappingTarget RatePlanTieredRate ratePlanTieredRate);
+
+    // Map UpdateRatePlanTieredRateDetailsRequest to existing RatePlanTieredRateDetails entity
+    void updateRatePlanTieredRateDetails(UpdateRatePlanTieredRateDetailsRequest updateDetailsRequest,
+                                         @MappingTarget RatePlanTieredRateDetails ratePlanTieredRateDetails);
 }

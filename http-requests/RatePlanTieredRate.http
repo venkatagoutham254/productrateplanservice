@@ -1,0 +1,50 @@
+### Update RatePlanTieredRate
+PUT http://localhost:8082/v1/api/ratePlanTieredRates/10000/tiered/{ratePlanTieredRateId}
+Content-Type: application/json
+
+{
+  "ratePlanTieredDescription": "Updated Rate Plan Tiered Rate Description",
+  "description": "Updated Description",
+  "unitType": "API",
+  "unitMeasurement": "MB",
+  "unitCalculation": "HOURLY",
+  "ratePlanTieredRateDetails": [
+    {
+      "tierNumber": 10000,
+      "tierStart": 30.00,
+      "tierRate": 40.00,
+      "tierEnd": 50.00
+    }
+  ]
+}
+
+### Get All RatePlanTieredRates
+GET http://localhost:8082/v1/api/ratePlanTieredRates
+Content-Type: application/json
+
+### Get RatePlanTieredRate by ID
+GET http://localhost:8082/v1/api/ratePlanTieredRates/{ratePlanTieredRateId}
+Content-Type: application/json
+
+### Create New RatePlanTieredRate (Optional for Testing)
+POST http://localhost:8082/v1/api/ratePlanTieredRates/{ratePlanId}
+Content-Type: application/json
+
+{
+  "ratePlanTieredDescription": "New Rate Plan Tiered Rate Description",
+  "description": "New Description",
+  "unitType": "API",
+  "unitMeasurement": "MB",
+  "unitCalculation": "HOURLY",
+  "ratePlanTieredRateDetails": [
+    {
+      "tierStart": 10.00,
+      "tierRate": 20.00,
+      "tierEnd": 30.00
+    }
+  ]
+}
+
+### Delete RatePlanTieredRate by ID
+DELETE http://localhost:8082/v1/api/ratePlanTieredRates/{ratePlanTieredRateId}
+Content-Type: application/json

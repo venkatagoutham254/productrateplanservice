@@ -7,11 +7,15 @@ import aforo.productrateplanservie.rate_plan_tiered_rate_details.RatePlanTieredR
 import aforo.productrateplanservie.rate_plan_tiered_rate_details.RatePlanTieredRateDetailsRepository;
 import aforo.productrateplanservie.exception.NotFoundException;
 import aforo.productrateplanservie.exception.ReferencedWarning;
+import aforo.productrateplanservie.rate_plan_tiered_rate_details.UpdateRatePlanTieredRateDetailsRequest;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Set;
 
 
 @Service
@@ -50,52 +54,99 @@ public class RatePlanTieredRateServiceImpl implements RatePlanTieredRateService 
     public RatePlanTieredRateDTO get(final Long ratePlanTieredRateId) {
         return ratePlanTieredRateRepository.findById(ratePlanTieredRateId).map(ratePlanTieredRate -> ratePlanTieredRateMapper.updateRatePlanTieredRateDTO(ratePlanTieredRate, new RatePlanTieredRateDTO())).orElseThrow(NotFoundException::new);
     }
-
     @Override
     @Transactional
-    public Long create(Long ratePlanId, RatePlanTieredRateDTO ratePlanTieredRateDTO) {
-        RatePlan ratePlan = ratePlanRepository.findById(ratePlanId).orElseThrow(() -> new NotFoundException("RatePlan not found with id: " + ratePlanId));
-        RatePlanTieredRate ratePlanTieredRate = new RatePlanTieredRate();
-        ratePlanTieredRateMapper.updateRatePlanTieredRate(ratePlanTieredRateDTO, ratePlanTieredRate, ratePlanRepository);
+    public Long create(Long ratePlanId, CreateRatePlanTieredRateRequest createRequest) {
+        RatePlan ratePlan = ratePlanRepository.findById(ratePlanId)
+                .orElseThrow(() -> new NotFoundException("RatePlan not found with id: " + ratePlanId));
+
+        // Map the request to RatePlanTieredRate entity
+        RatePlanTieredRate ratePlanTieredRate = ratePlanTieredRateMapper.mapToRatePlanTieredRate(createRequest);
         ratePlanTieredRate.setRatePlan(ratePlan);
 
         RatePlanTieredRate savedRatePlanTieredRate = ratePlanTieredRateRepository.save(ratePlanTieredRate);
 
-
-        if (ratePlanTieredRateDTO.getRatePlanTieredRateDetailsDTO() != null) {
-            for (RatePlanTieredRateDetailsDTO detailsDTO : ratePlanTieredRateDTO.getRatePlanTieredRateDetailsDTO()) {
-                RatePlanTieredRateDetails details = ratePlanTieredRateMapper.mapToRatePlanTieredRateDetails(detailsDTO);
-                details.setRatePlanTieredRate(savedRatePlanTieredRate); // Ensure the relationship is set
-                ratePlanTieredRateDetailsRepository.save(details); // Save the details object
-            }
-        }
+        // Map and save each RatePlanTieredRateDetails entity
+        createRequest.getRatePlanTieredRateDetails().forEach(detailsRequest -> {
+            RatePlanTieredRateDetails details = ratePlanTieredRateMapper.mapToRatePlanTieredRateDetails(detailsRequest);
+            details.setRatePlanTieredRate(savedRatePlanTieredRate);
+            ratePlanTieredRateDetailsRepository.save(details);
+        });
 
         return savedRatePlanTieredRate.getRatePlanTieredRateId();
     }
 
     @Override
     @Transactional
-    public void update(Long ratePlanTieredRateId, RatePlanTieredRateDTO ratePlanTieredRateDTO) {
-        RatePlanTieredRate ratePlanTieredRate = ratePlanTieredRateRepository.findById(ratePlanTieredRateId).orElseThrow(() -> new NotFoundException("RatePlanTieredRate not found with id: " + ratePlanTieredRateId));
+    public void update(Long ratePlanId, Long ratePlanTieredRateId, UpdateRatePlanTieredRateRequest updateRequest) {
+        if (!ratePlanRepository.existsById(ratePlanId)) {
+            throw new EntityNotFoundException("RatePlan with id " + ratePlanId + " not found");
+        }
 
-        // Update the RatePlanTieredRate itself
-        ratePlanTieredRateMapper.updateRatePlanTieredRate(ratePlanTieredRateDTO, ratePlanTieredRate, ratePlanRepository);
+        RatePlanTieredRate existingRatePlanTieredRate = ratePlanTieredRateRepository.findById(ratePlanTieredRateId)
+                .orElseThrow(() -> new EntityNotFoundException("RatePlanTieredRate with id " + ratePlanTieredRateId + " not found"));
 
-        RatePlanTieredRate updatedRatePlanTieredRate = ratePlanTieredRateRepository.save(ratePlanTieredRate);
+        boolean isModified = false;
 
-        // Handle the updating of RatePlanTieredRateDetails
-        if (ratePlanTieredRateDTO.getRatePlanTieredRateDetailsDTO() != null) {
-            // First, delete existing RatePlanTieredRateDetails
-            ratePlanTieredRateDetailsRepository.deleteAllByRatePlanTieredRate(updatedRatePlanTieredRate);
+        if (updateRequest.getRatePlanTieredDescription() != null) {
+            existingRatePlanTieredRate.setRatePlanTieredDescription(updateRequest.getRatePlanTieredDescription());
+            isModified = true;
+        }
+        if (updateRequest.getDescription() != null) {
+            existingRatePlanTieredRate.setDescription(updateRequest.getDescription());
+            isModified = true;
+        }
+        if (updateRequest.getUnitType() != null) {
+            existingRatePlanTieredRate.setUnitType(updateRequest.getUnitType());
+            isModified = true;
+        }
+        if (updateRequest.getUnitMeasurement() != null) {
+            existingRatePlanTieredRate.setUnitMeasurement(updateRequest.getUnitMeasurement());
+            isModified = true;
+        }
+        if (updateRequest.getUnitCalculation() != null) {
+            existingRatePlanTieredRate.setUnitCalculation(updateRequest.getUnitCalculation());
+            isModified = true;
+        }
 
-            // Now, add the new RatePlanTieredRateDetails
-            for (RatePlanTieredRateDetailsDTO detailsDTO : ratePlanTieredRateDTO.getRatePlanTieredRateDetailsDTO()) {
-                RatePlanTieredRateDetails details = ratePlanTieredRateMapper.mapToRatePlanTieredRateDetails(detailsDTO);
-                details.setRatePlanTieredRate(updatedRatePlanTieredRate); // Set the relationship
-                ratePlanTieredRateDetailsRepository.save(details);
-            }
+        if (updateRequest.getRatePlanTieredRateDetails() != null) {
+            isModified |= updateRatePlanTieredRateDetails(existingRatePlanTieredRate, updateRequest.getRatePlanTieredRateDetails());
+        }
+
+        if (isModified) {
+            ratePlanTieredRateRepository.save(existingRatePlanTieredRate);
         }
     }
+
+    private boolean updateRatePlanTieredRateDetails(RatePlanTieredRate existingRatePlanTieredRate,
+                                                    Set<UpdateRatePlanTieredRateDetailsRequest> detailsRequests) {
+        boolean isModified = false;
+        Set<RatePlanTieredRateDetails> existingDetails = existingRatePlanTieredRate.getRatePlanTieredRateDetails();
+
+        for (UpdateRatePlanTieredRateDetailsRequest detailRequest : detailsRequests) {
+            RatePlanTieredRateDetails detail = existingDetails.stream()
+                    .filter(d -> d.getTierNumber().equals(detailRequest.getTierNumber()))
+                    .findFirst()
+                    .orElseThrow(() -> new EntityNotFoundException("RatePlanTieredRateDetails not found for ID: " + detailRequest.getTierNumber()));
+
+            if (detailRequest.getTierStart() != null && !detailRequest.getTierStart().equals(detail.getTierStart())) {
+                detail.setTierStart(detailRequest.getTierStart());
+                isModified = true;
+            }
+            if (detailRequest.getTierRate() != null && !detailRequest.getTierRate().equals(detail.getTierRate())) {
+                detail.setTierRate(detailRequest.getTierRate());
+                isModified = true;
+            }
+            if (detailRequest.getTierEnd() != null && !detailRequest.getTierEnd().equals(detail.getTierEnd())) {
+                detail.setTierEnd(detailRequest.getTierEnd());
+                isModified = true;
+            }
+        }
+        return isModified;
+    }
+
+
+
 
 
     @Transactional
@@ -107,17 +158,17 @@ public class RatePlanTieredRateServiceImpl implements RatePlanTieredRateService 
     }
 
 
-    @Override
-    public ReferencedWarning getReferencedWarning(final Long ratePlanTieredRateId) {
-        final ReferencedWarning referencedWarning = new ReferencedWarning();
-        final RatePlanTieredRate ratePlanTieredRate = ratePlanTieredRateRepository.findById(ratePlanTieredRateId).orElseThrow(NotFoundException::new);
-        final RatePlanTieredRateDetails ratePlanTieredRateRatePlanTieredRateDetails = ratePlanTieredRateDetailsRepository.findFirstByRatePlanTieredRate(ratePlanTieredRate);
-        if (ratePlanTieredRateRatePlanTieredRateDetails != null) {
-            referencedWarning.setKey("ratePlanTieredRate.ratePlanTieredRateDetails.ratePlanTieredRate.referenced");
-            referencedWarning.addParam(ratePlanTieredRateRatePlanTieredRateDetails.getTierNumber());
-            return referencedWarning;
-        }
-        return null;
-    }
+//    @Override
+//    public ReferencedWarning getReferencedWarning(final Long ratePlanTieredRateId) {
+//        final ReferencedWarning referencedWarning = new ReferencedWarning();
+//        final RatePlanTieredRate ratePlanTieredRate = ratePlanTieredRateRepository.findById(ratePlanTieredRateId).orElseThrow(NotFoundException::new);
+//        final RatePlanTieredRateDetails ratePlanTieredRateRatePlanTieredRateDetails = ratePlanTieredRateDetailsRepository.findFirstByRatePlanTieredRate(ratePlanTieredRate);
+//        if (ratePlanTieredRateRatePlanTieredRateDetails != null) {
+//            referencedWarning.setKey("ratePlanTieredRate.ratePlanTieredRateDetails.ratePlanTieredRate.referenced");
+//            referencedWarning.addParam(ratePlanTieredRateRatePlanTieredRateDetails.getTierNumber());
+//            return referencedWarning;
+//        }
+//        return null;
+//    }
 
 }

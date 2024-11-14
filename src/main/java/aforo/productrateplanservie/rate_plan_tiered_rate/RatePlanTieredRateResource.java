@@ -33,7 +33,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @Tag(name = "RatePlanTieredRates", description = "Operations related to RatePlanTieredRates")
-@RequestMapping(value = "/v1/api/ratePlanTieredRates", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/v1/api/rateplans", produces = MediaType.APPLICATION_JSON_VALUE)
 public class RatePlanTieredRateResource {
 
     private final RatePlanTieredRateService ratePlanTieredRateService;
@@ -67,7 +67,7 @@ public class RatePlanTieredRateResource {
                     )
             }
     )
-    @GetMapping
+    @GetMapping("/tiered")
     public ResponseEntity<PagedModel<EntityModel<RatePlanTieredRateDTO>>> getAllRatePlanTieredRates(
             @RequestParam(name = "filter", required = false) final String filter,
             @Parameter(hidden = true) @SortDefault(sort = "ratePlanTieredRateId") @PageableDefault(size = 20) final Pageable pageable) {
@@ -75,40 +75,39 @@ public class RatePlanTieredRateResource {
         return ResponseEntity.ok(pagedResourcesAssembler.toModel(ratePlanTieredRateDTOs, ratePlanTieredRateAssembler));
     }
 
-    @GetMapping("/{ratePlanTieredRateId}")
+    @GetMapping("/tiered/{ratePlanTieredRateId}")
     public ResponseEntity<EntityModel<RatePlanTieredRateDTO>> getRatePlanTieredRate(
             @PathVariable(name = "ratePlanTieredRateId") final Long ratePlanTieredRateId) {
         final RatePlanTieredRateDTO ratePlanTieredRateDTO = ratePlanTieredRateService.get(ratePlanTieredRateId);
         return ResponseEntity.ok(ratePlanTieredRateAssembler.toModel(ratePlanTieredRateDTO));
     }
 
-    @PostMapping("/{ratePlanId}")
-    @ApiResponse(responseCode = "201")
+    @PostMapping("/{ratePlanId}/tiered")
     public ResponseEntity<EntityModel<SimpleValue<Long>>> createRatePlanTieredRate(
             @PathVariable("ratePlanId") Long ratePlanId,
-            @RequestBody @Valid final RatePlanTieredRateDTO ratePlanTieredRateDTO) {
-        final Long createdRatePlanTieredRateId = ratePlanTieredRateService.create(ratePlanId,ratePlanTieredRateDTO);
+            @RequestBody @Valid CreateRatePlanTieredRateRequest createRequest) {
+        final Long createdRatePlanTieredRateId = ratePlanTieredRateService.create(ratePlanId, createRequest);
         return new ResponseEntity<>(ratePlanTieredRateAssembler.toSimpleModel(createdRatePlanTieredRateId), HttpStatus.CREATED);
     }
 
-
-    @PutMapping("/{ratePlanTieredRateId}")
+    @PutMapping("/{ratePlanId}/tiered/{ratePlanTieredRateId}")
     public ResponseEntity<EntityModel<SimpleValue<Long>>> updateRatePlanTieredRate(
-            @PathVariable(name = "ratePlanTieredRateId") final Long ratePlanTieredRateId,
-            @RequestBody @Valid final RatePlanTieredRateDTO ratePlanTieredRateDTO) {
-        ratePlanTieredRateService.update(ratePlanTieredRateId, ratePlanTieredRateDTO);
+            @PathVariable("ratePlanId") Long ratePlanId,
+            @PathVariable("ratePlanTieredRateId") Long ratePlanTieredRateId,
+            @RequestBody @Valid UpdateRatePlanTieredRateRequest updateRequest) {
+        ratePlanTieredRateService.update(ratePlanId, ratePlanTieredRateId, updateRequest);
         return ResponseEntity.ok(ratePlanTieredRateAssembler.toSimpleModel(ratePlanTieredRateId));
-
     }
 
-    @DeleteMapping("/{ratePlanTieredRateId}")
+
+    @DeleteMapping("/tiered/{ratePlanTieredRateId}")
     @ApiResponse(responseCode = "204")
     public ResponseEntity<Void> deleteRatePlanTieredRate(
             @PathVariable(name = "ratePlanTieredRateId") final Long ratePlanTieredRateId) {
-        final ReferencedWarning referencedWarning = ratePlanTieredRateService.getReferencedWarning(ratePlanTieredRateId);
-        if (referencedWarning != null) {
-            throw new ReferencedException(referencedWarning);
-        }
+//        final ReferencedWarning referencedWarning = ratePlanTieredRateService.getReferencedWarning(ratePlanTieredRateId);
+//        if (referencedWarning != null) {
+//            throw new ReferencedException(referencedWarning);
+//        }
         ratePlanTieredRateService.delete(ratePlanTieredRateId);
         return ResponseEntity.noContent().build();
     }

@@ -11,13 +11,13 @@ public interface RatePlanTieredRateService {
 
     RatePlanTieredRateDTO get(Long ratePlanTieredRateId);
 
-    Long create(Long ratePlanId,RatePlanTieredRateDTO ratePlanTieredRateDTO);
+    Long create(Long ratePlanId, CreateRatePlanTieredRateRequest createRequest);
 
 
-    void update(Long ratePlanTieredRateId, RatePlanTieredRateDTO ratePlanTieredRateDTO);
+    void update(Long ratePlanId, Long ratePlanTieredRateId, UpdateRatePlanTieredRateRequest updateRequest);
 
     void delete(Long ratePlanTieredRateId);
 
-    ReferencedWarning getReferencedWarning(Long ratePlanTieredRateId);
+//    ReferencedWarning getReferencedWarning(Long ratePlanTieredRateId);
 
 }
