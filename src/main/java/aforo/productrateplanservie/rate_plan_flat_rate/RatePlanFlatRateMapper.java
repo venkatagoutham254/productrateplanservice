@@ -2,9 +2,11 @@ package aforo.productrateplanservie.rate_plan_flat_rate;
 
 import aforo.productrateplanservie.rate_plan.RatePlan;
 import aforo.productrateplanservie.rate_plan.RatePlanRepository;
+import aforo.productrateplanservie.rate_plan_flat_rate_details.CreateRatePlanFlatRateDetailsRequest;
 import aforo.productrateplanservie.rate_plan_flat_rate_details.RatePlanFlatRateDetails;
 import aforo.productrateplanservie.rate_plan_flat_rate_details.RatePlanFlatRateDetailsDTO;
 import aforo.productrateplanservie.exception.NotFoundException;
+import aforo.productrateplanservie.rate_plan_flat_rate_details.UpdateRatePlanFlatRateDetailsRequest;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Context;
 import org.mapstruct.Mapper;
@@ -52,5 +54,27 @@ public interface RatePlanFlatRateMapper {
     RatePlanFlatRateDetails mapToRatePlanFlatRateDetails(RatePlanFlatRateDetailsDTO detailsDTO);
 
     // Maps from entity to DTO, including the ID
+
+
+
+
+    // Map CreateRatePlanFlatRateRequest to RatePlanFlatRate entity
+    @Mapping(target = "ratePlan", ignore = true) // We set ratePlan separately in the service
+    RatePlanFlatRate mapToRatePlanFlatRate(CreateRatePlanFlatRateRequest createRequest);
+
+    // Map CreateRatePlanFlatRateDetailsRequest to RatePlanFlatRateDetails entity
+    @Mapping(target = "ratePlanFlatRate", ignore = true) // We set ratePlanFlatRate separately in the service
+    RatePlanFlatRateDetails mapToRatePlanFlatRateDetails(CreateRatePlanFlatRateDetailsRequest detailsRequest);
+
+    // Map entity to DTO
     RatePlanFlatRateDetailsDTO mapToRatePlanFlatRateDetailsDTO(RatePlanFlatRateDetails details);
+
+    // Map UpdateRatePlanFlatRateRequest to existing RatePlanFlatRate entity
+    void updateRatePlanFlatRate(UpdateRatePlanFlatRateRequest updateRequest,
+                                @MappingTarget RatePlanFlatRate ratePlanFlatRate);
+
+    // Map UpdateRatePlanFlatRateDetailsRequest to existing RatePlanFlatRateDetails entity
+    void updateRatePlanFlatRateDetails(UpdateRatePlanFlatRateDetailsRequest updateDetailsRequest,
+                                       @MappingTarget RatePlanFlatRateDetails ratePlanFlatRateDetails);
+
 }

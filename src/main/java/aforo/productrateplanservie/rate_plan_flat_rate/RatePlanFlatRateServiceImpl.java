@@ -7,13 +7,18 @@ import aforo.productrateplanservie.rate_plan_flat_rate_details.RatePlanFlatRateD
 import aforo.productrateplanservie.rate_plan_flat_rate_details.RatePlanFlatRateDetailsRepository;
 import aforo.productrateplanservie.exception.NotFoundException;
 import aforo.productrateplanservie.exception.ReferencedWarning;
+import aforo.productrateplanservie.rate_plan_flat_rate_details.UpdateRatePlanFlatRateDetailsRequest;
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class RatePlanFlatRateServiceImpl implements RatePlanFlatRateService {
@@ -63,48 +68,103 @@ public class RatePlanFlatRateServiceImpl implements RatePlanFlatRateService {
 
     @Override
     @Transactional
-    public Long create(Long ratePlanId, RatePlanFlatRateDTO ratePlanFlatRateDTO) {
+    public Long create(Long ratePlanId, CreateRatePlanFlatRateRequest createRatePlanFlatRateRequest) {
         RatePlan ratePlan = ratePlanRepository.findById(ratePlanId)
                 .orElseThrow(() -> new NotFoundException("RatePlan not found with id: " + ratePlanId));
 
-        RatePlanFlatRate ratePlanFlatRate = new RatePlanFlatRate();
-        ratePlanFlatRateMapper.updateRatePlanFlatRate(ratePlanFlatRateDTO, ratePlanFlatRate, ratePlanRepository);
-
+        // Map the request to RatePlanFlatRate entity
+        RatePlanFlatRate ratePlanFlatRate = ratePlanFlatRateMapper.mapToRatePlanFlatRate(createRatePlanFlatRateRequest);
         ratePlanFlatRate.setRatePlan(ratePlan);
 
         RatePlanFlatRate savedRatePlanFlatRate = ratePlanFlatRateRepository.save(ratePlanFlatRate);
 
-        if (ratePlanFlatRateDTO.getRatePlanFlatRateDetails() != null) {
-            for (RatePlanFlatRateDetailsDTO detailsDTO : ratePlanFlatRateDTO.getRatePlanFlatRateDetails()) {
-                RatePlanFlatRateDetails details = ratePlanFlatRateMapper.mapToRatePlanFlatRateDetails(detailsDTO);
-                details.setRatePlanFlatRate(savedRatePlanFlatRate);
-                ratePlanFlatRateDetailsRepository.save(details);
-            }
-        }
+        // Map and save each RatePlanFlatRateDetails entity
+        createRatePlanFlatRateRequest.getRatePlanFlatRateDetails().forEach(detailsRequest -> {
+            RatePlanFlatRateDetails details = ratePlanFlatRateMapper.mapToRatePlanFlatRateDetails(detailsRequest);
+            details.setRatePlanFlatRate(savedRatePlanFlatRate);
+            ratePlanFlatRateDetailsRepository.save(details);
+        });
 
         return savedRatePlanFlatRate.getRatePlanFlatRateId();
     }
 
+
+
     @Override
     @Transactional
-    public void update(Long ratePlanFlatRateId, RatePlanFlatRateDTO ratePlanFlatRateDTO) {
-        RatePlanFlatRate ratePlanFlatRate = ratePlanFlatRateRepository.findById(ratePlanFlatRateId)
-                .orElseThrow(() -> new NotFoundException("RatePlanFlatRate not found with id: " + ratePlanFlatRateId));
+    public void update(Long ratePlanId, Long ratePlanFlatRateId, @Valid UpdateRatePlanFlatRateRequest updateRequest) {
+        // Check if RatePlan exists
+        if (!ratePlanRepository.existsById(ratePlanId)) {
+            throw new EntityNotFoundException("RatePlan with id " + ratePlanId + " not found");
+        }
 
-        ratePlanFlatRateMapper.updateRatePlanFlatRate(ratePlanFlatRateDTO, ratePlanFlatRate, ratePlanRepository);
+        // Retrieve existing RatePlanFlatRate entity
+        RatePlanFlatRate existingRatePlanFlatRate = ratePlanFlatRateRepository.findById(ratePlanFlatRateId)
+                .orElseThrow(() -> new EntityNotFoundException("RatePlanFlatRate with id " + ratePlanFlatRateId + " not found"));
 
-        RatePlanFlatRate updatedRatePlanFlatRate = ratePlanFlatRateRepository.save(ratePlanFlatRate);
+        boolean isModified = false;
 
-        if (ratePlanFlatRateDTO.getRatePlanFlatRateDetails() != null) {
-            ratePlanFlatRateDetailsRepository.deleteAllByRatePlanFlatRate(updatedRatePlanFlatRate);
+        // Update main RatePlanFlatRate fields if provided
+        if (updateRequest.getRatePlanFlatDescription() != null) {
+            existingRatePlanFlatRate.setRatePlanFlatDescription(updateRequest.getRatePlanFlatDescription());
+            isModified = true;
+        }
+        if (updateRequest.getDescription() != null) {
+            existingRatePlanFlatRate.setDescription(updateRequest.getDescription());
+            isModified = true;
+        }
+        if (updateRequest.getUnitType() != null) {
+            existingRatePlanFlatRate.setUnitType(updateRequest.getUnitType());
+            isModified = true;
+        }
+        if (updateRequest.getUnitMeasurement() != null) {
+            existingRatePlanFlatRate.setUnitMeasurement(updateRequest.getUnitMeasurement());
+            isModified = true;
+        }
+        if (updateRequest.getFlatRateUnitCalculation() != null) {
+            existingRatePlanFlatRate.setFlatRateUnitCalculation(updateRequest.getFlatRateUnitCalculation());
+            isModified = true;
+        }
+        if (updateRequest.getMaxLimitFrequency() != null) {
+            existingRatePlanFlatRate.setMaxLimitFrequency(updateRequest.getMaxLimitFrequency());
+            isModified = true;
+        }
 
-            for (RatePlanFlatRateDetailsDTO detailsDTO : ratePlanFlatRateDTO.getRatePlanFlatRateDetails()) {
-                RatePlanFlatRateDetails details = ratePlanFlatRateMapper.mapToRatePlanFlatRateDetails(detailsDTO);
-                details.setRatePlanFlatRate(updatedRatePlanFlatRate);
-                ratePlanFlatRateDetailsRepository.save(details);
-            }
+        // Handle updating of nested RatePlanFlatRateDetails if provided
+        if (updateRequest.getRatePlanFlatRateDetails() != null) {
+            isModified |= updateRatePlanFlatRateDetails(existingRatePlanFlatRate, updateRequest.getRatePlanFlatRateDetails());
+        }
+
+        // Save changes if any modifications were made
+        if (isModified) {
+            ratePlanFlatRateRepository.save(existingRatePlanFlatRate);
         }
     }
+
+    private boolean updateRatePlanFlatRateDetails(RatePlanFlatRate existingRatePlanFlatRate,
+                                                  List<UpdateRatePlanFlatRateDetailsRequest> detailsRequests) {
+        boolean isModified = false;
+        Set<RatePlanFlatRateDetails> existingDetails = existingRatePlanFlatRate.getRatePlanFlatRateDetails();
+
+        for (UpdateRatePlanFlatRateDetailsRequest detailRequest : detailsRequests) {
+            RatePlanFlatRateDetails detail = existingDetails.stream()
+                    .filter(d -> d.getId().equals(detailRequest.getId()))
+                    .findFirst()
+                    .orElseThrow(() -> new EntityNotFoundException("RatePlanFlatRateDetails not found for ID: " + detailRequest.getId()));
+
+            if (detailRequest.getUnitRate() != null && !detailRequest.getUnitRate().equals(detail.getUnitRate())) {
+                detail.setUnitRate(detailRequest.getUnitRate());
+                isModified = true;
+            }
+            if (detailRequest.getMaxLimit() != null && !detailRequest.getMaxLimit().equals(detail.getMaxLimit())) {
+                detail.setMaxLimit(detailRequest.getMaxLimit());
+                isModified = true;
+            }
+        }
+        return isModified;
+    }
+
+
 
     @Override
     @Transactional
@@ -112,9 +172,7 @@ public class RatePlanFlatRateServiceImpl implements RatePlanFlatRateService {
         RatePlanFlatRate ratePlanFlatRate = ratePlanFlatRateRepository.findById(ratePlanFlatRateId)
                 .orElseThrow(() -> new NotFoundException("RatePlanFlatRate not found with id: " + ratePlanFlatRateId));
 
-        ratePlanFlatRateDetailsRepository.deleteAllByRatePlanFlatRate(ratePlanFlatRate);
-
-        ratePlanFlatRateRepository.delete(ratePlanFlatRate);
+        ratePlanFlatRateRepository.delete(ratePlanFlatRate); // Details are deleted automatically
     }
 
     @Override

@@ -1,0 +1,54 @@
+### Create RatePlanFlatRate
+POST http://localhost:8082/v1/api/rateplans/10000/flat_rate
+Content-Type: application/json
+
+{
+  "ratePlanFlatDescription": "Flat rate description 2",
+  "description": "optional description 2",
+  "unitType": "DATA_STORAGE",
+  "unitMeasurement": "GB",
+  "flatRateUnitCalculation": "MONTHLY",
+  "maxLimitFrequency": "DAILY",
+  "ratePlanFlatRateDetails": [
+    {
+      "unitRate": 3,
+      "maxLimit": 4
+    }
+  ]
+}
+
+### Get All RatePlanFlatRates
+GET http://localhost:8082/v1/api/rateplans/flat_rate
+Content-Type: application/json
+
+### Get All RatePlanFlatRates by RatePlan ID
+GET http://localhost:8082/v1/api/rateplans/10000/flat_rate
+Content-Type: application/json
+
+### Get RatePlanFlatRate by ID
+GET http://localhost:8082/v1/api/rateplans/flat_rate/10001
+Content-Type: application/json
+
+### Update RatePlanFlatRate
+PUT http://localhost:8082/v1/api/rateplans/10000/flat_rate/10001
+Content-Type: application/json
+
+{
+   "ratePlanFlatDescription": "Updated Flat Rate description 1",
+   "description": "Updated Optional Description",
+   "unitType": "PROCESSING",
+   "unitMeasurement": "TB",
+   "flatRateUnitCalculation": "YEARLY",
+   "maxLimitFrequency": "YEARLY",
+  "ratePlanFlatRateDetails": [
+    {
+      "id": 10004,
+      "unitRate": 300,
+      "maxLimit": 3000
+    }
+  ]
+}
+
+### Delete RatePlanFlatRate
+DELETE http://localhost:8082/v1/api/rateplans/flat_rate/1
+Content-Type: application/json

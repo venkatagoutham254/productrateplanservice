@@ -1,6 +1,7 @@
 package aforo.productrateplanservie.rate_plan_flat_rate;
 
 import aforo.productrateplanservie.exception.ReferencedWarning;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -12,9 +13,10 @@ public interface RatePlanFlatRateService {
 
     RatePlanFlatRateDTO get(Long ratePlanFlatRateId);
 
-    Long create(Long ratePlanId, RatePlanFlatRateDTO ratePlanFlatRateDTO);
+    Long create(Long ratePlanId, CreateRatePlanFlatRateRequest createRatePlanFlatRateRequest);
 
-    void update(Long ratePlanFlatRateId, RatePlanFlatRateDTO ratePlanFlatRateDTO);
+
+    void update(Long ratePlanId, Long ratePlanFlatRateId, @Valid UpdateRatePlanFlatRateRequest updateRequest);
 
     void delete(Long ratePlanFlatRateId);
 

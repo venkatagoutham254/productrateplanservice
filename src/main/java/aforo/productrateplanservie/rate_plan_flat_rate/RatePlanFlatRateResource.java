@@ -60,7 +60,7 @@ public class RatePlanFlatRateResource {
                     )
             }
     )
-    @GetMapping
+    @GetMapping("/flat_rate")
     public ResponseEntity<PagedModel<EntityModel<RatePlanFlatRateDTO>>> getAllRatePlanFlatRates(
             @RequestParam(name = "filter", required = false) final String filter,
             @Parameter(hidden = true) @SortDefault(sort = "ratePlanFlatRateId") @PageableDefault(size = 20) final Pageable pageable) {
@@ -72,7 +72,7 @@ public class RatePlanFlatRateResource {
             summary = "Get all RatePlanFlatRates by RatePlan ID",
             description = "Retrieves all RatePlanFlatRates associated with the specified RatePlan ID."
     )
-    @GetMapping("/ratePlan/{ratePlanId}")
+    @GetMapping("/{ratePlanId}/flat_rate")
     public ResponseEntity<PagedModel<EntityModel<RatePlanFlatRateDTO>>> getRatePlanFlatRatesByRatePlanId(
             @PathVariable("ratePlanId") final Long ratePlanId,
             @Parameter(hidden = true) @SortDefault(sort = "ratePlanFlatRateId") @PageableDefault(size = 20) final Pageable pageable) {
@@ -80,7 +80,7 @@ public class RatePlanFlatRateResource {
         return ResponseEntity.ok(pagedResourcesAssembler.toModel(ratePlanFlatRateDTOs, ratePlanFlatRateAssembler));
     }
 
-    @GetMapping("/{ratePlanFlatRateId}")
+    @GetMapping("/flat_rate/{ratePlanFlatRateId}")
     public ResponseEntity<EntityModel<RatePlanFlatRateDTO>> getRatePlanFlatRate(
             @PathVariable(name = "ratePlanFlatRateId") final Long ratePlanFlatRateId) {
         final RatePlanFlatRateDTO ratePlanFlatRateDTO = ratePlanFlatRateService.get(ratePlanFlatRateId);
@@ -88,23 +88,23 @@ public class RatePlanFlatRateResource {
     }
 
     @PostMapping("/{ratePlanId}/flat_rate")
-    @ApiResponse(responseCode = "201")
     public ResponseEntity<EntityModel<SimpleValue<Long>>> createRatePlanFlatRate(
             @PathVariable("ratePlanId") Long ratePlanId,
-            @RequestBody @Valid final RatePlanFlatRateDTO ratePlanFlatRateDTO) {
-        final Long createdRatePlanFlatRateId = ratePlanFlatRateService.create(ratePlanId, ratePlanFlatRateDTO);
+            @RequestBody @Valid final CreateRatePlanFlatRateRequest createRatePlanFlatRateRequest) {
+        final Long createdRatePlanFlatRateId = ratePlanFlatRateService.create(ratePlanId, createRatePlanFlatRateRequest);
         return new ResponseEntity<>(ratePlanFlatRateAssembler.toSimpleModel(createdRatePlanFlatRateId), HttpStatus.CREATED);
     }
-
-    @PutMapping("/{ratePlanFlatRateId}")
+    @PutMapping("/{ratePlanId}/flat_rate/{ratePlanFlatRateId}")
     public ResponseEntity<EntityModel<SimpleValue<Long>>> updateRatePlanFlatRate(
-            @PathVariable(name = "ratePlanFlatRateId") final Long ratePlanFlatRateId,
-            @RequestBody @Valid final RatePlanFlatRateDTO ratePlanFlatRateDTO) {
-        ratePlanFlatRateService.update(ratePlanFlatRateId, ratePlanFlatRateDTO);
+            @PathVariable("ratePlanId") Long ratePlanId,
+            @PathVariable("ratePlanFlatRateId") Long ratePlanFlatRateId,
+            @RequestBody @Valid UpdateRatePlanFlatRateRequest updateRequest) {
+        ratePlanFlatRateService.update(ratePlanId, ratePlanFlatRateId, updateRequest);
         return ResponseEntity.ok(ratePlanFlatRateAssembler.toSimpleModel(ratePlanFlatRateId));
     }
 
-    @DeleteMapping("/{ratePlanFlatRateId}")
+
+    @DeleteMapping("/flat_rate/{ratePlanFlatRateId}")
     @ApiResponse(responseCode = "204")
     public ResponseEntity<Void> deleteRatePlanFlatRate(
             @PathVariable(name = "ratePlanFlatRateId") final Long ratePlanFlatRateId) {
