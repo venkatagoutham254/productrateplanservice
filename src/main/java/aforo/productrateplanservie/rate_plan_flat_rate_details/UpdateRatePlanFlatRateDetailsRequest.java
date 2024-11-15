@@ -1,17 +1,10 @@
 package aforo.productrateplanservie.rate_plan_flat_rate_details;
 
-import lombok.Getter;
-import lombok.Setter;
-
+import lombok.Data;
 import java.math.BigDecimal;
-
-@Getter
-@Setter
+@Data
 public class UpdateRatePlanFlatRateDetailsRequest {
-
-    private Long id; // The ID of the detail to be updated
-
+    private Long id;
     private BigDecimal unitRate;
-
     private BigDecimal maxLimit;
 }

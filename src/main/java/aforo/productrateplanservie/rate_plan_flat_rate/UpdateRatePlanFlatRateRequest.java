@@ -7,18 +7,17 @@ import aforo.productrateplanservie.util.enums.MaxLimitFrequency;
 import aforo.productrateplanservie.util.enums.UnitMeasurement;
 import aforo.productrateplanservie.util.enums.UnitType;
 import jakarta.validation.constraints.Size;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.List;
 
-@Getter
-@Setter
+@Data
 public class UpdateRatePlanFlatRateRequest {
 
     @Size(max = 100)
     private String ratePlanFlatDescription;
-
     private String description;
     @ValidEnum(enumClass = UnitType.class, message = "Invalid UnitType value")
     private UnitType unitType;
@@ -28,6 +27,5 @@ public class UpdateRatePlanFlatRateRequest {
     private FlatRateUnitCalculation flatRateUnitCalculation;
     @ValidEnum(enumClass = MaxLimitFrequency.class, message = "Invalid MaxLimitFrequency value")
     private MaxLimitFrequency maxLimitFrequency;
-
     private List<UpdateRatePlanFlatRateDetailsRequest> ratePlanFlatRateDetails;
 }

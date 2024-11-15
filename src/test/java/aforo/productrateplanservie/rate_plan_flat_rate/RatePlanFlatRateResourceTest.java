@@ -1,134 +1,189 @@
 package aforo.productrateplanservie.rate_plan_flat_rate;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import java.io.IOException;
-
-import aforo.productrateplanservie.config.BaseIT;
-import io.restassured.RestAssured;
-import io.restassured.http.ContentType;
-import org.hamcrest.Matchers;
+import aforo.productrateplanservie.exception.ReferencedException;
+import aforo.productrateplanservie.exception.ReferencedWarning;
+import aforo.productrateplanservie.model.SimpleValue;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
-import org.springframework.test.context.jdbc.Sql;
+import org.springframework.http.ResponseEntity;
 
+import java.util.List;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.*;
 
-public class RatePlanFlatRateResourceTest extends BaseIT {
+@ExtendWith(MockitoExtension.class)
+class RatePlanFlatRateResourceTest {
+
+    @Mock
+    private RatePlanFlatRateService ratePlanFlatRateService;
+
+    @Mock
+    private RatePlanFlatRateAssembler ratePlanFlatRateAssembler;
+
+    @Mock
+    private PagedResourcesAssembler<RatePlanFlatRateDTO> pagedResourcesAssembler;
+
+    @InjectMocks
+    private RatePlanFlatRateResource ratePlanFlatRateResource;
 
     @Test
-    @Sql({"/data/productData.sql", "/data/currenciesData.sql", "/data/ratePlanData.sql", "/data/ratePlanFlatRateData.sql"})
-    void getAllRatePlanFlatRates_success() {
-        RestAssured
-                .given()
-                    .accept(ContentType.JSON)
-                .when()
-                    .get("/api/ratePlanFlatRates")
-                .then()
-                    .statusCode(HttpStatus.OK.value())
-                    .body("page.totalElements", Matchers.equalTo(2))
-                    .body("_embedded.ratePlanFlatRateDTOList.get(0).ratePlanFlatRateId", Matchers.equalTo(1700))
-                    .body("_links.self.href", Matchers.endsWith("/api/ratePlanFlatRates?page=0&size=20&sort=ratePlanFlatRateId,asc"));
+    void getAllRatePlanFlatRateShouldReturnPagedModel() {
+        // Arrange
+        String filter = null;
+        Pageable pageable = Pageable.ofSize(20);
+        Page<RatePlanFlatRateDTO> ratePlanFlatRateDTOs = new PageImpl<>(List.of(new RatePlanFlatRateDTO()));
+        PagedModel<EntityModel<RatePlanFlatRateDTO>> pagedModel = PagedModel.empty();
+
+        when(ratePlanFlatRateService.findAll(filter, pageable)).thenReturn(ratePlanFlatRateDTOs);
+        when(pagedResourcesAssembler.toModel(ratePlanFlatRateDTOs, ratePlanFlatRateAssembler)).thenReturn(pagedModel);
+
+        // Act
+        ResponseEntity<PagedModel<EntityModel<RatePlanFlatRateDTO>>> response =
+                ratePlanFlatRateResource.getAllRatePlanFlatRates(filter, pageable);
+
+        // Assert
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).isEqualTo(pagedModel);
+        verify(ratePlanFlatRateService).findAll(filter, pageable);
+        verify(pagedResourcesAssembler).toModel(ratePlanFlatRateDTOs, ratePlanFlatRateAssembler);
     }
 
     @Test
-    @Sql({"/data/productData.sql", "/data/currenciesData.sql", "/data/ratePlanData.sql", "/data/ratePlanFlatRateData.sql"})
-    void getAllRatePlanFlatRates_filtered() {
-        RestAssured
-                .given()
-                    .accept(ContentType.JSON)
-                .when()
-                    .get("/api/ratePlanFlatRates?filter=1701")
-                .then()
-                    .statusCode(HttpStatus.OK.value())
-                    .body("page.totalElements", Matchers.equalTo(1))
-                    .body("_embedded.ratePlanFlatRateDTOList.get(0).ratePlanFlatRateId", Matchers.equalTo(1701));
+    void getRatePlanFlatRatesByRatePlanIdShouldReturnPagedModel() {
+        // Arrange
+        Long ratePlanId = 1L;
+        Pageable pageable = Pageable.ofSize(20);
+        Page<RatePlanFlatRateDTO> ratePlanFlatRateDTOs = new PageImpl<>(List.of(new RatePlanFlatRateDTO()));
+        PagedModel<EntityModel<RatePlanFlatRateDTO>> pagedModel = PagedModel.empty();
+
+        when(ratePlanFlatRateService.findAllByRatePlanId(ratePlanId, pageable)).thenReturn(ratePlanFlatRateDTOs);
+        when(pagedResourcesAssembler.toModel(ratePlanFlatRateDTOs, ratePlanFlatRateAssembler)).thenReturn(pagedModel);
+
+        // Act
+        ResponseEntity<PagedModel<EntityModel<RatePlanFlatRateDTO>>> response =
+                ratePlanFlatRateResource.getRatePlanFlatRatesByRatePlanId(ratePlanId, pageable);
+
+        // Assert
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).isEqualTo(pagedModel);
+        verify(ratePlanFlatRateService).findAllByRatePlanId(ratePlanId, pageable);
+        verify(pagedResourcesAssembler).toModel(ratePlanFlatRateDTOs, ratePlanFlatRateAssembler);
     }
 
     @Test
-    @Sql({"/data/productData.sql", "/data/currenciesData.sql", "/data/ratePlanData.sql", "/data/ratePlanFlatRateData.sql"})
-    void getRatePlanFlatRate_success() {
-        RestAssured
-                .given()
-                    .accept(ContentType.JSON)
-                .when()
-                    .get("/api/ratePlanFlatRates/1700")
-                .then()
-                    .statusCode(HttpStatus.OK.value())
-                    .body("ratePlanFlatDescription", Matchers.equalTo("Commodo consequat."))
-                    .body("_links.self.href", Matchers.endsWith("/api/ratePlanFlatRates/1700"));
+    void getRatePlanFlatRateShouldReturnEntityModel() {
+        // Arrange
+        Long ratePlanFlatRateId = 1L;
+        RatePlanFlatRateDTO dto = new RatePlanFlatRateDTO();
+        EntityModel<RatePlanFlatRateDTO> entityModel = EntityModel.of(dto);
+
+        when(ratePlanFlatRateService.get(ratePlanFlatRateId)).thenReturn(dto);
+        when(ratePlanFlatRateAssembler.toModel(dto)).thenReturn(entityModel);
+
+        // Act
+        ResponseEntity<EntityModel<RatePlanFlatRateDTO>> response =
+                ratePlanFlatRateResource.getRatePlanFlatRate(ratePlanFlatRateId);
+
+        // Assert
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).isEqualTo(entityModel);
+        verify(ratePlanFlatRateService).get(ratePlanFlatRateId);
+        verify(ratePlanFlatRateAssembler).toModel(dto);
     }
 
     @Test
-    void getRatePlanFlatRate_notFound() {
-        RestAssured
-                .given()
-                    .accept(ContentType.JSON)
-                .when()
-                    .get("/api/ratePlanFlatRates/2366")
-                .then()
-                    .statusCode(HttpStatus.NOT_FOUND.value())
-                    .body("code", Matchers.equalTo("NOT_FOUND"));
+    void createRatePlanFlatRateShouldReturnCreatedResponse() {
+        // Arrange
+        Long ratePlanId = 1L;
+        CreateRatePlanFlatRateRequest request = new CreateRatePlanFlatRateRequest();
+        Long createdId = 1L;
+        EntityModel<SimpleValue<Long>> entityModel = EntityModel.of(new SimpleValue<>(createdId));
+
+        when(ratePlanFlatRateService.create(ratePlanId, request)).thenReturn(createdId);
+        when(ratePlanFlatRateAssembler.toSimpleModel(createdId)).thenReturn(entityModel);
+
+        // Act
+        ResponseEntity<EntityModel<SimpleValue<Long>>> response =
+                ratePlanFlatRateResource.createRatePlanFlatRate(ratePlanId, request);
+
+        // Assert
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+        assertThat(response.getBody()).isEqualTo(entityModel);
+        verify(ratePlanFlatRateService).create(ratePlanId, request);
+        verify(ratePlanFlatRateAssembler).toSimpleModel(createdId);
     }
 
     @Test
-    @Sql({"/data/productData.sql", "/data/currenciesData.sql", "/data/ratePlanData.sql"})
-    void createRatePlanFlatRate_success() throws IOException {
-        RestAssured
-                .given()
-                    .accept(ContentType.JSON)
-                    .contentType(ContentType.JSON)
-                    .body(readResource("/requests/ratePlanFlatRateDTORequest.json"))
-                .when()
-                    .post("/api/ratePlanFlatRates")
-                .then()
-                    .statusCode(HttpStatus.CREATED.value());
-        assertEquals(1, ratePlanFlatRateRepository.count());
+    void updateRatePlanFlatRateShouldReturnUpdatedResponse() {
+        // Arrange
+        Long ratePlanId = 1L;
+        Long ratePlanFlatRateId = 1L;
+        UpdateRatePlanFlatRateRequest updateRequest = new UpdateRatePlanFlatRateRequest();
+        EntityModel<SimpleValue<Long>> entityModel = EntityModel.of(new SimpleValue<>(ratePlanFlatRateId));
+
+        when(ratePlanFlatRateAssembler.toSimpleModel(ratePlanFlatRateId)).thenReturn(entityModel);
+
+        // Act
+        ResponseEntity<EntityModel<SimpleValue<Long>>> response =
+                ratePlanFlatRateResource.updateRatePlanFlatRate(ratePlanId, ratePlanFlatRateId, updateRequest);
+
+        // Assert
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).isEqualTo(entityModel);
+        verify(ratePlanFlatRateService).update(ratePlanId, ratePlanFlatRateId, updateRequest);
+        verify(ratePlanFlatRateAssembler).toSimpleModel(ratePlanFlatRateId);
     }
 
     @Test
-    void createRatePlanFlatRate_missingField() throws IOException {
-        RestAssured
-                .given()
-                    .accept(ContentType.JSON)
-                    .contentType(ContentType.JSON)
-                    .body(readResource("/requests/ratePlanFlatRateDTORequest_missingField.json"))
-                .when()
-                    .post("/api/ratePlanFlatRates")
-                .then()
-                    .statusCode(HttpStatus.BAD_REQUEST.value())
-                    .body("code", Matchers.equalTo("VALIDATION_FAILED"))
-                    .body("fieldErrors.get(0).property", Matchers.equalTo("ratePlanFlatDescription"))
-                    .body("fieldErrors.get(0).code", Matchers.equalTo("REQUIRED_NOT_NULL"));
+    void deleteRatePlanFlatRateShouldDeleteEntity() {
+        // Given
+        Long ratePlanFlatRateId = 2L;
+
+        // When
+        doNothing().when(ratePlanFlatRateService).delete(ratePlanFlatRateId);
+
+        ResponseEntity<Void> response = ratePlanFlatRateResource.deleteRatePlanFlatRate(ratePlanFlatRateId);
+
+        // Then
+        verify(ratePlanFlatRateService, times(1)).delete(ratePlanFlatRateId);
+        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
     }
 
-    @Test
-    @Sql({"/data/productData.sql", "/data/currenciesData.sql", "/data/ratePlanData.sql", "/data/ratePlanFlatRateData.sql"})
-    void updateRatePlanFlatRate_success() throws IOException {
-        RestAssured
-                .given()
-                    .accept(ContentType.JSON)
-                    .contentType(ContentType.JSON)
-                    .body(readResource("/requests/ratePlanFlatRateDTORequest.json"))
-                .when()
-                    .put("/api/ratePlanFlatRates/1700")
-                .then()
-                    .statusCode(HttpStatus.OK.value())
-                    .body("_links.self.href", Matchers.endsWith("/api/ratePlanFlatRates/1700"));
-        assertEquals("Stet clita kasd.", ratePlanFlatRateRepository.findById(((long)1700)).orElseThrow().getRatePlanFlatRateId());
-        assertEquals(2, ratePlanFlatRateRepository.count());
-    }
 
     @Test
-    @Sql({"/data/productData.sql", "/data/currenciesData.sql", "/data/ratePlanData.sql", "/data/ratePlanFlatRateData.sql"})
-    void deleteRatePlanFlatRate_success() {
-        RestAssured
-                .given()
-                    .accept(ContentType.JSON)
-                .when()
-                    .delete("/api/ratePlanFlatRates/1700")
-                .then()
-                    .statusCode(HttpStatus.NO_CONTENT.value());
-        assertEquals(1, ratePlanFlatRateRepository.count());
+    void deleteRatePlanFlatRateShouldThrowReferencedException() {
+        // Given
+        Long ratePlanFlatRateId = 1L;
+        ReferencedWarning referencedWarning = new ReferencedWarning();
+        referencedWarning.setKey("Reference exists");
+        referencedWarning.addParam("RatePlanFlatRate");
+        ReferencedException referencedException = new ReferencedException(referencedWarning);
+
+        // When
+        doThrow(referencedException).when(ratePlanFlatRateService).delete(ratePlanFlatRateId);
+
+        // Then
+        ReferencedException thrownException = assertThrows(
+                ReferencedException.class,
+                () -> ratePlanFlatRateResource.deleteRatePlanFlatRate(ratePlanFlatRateId)
+        );
+
+        assertNotNull(thrownException.getReferencedWarning());
+        assertEquals("Reference exists,RatePlanFlatRate", thrownException.getMessage());
     }
+
 
 }

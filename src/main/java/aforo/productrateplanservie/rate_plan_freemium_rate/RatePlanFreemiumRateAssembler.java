@@ -2,7 +2,6 @@ package aforo.productrateplanservie.rate_plan_freemium_rate;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
-
 import aforo.productrateplanservie.model.SimpleValue;
 import aforo.productrateplanservie.rate_plan.RatePlanResource;
 import org.springframework.hateoas.CollectionModel;
@@ -10,8 +9,6 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.hateoas.server.SimpleRepresentationModelAssembler;
 import org.springframework.stereotype.Component;
-
-
 @Component
 public class RatePlanFreemiumRateAssembler implements SimpleRepresentationModelAssembler<RatePlanFreemiumRateDTO> {
 

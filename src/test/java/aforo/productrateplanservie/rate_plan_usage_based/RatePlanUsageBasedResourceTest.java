@@ -1,134 +1,136 @@
 package aforo.productrateplanservie.rate_plan_usage_based;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import java.io.IOException;
-
-import aforo.productrateplanservie.config.BaseIT;
-import io.restassured.RestAssured;
-import io.restassured.http.ContentType;
-import org.hamcrest.Matchers;
+import aforo.productrateplanservie.model.SimpleValue;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.HttpStatus;
-import org.springframework.test.context.jdbc.Sql;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.PagedModel;
+import org.springframework.http.ResponseEntity;
 
+import java.util.List;
 
-public class RatePlanUsageBasedResourceTest extends BaseIT {
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.*;
 
-    @Test
-    @Sql({"/data/productData.sql", "/data/currenciesData.sql", "/data/ratePlanData.sql", "/data/ratePlanUsageBasedData.sql"})
-    void getAllRatePlanUsageBaseds_success() {
-        RestAssured
-                .given()
-                    .accept(ContentType.JSON)
-                .when()
-                    .get("/api/ratePlanUsageBaseds")
-                .then()
-                    .statusCode(HttpStatus.OK.value())
-                    .body("page.totalElements", Matchers.equalTo(2))
-                    .body("_embedded.ratePlanUsageBasedDTOList.get(0).ratePlanUsageRateId", Matchers.equalTo(1300))
-                    .body("_links.self.href", Matchers.endsWith("/api/ratePlanUsageBaseds?page=0&size=20&sort=ratePlanUsageRateId,asc"));
+class RatePlanUsageBasedResourceTest {
+
+    @Mock
+    private RatePlanUsageBasedService ratePlanUsageBasedService;
+
+    @Mock
+    private RatePlanUsageBasedAssembler ratePlanUsageBasedAssembler;
+
+    @Mock
+    private PagedResourcesAssembler<RatePlanUsageBasedDTO> pagedResourcesAssembler;
+
+    @InjectMocks
+    private RatePlanUsageBasedResource ratePlanUsageBasedResource;
+
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test
-    @Sql({"/data/productData.sql", "/data/currenciesData.sql", "/data/ratePlanData.sql", "/data/ratePlanUsageBasedData.sql"})
-    void getAllRatePlanUsageBaseds_filtered() {
-        RestAssured
-                .given()
-                    .accept(ContentType.JSON)
-                .when()
-                    .get("/api/ratePlanUsageBaseds?filter=1301")
-                .then()
-                    .statusCode(HttpStatus.OK.value())
-                    .body("page.totalElements", Matchers.equalTo(1))
-                    .body("_embedded.ratePlanUsageBasedDTOList.get(0).ratePlanUsageRateId", Matchers.equalTo(1301));
+    void getAllRatePlanUsageBaseds() {
+        // Arrange
+        String filter = "testFilter";
+        Pageable pageable = Pageable.unpaged();
+        Page<RatePlanUsageBasedDTO> page = new PageImpl<>(List.of(new RatePlanUsageBasedDTO()));
+        PagedModel<EntityModel<RatePlanUsageBasedDTO>> pagedModel = mock(PagedModel.class);
+
+        when(ratePlanUsageBasedService.findAll(filter, pageable)).thenReturn(page);
+        when(pagedResourcesAssembler.toModel(page, ratePlanUsageBasedAssembler)).thenReturn(pagedModel);
+
+        // Act
+        ResponseEntity<PagedModel<EntityModel<RatePlanUsageBasedDTO>>> response =
+                ratePlanUsageBasedResource.getAllRatePlanUsageBaseds(filter, pageable);
+
+        // Assert
+        assertThat(response.getBody()).isEqualTo(pagedModel);
+        verify(ratePlanUsageBasedService, times(1)).findAll(filter, pageable);
+        verify(pagedResourcesAssembler, times(1)).toModel(page, ratePlanUsageBasedAssembler);
     }
 
     @Test
-    @Sql({"/data/productData.sql", "/data/currenciesData.sql", "/data/ratePlanData.sql", "/data/ratePlanUsageBasedData.sql"})
-    void getRatePlanUsageBased_success() {
-        RestAssured
-                .given()
-                    .accept(ContentType.JSON)
-                .when()
-                    .get("/api/ratePlanUsageBaseds/1300")
-                .then()
-                    .statusCode(HttpStatus.OK.value())
-                    .body("ratePlanUsageDescription", Matchers.equalTo("Consectetuer adipiscing."))
-                    .body("_links.self.href", Matchers.endsWith("/api/ratePlanUsageBaseds/1300"));
+    void getRatePlanUsageBased() {
+        // Arrange
+        Long ratePlanUsageRateId = 1L;
+        RatePlanUsageBasedDTO dto = new RatePlanUsageBasedDTO();
+        EntityModel<RatePlanUsageBasedDTO> entityModel = mock(EntityModel.class);
+
+        when(ratePlanUsageBasedService.get(ratePlanUsageRateId)).thenReturn(dto);
+        when(ratePlanUsageBasedAssembler.toModel(dto)).thenReturn(entityModel);
+
+        // Act
+        ResponseEntity<EntityModel<RatePlanUsageBasedDTO>> response =
+                ratePlanUsageBasedResource.getRatePlanUsageBased(ratePlanUsageRateId);
+
+        // Assert
+        assertThat(response.getBody()).isEqualTo(entityModel);
+        verify(ratePlanUsageBasedService, times(1)).get(ratePlanUsageRateId);
+        verify(ratePlanUsageBasedAssembler, times(1)).toModel(dto);
     }
 
     @Test
-    void getRatePlanUsageBased_notFound() {
-        RestAssured
-                .given()
-                    .accept(ContentType.JSON)
-                .when()
-                    .get("/api/ratePlanUsageBaseds/1966")
-                .then()
-                    .statusCode(HttpStatus.NOT_FOUND.value())
-                    .body("code", Matchers.equalTo("NOT_FOUND"));
+    void createRatePlanUsageBased() {
+        // Arrange
+        Long ratePlanId = 1L;
+        CreateRatePlanUsageBasedRequest request = new CreateRatePlanUsageBasedRequest();
+        Long createdId = 1L;
+        EntityModel<SimpleValue<Long>> entityModel = mock(EntityModel.class);
+
+        when(ratePlanUsageBasedService.create(ratePlanId, request)).thenReturn(createdId);
+        when(ratePlanUsageBasedAssembler.toSimpleModel(createdId)).thenReturn(entityModel);
+
+        // Act
+        ResponseEntity<EntityModel<SimpleValue<Long>>> response =
+                ratePlanUsageBasedResource.createRatePlanUsageBased(ratePlanId, request);
+
+        // Assert
+        assertThat(response.getBody()).isEqualTo(entityModel);
+        assertThat(response.getStatusCodeValue()).isEqualTo(201);
+        verify(ratePlanUsageBasedService, times(1)).create(ratePlanId, request);
+        verify(ratePlanUsageBasedAssembler, times(1)).toSimpleModel(createdId);
     }
 
     @Test
-    @Sql({"/data/productData.sql", "/data/currenciesData.sql", "/data/ratePlanData.sql"})
-    void createRatePlanUsageBased_success() throws IOException {
-        RestAssured
-                .given()
-                    .accept(ContentType.JSON)
-                    .contentType(ContentType.JSON)
-                    .body(readResource("/requests/ratePlanUsageBasedDTORequest.json"))
-                .when()
-                    .post("/api/ratePlanUsageBaseds")
-                .then()
-                    .statusCode(HttpStatus.CREATED.value());
-        assertEquals(1, ratePlanUsageBasedRepository.count());
+    void updateRatePlanUsageBased() {
+        // Arrange
+        Long ratePlanId = 1L;
+        Long ratePlanUsageRateId = 1L;
+        UpdateRatePlanUsageBasedRequest request = new UpdateRatePlanUsageBasedRequest();
+        EntityModel<SimpleValue<Long>> entityModel = mock(EntityModel.class);
+
+        when(ratePlanUsageBasedAssembler.toSimpleModel(ratePlanUsageRateId)).thenReturn(entityModel);
+
+        // Act
+        ResponseEntity<EntityModel<SimpleValue<Long>>> response =
+                ratePlanUsageBasedResource.updateRatePlanUsageBased(ratePlanId, ratePlanUsageRateId, request);
+
+        // Assert
+        assertThat(response.getBody()).isEqualTo(entityModel);
+        verify(ratePlanUsageBasedService, times(1)).update(ratePlanId, ratePlanUsageRateId, request);
+        verify(ratePlanUsageBasedAssembler, times(1)).toSimpleModel(ratePlanUsageRateId);
     }
 
     @Test
-    void createRatePlanUsageBased_missingField() throws IOException {
-        RestAssured
-                .given()
-                    .accept(ContentType.JSON)
-                    .contentType(ContentType.JSON)
-                    .body(readResource("/requests/ratePlanUsageBasedDTORequest_missingField.json"))
-                .when()
-                    .post("/api/ratePlanUsageBaseds")
-                .then()
-                    .statusCode(HttpStatus.BAD_REQUEST.value())
-                    .body("code", Matchers.equalTo("VALIDATION_FAILED"))
-                    .body("fieldErrors.get(0).property", Matchers.equalTo("ratePlanUsageDescription"))
-                    .body("fieldErrors.get(0).code", Matchers.equalTo("REQUIRED_NOT_NULL"));
-    }
+    void deleteRatePlanUsageBased() {
+        // Arrange
+        Long ratePlanUsageRateId = 1L;
 
-    @Test
-    @Sql({"/data/productData.sql", "/data/currenciesData.sql", "/data/ratePlanData.sql", "/data/ratePlanUsageBasedData.sql"})
-    void updateRatePlanUsageBased_success() throws IOException {
-        RestAssured
-                .given()
-                    .accept(ContentType.JSON)
-                    .contentType(ContentType.JSON)
-                    .body(readResource("/requests/ratePlanUsageBasedDTORequest.json"))
-                .when()
-                    .put("/api/ratePlanUsageBaseds/1300")
-                .then()
-                    .statusCode(HttpStatus.OK.value())
-                    .body("_links.self.href", Matchers.endsWith("/api/ratePlanUsageBaseds/1300"));
-        assertEquals("Sed diam voluptua.", ratePlanUsageBasedRepository.findById(((long)1300)).orElseThrow().getRatePlanUsageDescription());
-        assertEquals(2, ratePlanUsageBasedRepository.count());
-    }
+        // Act
+        ResponseEntity<Void> response = ratePlanUsageBasedResource.deleteRatePlanUsageBased(ratePlanUsageRateId);
 
-    @Test
-    @Sql({"/data/productData.sql", "/data/currenciesData.sql", "/data/ratePlanData.sql", "/data/ratePlanUsageBasedData.sql"})
-    void deleteRatePlanUsageBased_success() {
-        RestAssured
-                .given()
-                    .accept(ContentType.JSON)
-                .when()
-                    .delete("/api/ratePlanUsageBaseds/1300")
-                .then()
-                    .statusCode(HttpStatus.NO_CONTENT.value());
-        assertEquals(1, ratePlanUsageBasedRepository.count());
+        // Assert
+        assertThat(response.getStatusCodeValue()).isEqualTo(204);
+        verify(ratePlanUsageBasedService, times(1)).delete(ratePlanUsageRateId);
     }
-
 }

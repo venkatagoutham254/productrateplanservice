@@ -12,17 +12,16 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
+
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
-
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-@Getter
-@Setter
+@Data
 public class RatePlanSubscriptionRateDetails {
 
     @Id
@@ -47,7 +46,4 @@ public class RatePlanSubscriptionRateDetails {
     @LastModifiedDate
     @Column(nullable = false)
     private OffsetDateTime lastUpdated;
-
-
-
 }

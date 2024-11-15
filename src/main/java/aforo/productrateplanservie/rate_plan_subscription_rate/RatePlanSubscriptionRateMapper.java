@@ -1,9 +1,14 @@
 package aforo.productrateplanservie.rate_plan_subscription_rate;
 
+import aforo.productrateplanservie.rate_plan.RatePlan;
 import aforo.productrateplanservie.rate_plan.RatePlanRepository;
+import aforo.productrateplanservie.rate_plan_subscription_rate_details.CreateRatePlanSubscriptionRateDetailsRequest;
 import aforo.productrateplanservie.rate_plan_subscription_rate_details.RatePlanSubscriptionRateDetails;
 import aforo.productrateplanservie.rate_plan_subscription_rate_details.RatePlanSubscriptionRateDetailsDTO;
 import org.mapstruct.*;
+
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Mapper(
         componentModel = MappingConstants.ComponentModel.SPRING,
@@ -39,4 +44,29 @@ public interface RatePlanSubscriptionRateMapper {
 
     // Maps from entity to DTO, including the ID
     RatePlanSubscriptionRateDetailsDTO mapToRatePlanSubscriptionRateDetailsDTO(RatePlanSubscriptionRateDetails details);
+
+    // Map from Create DTO to RatePlanSubscriptionRate, ignoring the ID
+    @Mapping(target = "ratePlanSubscriptionRateId", ignore = true)
+    @Mapping(target = "ratePlan", ignore = true) // Set manually in the service
+    @Mapping(target = "ratePlanSubscriptionRateDetails", ignore = true) // Handle manually after mapping
+    RatePlanSubscriptionRate toEntity(CreateRatePlanSubscriptionRateRequest dto);
+
+    // Custom method to map nested RatePlanSubscriptionRateDetails and RatePlan
+    default RatePlanSubscriptionRate mapToEntity(CreateRatePlanSubscriptionRateRequest dto, RatePlan ratePlan) {
+        RatePlanSubscriptionRate ratePlanSubscriptionRate = toEntity(dto);
+        ratePlanSubscriptionRate.setRatePlan(ratePlan);
+
+        Set<RatePlanSubscriptionRateDetails> details = dto.getRatePlanSubscriptionRateDetails().stream()
+                .map(this::mapDetailsRequestToEntity)
+                .peek(detail -> detail.setRatePlanSubscriptionRate(ratePlanSubscriptionRate))
+                .collect(Collectors.toSet());
+
+        ratePlanSubscriptionRate.setRatePlanSubscriptionRateDetails(details);
+        return ratePlanSubscriptionRate;
+    }
+
+    // Helper method to map details request to details entity
+    RatePlanSubscriptionRateDetails mapDetailsRequestToEntity(CreateRatePlanSubscriptionRateDetailsRequest detailsRequest);
+
+
 }

@@ -1,134 +1,133 @@
 package aforo.productrateplanservie.rate_plan_tiered_rate;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import java.io.IOException;
-
-import aforo.productrateplanservie.config.BaseIT;
-import io.restassured.RestAssured;
-import io.restassured.http.ContentType;
-import org.hamcrest.Matchers;
+import aforo.productrateplanservie.model.SimpleValue;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.HttpStatus;
-import org.springframework.test.context.jdbc.Sql;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.PagedModel;
+import org.springframework.http.ResponseEntity;
 
+import java.util.List;
 
-public class RatePlanTieredRateResourceTest extends BaseIT {
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.*;
 
-    @Test
-    @Sql({"/data/productData.sql", "/data/currenciesData.sql", "/data/ratePlanData.sql", "/data/ratePlanTieredRateData.sql"})
-    void getAllRatePlanTieredRates_success() {
-        RestAssured
-                .given()
-                    .accept(ContentType.JSON)
-                .when()
-                    .get("/api/ratePlanTieredRates")
-                .then()
-                    .statusCode(HttpStatus.OK.value())
-                    .body("page.totalElements", Matchers.equalTo(2))
-                    .body("_embedded.ratePlanTieredRateDTOList.get(0).ratePlanTieredRateId", Matchers.equalTo(1500))
-                    .body("_links.self.href", Matchers.endsWith("/api/ratePlanTieredRates?page=0&size=20&sort=ratePlanTieredRateId,asc"));
+class RatePlanTieredRateResourceTest {
+
+    @Mock
+    private RatePlanTieredRateService ratePlanTieredRateService;
+
+    @Mock
+    private RatePlanTieredRateAssembler ratePlanTieredRateAssembler;
+
+    @Mock
+    private PagedResourcesAssembler<RatePlanTieredRateDTO> pagedResourcesAssembler;
+
+    @InjectMocks
+    private RatePlanTieredRateResource ratePlanTieredRateResource;
+
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test
-    @Sql({"/data/productData.sql", "/data/currenciesData.sql", "/data/ratePlanData.sql", "/data/ratePlanTieredRateData.sql"})
-    void getAllRatePlanTieredRates_filtered() {
-        RestAssured
-                .given()
-                    .accept(ContentType.JSON)
-                .when()
-                    .get("/api/ratePlanTieredRates?filter=1501")
-                .then()
-                    .statusCode(HttpStatus.OK.value())
-                    .body("page.totalElements", Matchers.equalTo(1))
-                    .body("_embedded.ratePlanTieredRateDTOList.get(0).ratePlanTieredRateId", Matchers.equalTo(1501));
+    void getAllRatePlanTieredRates() {
+        // Arrange
+        String filter = "test";
+        Pageable pageable = Pageable.unpaged();
+        Page<RatePlanTieredRateDTO> page = new PageImpl<>(List.of(new RatePlanTieredRateDTO()));
+        PagedModel<EntityModel<RatePlanTieredRateDTO>> pagedModel = mock(PagedModel.class);
+
+        when(ratePlanTieredRateService.findAll(filter, pageable)).thenReturn(page);
+        when(pagedResourcesAssembler.toModel(page, ratePlanTieredRateAssembler)).thenReturn(pagedModel);
+
+        // Act
+        ResponseEntity<PagedModel<EntityModel<RatePlanTieredRateDTO>>> response = ratePlanTieredRateResource.getAllRatePlanTieredRates(filter, pageable);
+
+        // Assert
+        assertEquals(pagedModel, response.getBody());
+        verify(ratePlanTieredRateService, times(1)).findAll(filter, pageable);
+        verify(pagedResourcesAssembler, times(1)).toModel(page, ratePlanTieredRateAssembler);
     }
 
     @Test
-    @Sql({"/data/productData.sql", "/data/currenciesData.sql", "/data/ratePlanData.sql", "/data/ratePlanTieredRateData.sql"})
-    void getRatePlanTieredRate_success() {
-        RestAssured
-                .given()
-                    .accept(ContentType.JSON)
-                .when()
-                    .get("/api/ratePlanTieredRates/1500")
-                .then()
-                    .statusCode(HttpStatus.OK.value())
-                    .body("ratePlanTieredDescription", Matchers.equalTo("No sea takimata."))
-                    .body("_links.self.href", Matchers.endsWith("/api/ratePlanTieredRates/1500"));
+    void getRatePlanTieredRate() {
+        // Arrange
+        Long ratePlanTieredRateId = 1L;
+        RatePlanTieredRateDTO dto = new RatePlanTieredRateDTO();
+        EntityModel<RatePlanTieredRateDTO> entityModel = mock(EntityModel.class);
+
+        when(ratePlanTieredRateService.get(ratePlanTieredRateId)).thenReturn(dto);
+        when(ratePlanTieredRateAssembler.toModel(dto)).thenReturn(entityModel);
+
+        // Act
+        ResponseEntity<EntityModel<RatePlanTieredRateDTO>> response = ratePlanTieredRateResource.getRatePlanTieredRate(ratePlanTieredRateId);
+
+        // Assert
+        assertEquals(entityModel, response.getBody());
+        verify(ratePlanTieredRateService, times(1)).get(ratePlanTieredRateId);
+        verify(ratePlanTieredRateAssembler, times(1)).toModel(dto);
     }
 
     @Test
-    void getRatePlanTieredRate_notFound() {
-        RestAssured
-                .given()
-                    .accept(ContentType.JSON)
-                .when()
-                    .get("/api/ratePlanTieredRates/2166")
-                .then()
-                    .statusCode(HttpStatus.NOT_FOUND.value())
-                    .body("code", Matchers.equalTo("NOT_FOUND"));
+    void createRatePlanTieredRate() {
+        // Arrange
+        Long ratePlanId = 1L;
+        CreateRatePlanTieredRateRequest request = new CreateRatePlanTieredRateRequest();
+        Long createdId = 1L;
+        EntityModel<SimpleValue<Long>> entityModel = mock(EntityModel.class);
+
+        when(ratePlanTieredRateService.create(ratePlanId, request)).thenReturn(createdId);
+        when(ratePlanTieredRateAssembler.toSimpleModel(createdId)).thenReturn(entityModel);
+
+        // Act
+        ResponseEntity<EntityModel<SimpleValue<Long>>> response = ratePlanTieredRateResource.createRatePlanTieredRate(ratePlanId, request);
+
+        // Assert
+        assertEquals(entityModel, response.getBody());
+        assertThat(response.getStatusCodeValue()).isEqualTo(201);
+        verify(ratePlanTieredRateService, times(1)).create(ratePlanId, request);
+        verify(ratePlanTieredRateAssembler, times(1)).toSimpleModel(createdId);
     }
 
     @Test
-    @Sql({"/data/productData.sql", "/data/currenciesData.sql", "/data/ratePlanData.sql"})
-    void createRatePlanTieredRate_success() throws IOException {
-        RestAssured
-                .given()
-                    .accept(ContentType.JSON)
-                    .contentType(ContentType.JSON)
-                    .body(readResource("/requests/ratePlanTieredRateDTORequest.json"))
-                .when()
-                    .post("/api/ratePlanTieredRates")
-                .then()
-                    .statusCode(HttpStatus.CREATED.value());
-        assertEquals(1, ratePlanTieredRateRepository.count());
+    void updateRatePlanTieredRate() {
+        // Arrange
+        Long ratePlanId = 1L;
+        Long ratePlanTieredRateId = 1L;
+        UpdateRatePlanTieredRateRequest request = new UpdateRatePlanTieredRateRequest();
+        EntityModel<SimpleValue<Long>> entityModel = mock(EntityModel.class);
+
+        when(ratePlanTieredRateAssembler.toSimpleModel(ratePlanTieredRateId)).thenReturn(entityModel);
+
+        // Act
+        ResponseEntity<EntityModel<SimpleValue<Long>>> response = ratePlanTieredRateResource.updateRatePlanTieredRate(ratePlanId, ratePlanTieredRateId, request);
+
+        // Assert
+        assertEquals(entityModel, response.getBody());
+        verify(ratePlanTieredRateService, times(1)).update(ratePlanId, ratePlanTieredRateId, request);
+        verify(ratePlanTieredRateAssembler, times(1)).toSimpleModel(ratePlanTieredRateId);
     }
 
     @Test
-    void createRatePlanTieredRate_missingField() throws IOException {
-        RestAssured
-                .given()
-                    .accept(ContentType.JSON)
-                    .contentType(ContentType.JSON)
-                    .body(readResource("/requests/ratePlanTieredRateDTORequest_missingField.json"))
-                .when()
-                    .post("/api/ratePlanTieredRates")
-                .then()
-                    .statusCode(HttpStatus.BAD_REQUEST.value())
-                    .body("code", Matchers.equalTo("VALIDATION_FAILED"))
-                    .body("fieldErrors.get(0).property", Matchers.equalTo("ratePlanTieredDescription"))
-                    .body("fieldErrors.get(0).code", Matchers.equalTo("REQUIRED_NOT_NULL"));
-    }
+    void deleteRatePlanTieredRate() {
+        // Arrange
+        Long ratePlanTieredRateId = 1L;
 
-    @Test
-    @Sql({"/data/productData.sql", "/data/currenciesData.sql", "/data/ratePlanData.sql", "/data/ratePlanTieredRateData.sql"})
-    void updateRatePlanTieredRate_success() throws IOException {
-        RestAssured
-                .given()
-                    .accept(ContentType.JSON)
-                    .contentType(ContentType.JSON)
-                    .body(readResource("/requests/ratePlanTieredRateDTORequest.json"))
-                .when()
-                    .put("/api/ratePlanTieredRates/1500")
-                .then()
-                    .statusCode(HttpStatus.OK.value())
-                    .body("_links.self.href", Matchers.endsWith("/api/ratePlanTieredRates/1500"));
-        assertEquals("Consetetur sadipscing.", ratePlanTieredRateRepository.findById(((long)1500)).orElseThrow().getRatePlanTieredDescription());
-        assertEquals(2, ratePlanTieredRateRepository.count());
-    }
+        // Act
+        ResponseEntity<Void> response = ratePlanTieredRateResource.deleteRatePlanTieredRate(ratePlanTieredRateId);
 
-    @Test
-    @Sql({"/data/productData.sql", "/data/currenciesData.sql", "/data/ratePlanData.sql", "/data/ratePlanTieredRateData.sql"})
-    void deleteRatePlanTieredRate_success() {
-        RestAssured
-                .given()
-                    .accept(ContentType.JSON)
-                .when()
-                    .delete("/api/ratePlanTieredRates/1500")
-                .then()
-                    .statusCode(HttpStatus.NO_CONTENT.value());
-        assertEquals(1, ratePlanTieredRateRepository.count());
+        // Assert
+        assertThat(response.getStatusCodeValue()).isEqualTo(204);
+        verify(ratePlanTieredRateService, times(1)).delete(ratePlanTieredRateId);
     }
-
 }

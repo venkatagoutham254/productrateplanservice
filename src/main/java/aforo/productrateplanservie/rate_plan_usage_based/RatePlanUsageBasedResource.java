@@ -65,7 +65,7 @@ public class RatePlanUsageBasedResource {
                     )
             }
     )
-    @GetMapping("/usage_based")
+    @GetMapping("/usageBased")
     public ResponseEntity<PagedModel<EntityModel<RatePlanUsageBasedDTO>>> getAllRatePlanUsageBaseds(
             @RequestParam(name = "filter", required = false) final String filter,
             @Parameter(hidden = true) @SortDefault(sort = "ratePlanUsageRateId") @PageableDefault(size = 20) final Pageable pageable) {
@@ -73,14 +73,14 @@ public class RatePlanUsageBasedResource {
         return ResponseEntity.ok(pagedResourcesAssembler.toModel(ratePlanUsageBasedDTOs, ratePlanUsageBasedAssembler));
     }
 
-    @GetMapping("/usage_based/{ratePlanUsageRateId}")
+    @GetMapping("/usageBased/{ratePlanUsageRateId}")
     public ResponseEntity<EntityModel<RatePlanUsageBasedDTO>> getRatePlanUsageBased(
             @PathVariable(name = "ratePlanUsageRateId") final Long ratePlanUsageRateId) {
         final RatePlanUsageBasedDTO ratePlanUsageBasedDTO = ratePlanUsageBasedService.get(ratePlanUsageRateId );
         return ResponseEntity.ok(ratePlanUsageBasedAssembler.toModel(ratePlanUsageBasedDTO));
     }
 
-    @PostMapping("/{ratePlanId}/usage_based")
+    @PostMapping("/{ratePlanId}/usageBased")
     @ApiResponse(responseCode = "201")
     public ResponseEntity<EntityModel<SimpleValue<Long>>> createRatePlanUsageBased(
             @PathVariable("ratePlanId") Long ratePlanId,
@@ -91,7 +91,7 @@ public class RatePlanUsageBasedResource {
     }
 
 
-    @PutMapping("/{ratePlanId}/usage_based/{ratePlanUsageRateId}")
+    @PutMapping("/{ratePlanId}/usageBased/{ratePlanUsageRateId}")
     @Operation(summary = "Partially update an existing RatePlanUsageBased entry", description = "Only provided fields will be updated")
     @ApiResponse(responseCode = "200", description = "Successfully updated RatePlanUsageBased entry")
     public ResponseEntity<EntityModel<SimpleValue<Long>>> updateRatePlanUsageBased(
@@ -103,14 +103,10 @@ public class RatePlanUsageBasedResource {
         return ResponseEntity.ok(ratePlanUsageBasedAssembler.toSimpleModel(ratePlanUsageRateId));
     }
 
-    @DeleteMapping("/usage_based/{ratePlanUsageRateId}")
+    @DeleteMapping("/usageBased/{ratePlanUsageRateId}")
     @ApiResponse(responseCode = "204")
     public ResponseEntity<Void> deleteRatePlanUsageBased(
             @PathVariable(name = "ratePlanUsageRateId") final Long ratePlanUsageRateId) {
-//        final ReferencedWarning referencedWarning = ratePlanUsageBasedService.getReferencedWarning(ratePlanUsageRateId);
-//        if (referencedWarning != null) {
-//            throw new ReferencedException(referencedWarning);
-//        }
         ratePlanUsageBasedService.delete(ratePlanUsageRateId);
         return ResponseEntity.noContent().build();
     }

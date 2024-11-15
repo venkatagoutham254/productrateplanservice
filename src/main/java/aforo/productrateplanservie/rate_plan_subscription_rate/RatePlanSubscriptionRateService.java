@@ -10,10 +10,9 @@ public interface RatePlanSubscriptionRateService {
 
     RatePlanSubscriptionRateDTO get(Long ratePlanSubscriptionRateId);
 
-    Long create(Long ratePlanId, RatePlanSubscriptionRateDTO ratePlanSubscriptionRateDTO);
+    Long create(Long ratePlanId, CreateRatePlanSubscriptionRateRequest ratePlanSubscriptionRateRequest);
 
-    void update(Long ratePlanSubscriptionRateId,
-            RatePlanSubscriptionRateDTO ratePlanSubscriptionRateDTO);
+    void update(Long ratePlanId, Long ratePlanSubscriptionRateId, UpdateRatePlanSubscriptionRateRequest request);
 
     void delete(Long ratePlanSubscriptionRateId);
 

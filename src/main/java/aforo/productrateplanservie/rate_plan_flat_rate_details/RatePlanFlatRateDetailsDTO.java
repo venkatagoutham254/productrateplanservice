@@ -1,24 +1,9 @@
 package aforo.productrateplanservie.rate_plan_flat_rate_details;
-
-import lombok.Getter;
-import lombok.Setter;
-
+import lombok.Data;
 import java.math.BigDecimal;
-
-@Setter
-@Getter
+@Data
 public class RatePlanFlatRateDetailsDTO {
-
-    // Getters and setters
-    private Long id; // ID of the details entry
+    private Long id;
     private BigDecimal unitRate;
     private BigDecimal maxLimit;
-
-    // Constructor
-    public RatePlanFlatRateDetailsDTO(Long id, BigDecimal unitRate, BigDecimal maxLimit) {
-        this.id = id;
-        this.unitRate = unitRate;
-        this.maxLimit = maxLimit;
-    }
-
 }

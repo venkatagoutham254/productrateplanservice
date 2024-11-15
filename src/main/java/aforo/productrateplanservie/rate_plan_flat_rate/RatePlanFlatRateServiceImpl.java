@@ -3,7 +3,6 @@ package aforo.productrateplanservie.rate_plan_flat_rate;
 import aforo.productrateplanservie.rate_plan.RatePlan;
 import aforo.productrateplanservie.rate_plan.RatePlanRepository;
 import aforo.productrateplanservie.rate_plan_flat_rate_details.RatePlanFlatRateDetails;
-import aforo.productrateplanservie.rate_plan_flat_rate_details.RatePlanFlatRateDetailsDTO;
 import aforo.productrateplanservie.rate_plan_flat_rate_details.RatePlanFlatRateDetailsRepository;
 import aforo.productrateplanservie.exception.NotFoundException;
 import aforo.productrateplanservie.exception.ReferencedWarning;
@@ -67,28 +66,20 @@ public class RatePlanFlatRateServiceImpl implements RatePlanFlatRateService {
     }
 
     @Override
-    @Transactional
-    public Long create(Long ratePlanId, CreateRatePlanFlatRateRequest createRatePlanFlatRateRequest) {
+    public Long create(Long ratePlanId, CreateRatePlanFlatRateRequest request) {
+        // Validate if the RatePlan exists
         RatePlan ratePlan = ratePlanRepository.findById(ratePlanId)
-                .orElseThrow(() -> new NotFoundException("RatePlan not found with id: " + ratePlanId));
+                .orElseThrow(() -> new IllegalArgumentException("RatePlan with ID " + ratePlanId + " not found"));
 
-        // Map the request to RatePlanFlatRate entity
-        RatePlanFlatRate ratePlanFlatRate = ratePlanFlatRateMapper.mapToRatePlanFlatRate(createRatePlanFlatRateRequest);
-        ratePlanFlatRate.setRatePlan(ratePlan);
+        // Map the request to entity
+        RatePlanFlatRate ratePlanFlatRate = ratePlanFlatRateMapper.mapToEntity(request, ratePlan);
 
-        RatePlanFlatRate savedRatePlanFlatRate = ratePlanFlatRateRepository.save(ratePlanFlatRate);
+        // Save the RatePlanFlatRate entity
+        RatePlanFlatRate savedEntity = ratePlanFlatRateRepository.save(ratePlanFlatRate);
 
-        // Map and save each RatePlanFlatRateDetails entity
-        createRatePlanFlatRateRequest.getRatePlanFlatRateDetails().forEach(detailsRequest -> {
-            RatePlanFlatRateDetails details = ratePlanFlatRateMapper.mapToRatePlanFlatRateDetails(detailsRequest);
-            details.setRatePlanFlatRate(savedRatePlanFlatRate);
-            ratePlanFlatRateDetailsRepository.save(details);
-        });
-
-        return savedRatePlanFlatRate.getRatePlanFlatRateId();
+        // Return the ID of the saved entity
+        return savedEntity.getRatePlanFlatRateId();
     }
-
-
 
     @Override
     @Transactional
@@ -175,17 +166,10 @@ public class RatePlanFlatRateServiceImpl implements RatePlanFlatRateService {
         ratePlanFlatRateRepository.delete(ratePlanFlatRate); // Details are deleted automatically
     }
 
-    @Override
-    public ReferencedWarning getReferencedWarning(Long ratePlanFlatRateId) {
-        final ReferencedWarning referencedWarning = new ReferencedWarning();
-        final RatePlanFlatRate ratePlanFlatRate = ratePlanFlatRateRepository.findById(ratePlanFlatRateId)
-                .orElseThrow(() -> new NotFoundException("RatePlanFlatRate not found with id: " + ratePlanFlatRateId));
-        return referencedWarning;
-    }
 
     @Override
     public Page<RatePlanFlatRateDTO> findAllByRatePlanId(Long ratePlanId, Pageable pageable) {
-        Page<RatePlanFlatRate> page = ratePlanFlatRateRepository.findAllByRatePlan_RatePlanId(ratePlanId, pageable);
+        Page<RatePlanFlatRate> page = ratePlanFlatRateRepository.findAllByRatePlanRatePlanId(ratePlanId, pageable);
         return new PageImpl<>(page.getContent()
                 .stream()
                 .map(ratePlanFlatRate -> ratePlanFlatRateMapper.updateRatePlanFlatRateDTO(ratePlanFlatRate, new RatePlanFlatRateDTO()))
@@ -208,6 +192,14 @@ public class RatePlanFlatRateServiceImpl implements RatePlanFlatRateService {
             return Optional.empty();
         }
         return ratePlanFlatRateOpt.map(ratePlanFlatRate -> ratePlanFlatRateMapper.updateRatePlanFlatRateDTO(ratePlanFlatRate, new RatePlanFlatRateDTO()));
+    }
+
+    @Override
+    public ReferencedWarning getReferencedWarning(Long ratePlanFlatRateId) {
+        final ReferencedWarning referencedWarning = new ReferencedWarning();
+        final RatePlanFlatRate ratePlanFlatRate = ratePlanFlatRateRepository.findById(ratePlanFlatRateId)
+                .orElseThrow(() -> new NotFoundException("RatePlanFlatRate not found with id: " + ratePlanFlatRateId));
+        return referencedWarning;
     }
 
 }

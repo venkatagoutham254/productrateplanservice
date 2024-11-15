@@ -1,19 +1,23 @@
 package aforo.productrateplanservie.rate_plan_freemium_rate;
 
+import aforo.productrateplanservie.rate_plan.RatePlan;
 import aforo.productrateplanservie.rate_plan_freemium_rate_details.RatePlanFreemiumRateDetails;
 import aforo.productrateplanservie.util.enums.UnitBillingFrequency;
 import aforo.productrateplanservie.util.enums.UnitFreePriceFixedFrequency;
 import aforo.productrateplanservie.util.enums.UnitMeasurement;
 import aforo.productrateplanservie.util.enums.UnitType;
 import jakarta.persistence.*;
-import java.time.OffsetDateTime;
-import java.util.HashSet;
-import java.util.Set;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import aforo.productrateplanservie.rate_plan.RatePlan;
+
+import java.time.OffsetDateTime;
+import java.util.HashSet;
+import java.util.Set;
+
 @Data
 @Entity
 @EntityListeners(AuditingEntityListener.class)
@@ -44,7 +48,10 @@ public class RatePlanFreemiumRate {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "rate_plan_id", nullable = false)
     private RatePlan ratePlan;
+
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "ratePlanFreemiumRate")
+    @ToString.Exclude // Prevent cyclic reference in toString
+    @EqualsAndHashCode.Exclude // Prevent cyclic reference in hashCode and equals
     private Set<RatePlanFreemiumRateDetails> ratePlanFreemiumRateDetails = new HashSet<>();
 
     @CreatedDate
@@ -54,5 +61,4 @@ public class RatePlanFreemiumRate {
     @LastModifiedDate
     @Column(nullable = false)
     private OffsetDateTime lastUpdated;
-
 }

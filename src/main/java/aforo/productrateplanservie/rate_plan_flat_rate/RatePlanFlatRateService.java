@@ -15,16 +15,16 @@ public interface RatePlanFlatRateService {
 
     Long create(Long ratePlanId, CreateRatePlanFlatRateRequest createRatePlanFlatRateRequest);
 
-
     void update(Long ratePlanId, Long ratePlanFlatRateId, @Valid UpdateRatePlanFlatRateRequest updateRequest);
 
     void delete(Long ratePlanFlatRateId);
 
-    ReferencedWarning getReferencedWarning(Long ratePlanFlatRateId);
 
     // Method to find all flat rates by RatePlan ID
     Page<RatePlanFlatRateDTO> findAllByRatePlanId(Long ratePlanId, Pageable pageable);
 
     // New method to find the first RatePlanFlatRate by RatePlan ID
     Optional<RatePlanFlatRateDTO> findFirstByRatePlanId(Long ratePlanId);
+
+    ReferencedWarning getReferencedWarning(Long ratePlanFlatRateId);
 }

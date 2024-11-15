@@ -11,7 +11,6 @@ import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.hateoas.server.SimpleRepresentationModelAssembler;
 import org.springframework.stereotype.Component;
 
-
 @Component
 public class RatePlanFlatRateAssembler implements SimpleRepresentationModelAssembler<RatePlanFlatRateDTO> {
 

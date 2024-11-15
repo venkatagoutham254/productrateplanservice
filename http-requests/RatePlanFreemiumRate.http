@@ -1,5 +1,5 @@
 ### Create RatePlanFreemiumRate
-POST http://localhost:8082/v1/api/rateplans/10000/FREEMIUM
+POST http://localhost:8082/v1/api/rateplans/10000/freemium
 Content-Type: application/json
 
 {
@@ -17,7 +17,7 @@ Content-Type: application/json
 }
 
 ### Get All RatePlanFreemiumRates with Paging
-GET http://localhost:8082/v1/api/rateplans/FREEMIUM?page=0&size=10&sort=ratePlanFreemiumRateId,asc
+GET http://localhost:8082/v1/api/rateplans/freemium?page=0&size=10&sort=ratePlanFreemiumRateId,asc
 Content-Type: application/json
 
 ### Get Specific RatePlanFreemiumRate by ID
@@ -25,7 +25,7 @@ GET http://localhost:8082/v1/api/rateplans/10003
 Content-Type: application/json
 
 ### Update RatePlanFreemiumRate
-PUT http://localhost:8082/v1/api/rateplans/10000/FREEMIUM/10003
+PUT http://localhost:8082/v1/api/rateplans/10000/freemium/10003
 Content-Type: application/json
 
 {
@@ -44,5 +44,5 @@ Content-Type: application/json
 }
 
 ### Delete RatePlanFreemiumRate by ID
-DELETE http://localhost:8082/v1/api/rateplans/FREEMIUM/10003
+DELETE http://localhost:8082/v1/api/rateplans/freemium/10003
 Content-Type: application/json

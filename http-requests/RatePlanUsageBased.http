@@ -1,0 +1,46 @@
+### Get All RatePlanUsageBased
+GET http://localhost:8082/v1/api/rateplans/usageBased
+Content-Type: application/json
+
+### Get RatePlanUsageBased by ID
+GET http://localhost:8082/v1/api/rateplans/usageBased/10002
+Content-Type: application/json
+
+### Create RatePlanUsageBased
+POST http://localhost:8082/v1/api/rateplans/10000/usageBased
+Content-Type: application/json
+
+{
+  "ratePlanUsageDescription": "HASE",
+  "description": "Buchammagari",
+  "unitType": "API",
+  "unitMeasurement": "MB",
+  "unitCalculation": "HOURLY",
+  "ratePlanUsageBasedRatesDTO": [
+    {
+      "unitRate": 3143.00
+    }
+  ]
+}
+
+### Update RatePlanUsageBased
+PUT http://localhost:8082/v1/api/rateplans/10000/usageBased/10002
+Content-Type: application/json
+
+{
+  "ratePlanUsageDescription": "Eswar",
+  "description": "Eswar",
+  "unitType": "PROCESSING",
+  "unitMeasurement": "MB",
+  "unitCalculation": "DAILY",
+  "ratePlanUsageBasedRatesDTO": [
+    {
+      "id": 10002,
+      "unitRate": 10.00
+    }
+  ]
+}
+
+### Delete RatePlanUsageBased
+DELETE http://localhost:8082/v1/api/rateplans/usageBased/10002
+Content-Type: application/json

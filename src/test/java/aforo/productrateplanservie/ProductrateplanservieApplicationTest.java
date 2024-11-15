@@ -7,7 +7,9 @@ import org.junit.jupiter.api.Test;
 public class ProductrateplanservieApplicationTest extends BaseIT {
 
     @Test
-    void contextLoads() {
+    void contextLoads()
+    {
+
     }
 
 }

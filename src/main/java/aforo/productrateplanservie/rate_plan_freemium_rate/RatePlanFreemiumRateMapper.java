@@ -96,17 +96,17 @@ public interface RatePlanFreemiumRateMapper {
     // Mapping from Create DTO to Entity
     @Mapping(target = "ratePlanFreemiumRateId", ignore = true)
     @Mapping(target = "ratePlan", ignore = true)
-    RatePlanFreemiumRate toEntity(CreateRatePlanFreemiumRateRequest dto);
+    RatePlanFreemiumRate toEntity(CreateRatePlanFreemiumRateRequest createRequest);
 
-    default RatePlanFreemiumRate mapToEntity(CreateRatePlanFreemiumRateRequest dto, RatePlan ratePlan) {
+    default RatePlanFreemiumRate mapToEntity(CreateRatePlanFreemiumRateRequest createRequest, RatePlan ratePlan) {
         // Use MapStruct to map basic fields
-        RatePlanFreemiumRate ratePlanFreemiumRate = toEntity(dto);
+        RatePlanFreemiumRate ratePlanFreemiumRate = toEntity(createRequest);
 
         // Set ratePlan manually
         ratePlanFreemiumRate.setRatePlan(ratePlan);
 
         // Map and set nested RatePlanFreemiumRateDetails
-        Set<RatePlanFreemiumRateDetails> details = dto.getRatePlanFreemiumRateDetailsDTO().stream()
+        Set<RatePlanFreemiumRateDetails> details = createRequest.getRatePlanFreemiumRateDetailsDTO().stream()
                 .map(detailDto -> {
                     RatePlanFreemiumRateDetails detail = new RatePlanFreemiumRateDetails();
                     detail.setFreemiumMaxUnitQuantity(detailDto.getFreemiumMaxUnitQuantity());

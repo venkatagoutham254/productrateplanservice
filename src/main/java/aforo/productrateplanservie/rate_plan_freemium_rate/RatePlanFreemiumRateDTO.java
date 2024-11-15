@@ -6,11 +6,8 @@ import aforo.productrateplanservie.util.enums.UnitFreePriceFixedFrequency;
 import aforo.productrateplanservie.util.enums.UnitMeasurement;
 import aforo.productrateplanservie.util.enums.UnitType;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
-import lombok.*;
-
+import lombok.Data;
 import java.util.Set;
-
 @Data
 public class RatePlanFreemiumRateDTO {
     private Long ratePlanFreemiumRateId;

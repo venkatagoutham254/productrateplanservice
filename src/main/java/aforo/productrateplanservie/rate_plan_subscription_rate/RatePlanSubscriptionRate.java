@@ -50,7 +50,7 @@ public class RatePlanSubscriptionRate {
     @JoinColumn(name = "rate_plan_id", nullable = false)
     private RatePlan ratePlan;
 
-	@OneToMany(mappedBy = "ratePlanSubscriptionRate", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "ratePlanSubscriptionRate", cascade = CascadeType.ALL,fetch=FetchType.EAGER, orphanRemoval = true)
 	private Set<RatePlanSubscriptionRateDetails> ratePlanSubscriptionRateDetails;
 
 

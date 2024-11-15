@@ -1,0 +1,50 @@
+### Get All RatePlanSubscriptionRates
+GET http://localhost:8082/v1/api/rateplans/subscription
+Content-Type: application/json
+
+### Get RatePlanSubscriptionRate by ID
+GET http://localhost:8082/v1/api/rateplans/subscription/{{ratePlanSubscriptionRateId}}
+Content-Type: application/json
+
+### Create RatePlanSubscriptionRate
+POST http://localhost:8082/v1/api/rateplans/10000/subscription
+Content-Type: application/json
+
+{
+  "ratePlanSubscriptionDescription": "Subscription Description 2",
+  "description": "Optional Description",
+  "unitType": "DATA_STORAGE",
+  "unitMeasurement": "GB",
+  "unitBillingFrequency": "DAILY",
+  "unitPriceFixedFrequency": "DAILY",
+  "ratePlanSubscriptionRateDetails": [
+    {
+      "unitPriceFixed": 20.50,
+      "subscriptionMaxUnitQuantity": 200.00
+    }
+  ]
+}
+
+### Update RatePlanSubscriptionRate
+PUT http://localhost:8082/v1/api/rateplans/10000/subscription/10004
+Content-Type: application/json
+
+{
+  "ratePlanSubscriptionDescription": "ESWAR PRASAD",
+  "description": "Buchammagari",
+  "unitType": "API",
+  "unitMeasurement": "GB",
+  "unitBillingFrequency": "DAILY",
+  "unitPriceFixedFrequency": "DAILY",
+  "ratePlanSubscriptionRateDetails": [
+    {
+      "id": 10004,
+      "unitPriceFixed": 56.78,
+      "subscriptionMaxUnitQuantity": 109.00
+    }
+  ]
+}
+
+### Delete RatePlanSubscriptionRate
+DELETE http://localhost:8082/v1/api/rateplans/subscription/10004
+Content-Type: application/json

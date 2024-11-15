@@ -14,5 +14,5 @@ public interface RatePlanFlatRateRepository extends JpaRepository<RatePlanFlatRa
     Optional<RatePlanFlatRate> findFirstByRatePlan(RatePlan ratePlan);
 
     // New method to find all flat rates by ratePlanId
-    Page<RatePlanFlatRate> findAllByRatePlan_RatePlanId(Long ratePlanId, Pageable pageable);
+    Page<RatePlanFlatRate> findAllByRatePlanRatePlanId(Long ratePlanId, Pageable pageable);
 }

@@ -2,15 +2,14 @@ package aforo.productrateplanservie.rate_plan_flat_rate;
 
 
 import jakarta.persistence.*;
+
 import java.time.OffsetDateTime;
 import java.util.Set;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
 import aforo.productrateplanservie.rate_plan.RatePlan;
 import aforo.productrateplanservie.rate_plan_flat_rate_details.RatePlanFlatRateDetails;
 import aforo.productrateplanservie.util.enums.FlatRateUnitCalculation;
@@ -18,12 +17,10 @@ import aforo.productrateplanservie.util.enums.MaxLimitFrequency;
 import aforo.productrateplanservie.util.enums.UnitMeasurement;
 import aforo.productrateplanservie.util.enums.UnitType;
 
-@Setter
-@Getter
+@Data
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 public class RatePlanFlatRate {
-
     @Id
     @Column(nullable = false, updatable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -65,6 +62,4 @@ public class RatePlanFlatRate {
     @LastModifiedDate
     @Column(nullable = false)
     private OffsetDateTime lastUpdated;
-
-
 }

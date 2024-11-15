@@ -31,7 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @Tag(name = "RatePlanSubscriptionRates", description = "Operations related to RatePlanSubscriptionRates")
-@RequestMapping(value = "/v1/api/rateplans/SubscriptionRates", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/v1/api/rateplans", produces = MediaType.APPLICATION_JSON_VALUE)
 public class RatePlanSubscriptionRateResource {
 
     private final RatePlanSubscriptionRateService ratePlanSubscriptionRateService;
@@ -66,7 +66,7 @@ public class RatePlanSubscriptionRateResource {
                     )
             }
     )
-    @GetMapping
+    @GetMapping("/subscription")
     public ResponseEntity<PagedModel<EntityModel<RatePlanSubscriptionRateDTO>>> getAllRatePlanSubscriptionRates(
             @RequestParam(name = "filter", required = false) final String filter,
             @Parameter(hidden = true) @SortDefault(sort = "ratePlanSubscriptionRateId") @PageableDefault(size = 20) final Pageable pageable) {
@@ -74,31 +74,31 @@ public class RatePlanSubscriptionRateResource {
         return ResponseEntity.ok(pagedResourcesAssembler.toModel(ratePlanSubscriptionRateDTOs, ratePlanSubscriptionRateAssembler));
     }
 
-    @GetMapping("/{ratePlanSubscriptionRateId}")
+    @GetMapping("/subscription/{ratePlanSubscriptionRateId}")
     public ResponseEntity<EntityModel<RatePlanSubscriptionRateDTO>> getRatePlanSubscriptionRate(
             @PathVariable(name = "ratePlanSubscriptionRateId") final Long ratePlanSubscriptionRateId) {
         final RatePlanSubscriptionRateDTO ratePlanSubscriptionRateDTO = ratePlanSubscriptionRateService.get(ratePlanSubscriptionRateId);
         return ResponseEntity.ok(ratePlanSubscriptionRateAssembler.toModel(ratePlanSubscriptionRateDTO));
     }
 
-    @PostMapping("/{ratePlanId}")
-    @ApiResponse(responseCode = "201")
+    @PostMapping("/{ratePlanId}/subscription")
     public ResponseEntity<EntityModel<SimpleValue<Long>>> createRatePlanSubscriptionRate(
             @PathVariable("ratePlanId") Long ratePlanId,
-            @RequestBody @Valid final RatePlanSubscriptionRateDTO ratePlanSubscriptionRateDTO) {
-        final Long createdRatePlanSubscriptionRateId = ratePlanSubscriptionRateService.create(ratePlanId, ratePlanSubscriptionRateDTO);
+            @RequestBody @Valid CreateRatePlanSubscriptionRateRequest request) {
+        Long createdRatePlanSubscriptionRateId = ratePlanSubscriptionRateService.create(ratePlanId, request);
         return new ResponseEntity<>(ratePlanSubscriptionRateAssembler.toSimpleModel(createdRatePlanSubscriptionRateId), HttpStatus.CREATED);
     }
 
-    @PutMapping("/{ratePlanSubscriptionRateId}")
+    @PutMapping("/{ratePlanId}/subscription/{ratePlanSubscriptionRateId}")
     public ResponseEntity<EntityModel<SimpleValue<Long>>> updateRatePlanSubscriptionRate(
-            @PathVariable(name = "ratePlanSubscriptionRateId") final Long ratePlanSubscriptionRateId,
-            @RequestBody @Valid final RatePlanSubscriptionRateDTO ratePlanSubscriptionRateDTO) {
-        ratePlanSubscriptionRateService.update(ratePlanSubscriptionRateId, ratePlanSubscriptionRateDTO);
+            @PathVariable("ratePlanId") Long ratePlanId,
+            @PathVariable("ratePlanSubscriptionRateId") Long ratePlanSubscriptionRateId,
+            @RequestBody @Valid UpdateRatePlanSubscriptionRateRequest request) {
+        ratePlanSubscriptionRateService.update(ratePlanId, ratePlanSubscriptionRateId, request);
         return ResponseEntity.ok(ratePlanSubscriptionRateAssembler.toSimpleModel(ratePlanSubscriptionRateId));
     }
 
-    @DeleteMapping("/{ratePlanSubscriptionRateId}")
+    @DeleteMapping("/{ratePlanId}/subscription/{ratePlanSubscriptionRateId}")
     @ApiResponse(responseCode = "204")
     public ResponseEntity<Void> deleteRatePlanSubscriptionRate(
             @PathVariable(name = "ratePlanSubscriptionRateId") final Long ratePlanSubscriptionRateId) {

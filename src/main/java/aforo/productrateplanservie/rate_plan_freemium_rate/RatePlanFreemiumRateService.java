@@ -16,5 +16,5 @@ public interface RatePlanFreemiumRateService {
 
     void delete(Long ratePlanFreemiumRateId);
 
-//    ReferencedWarning getReferencedWarning(Long ratePlanFreemiumRateId);
+
 }
