@@ -3,6 +3,7 @@ package aforo.productrateplanservie.rate_plan_flat_rate;
 import aforo.productrateplanservie.rate_plan.RatePlan;
 import aforo.productrateplanservie.rate_plan.RatePlanRepository;
 import aforo.productrateplanservie.rate_plan_flat_rate_details.RatePlanFlatRateDetails;
+import aforo.productrateplanservie.rate_plan_flat_rate_details.RatePlanFlatRateDetailsDTO;
 import aforo.productrateplanservie.rate_plan_flat_rate_details.RatePlanFlatRateDetailsRepository;
 import aforo.productrateplanservie.exception.NotFoundException;
 import aforo.productrateplanservie.exception.ReferencedWarning;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -89,45 +91,62 @@ public class RatePlanFlatRateServiceImpl implements RatePlanFlatRateService {
             throw new EntityNotFoundException("RatePlan with id " + ratePlanId + " not found");
         }
 
-        // Retrieve existing RatePlanFlatRate entity
+        // Retrieve the existing RatePlanFlatRate entity
         RatePlanFlatRate existingRatePlanFlatRate = ratePlanFlatRateRepository.findById(ratePlanFlatRateId)
                 .orElseThrow(() -> new EntityNotFoundException("RatePlanFlatRate with id " + ratePlanFlatRateId + " not found"));
 
+        // Map existing entity to a DTO
+        RatePlanFlatRateDTO ratePlanFlatRateDTO = new RatePlanFlatRateDTO();
+        ratePlanFlatRateMapper.updateRatePlanFlatRateDTO(existingRatePlanFlatRate, ratePlanFlatRateDTO);
+
         boolean isModified = false;
 
-        // Update main RatePlanFlatRate fields if provided
-        if (updateRequest.getRatePlanFlatDescription() != null) {
-            existingRatePlanFlatRate.setRatePlanFlatDescription(updateRequest.getRatePlanFlatDescription());
-            isModified = true;
-        }
-        if (updateRequest.getDescription() != null) {
-            existingRatePlanFlatRate.setDescription(updateRequest.getDescription());
-            isModified = true;
-        }
-        if (updateRequest.getUnitType() != null) {
-            existingRatePlanFlatRate.setUnitType(updateRequest.getUnitType());
-            isModified = true;
-        }
-        if (updateRequest.getUnitMeasurement() != null) {
-            existingRatePlanFlatRate.setUnitMeasurement(updateRequest.getUnitMeasurement());
-            isModified = true;
-        }
-        if (updateRequest.getFlatRateUnitCalculation() != null) {
-            existingRatePlanFlatRate.setFlatRateUnitCalculation(updateRequest.getFlatRateUnitCalculation());
-            isModified = true;
-        }
-        if (updateRequest.getMaxLimitFrequency() != null) {
-            existingRatePlanFlatRate.setMaxLimitFrequency(updateRequest.getMaxLimitFrequency());
+        // Update main RatePlanFlatRate fields
+        if (updateRequest.getRatePlanFlatDescription() != null &&
+                !updateRequest.getRatePlanFlatDescription().trim().isEmpty() &&
+                !Objects.equals(ratePlanFlatRateDTO.getRatePlanFlatDescription(), updateRequest.getRatePlanFlatDescription())) {
+            ratePlanFlatRateDTO.setRatePlanFlatDescription(updateRequest.getRatePlanFlatDescription());
             isModified = true;
         }
 
-        // Handle updating of nested RatePlanFlatRateDetails if provided
+        if (updateRequest.getDescription() != null &&
+                !Objects.equals(ratePlanFlatRateDTO.getDescription(), updateRequest.getDescription())) {
+            ratePlanFlatRateDTO.setDescription(updateRequest.getDescription());
+            isModified = true;
+        }
+
+        if (updateRequest.getUnitType() != null &&
+                !Objects.equals(ratePlanFlatRateDTO.getUnitType(), updateRequest.getUnitType())) {
+            ratePlanFlatRateDTO.setUnitType(updateRequest.getUnitType());
+            isModified = true;
+        }
+
+        if (updateRequest.getUnitMeasurement() != null &&
+                !Objects.equals(ratePlanFlatRateDTO.getUnitMeasurement(), updateRequest.getUnitMeasurement())) {
+            ratePlanFlatRateDTO.setUnitMeasurement(updateRequest.getUnitMeasurement());
+            isModified = true;
+        }
+
+        if (updateRequest.getFlatRateUnitCalculation() != null &&
+                !Objects.equals(ratePlanFlatRateDTO.getFlatRateUnitCalculation(), updateRequest.getFlatRateUnitCalculation())) {
+            ratePlanFlatRateDTO.setFlatRateUnitCalculation(updateRequest.getFlatRateUnitCalculation());
+            isModified = true;
+        }
+
+        if (updateRequest.getMaxLimitFrequency() != null &&
+                !Objects.equals(ratePlanFlatRateDTO.getMaxLimitFrequency(), updateRequest.getMaxLimitFrequency())) {
+            ratePlanFlatRateDTO.setMaxLimitFrequency(updateRequest.getMaxLimitFrequency());
+            isModified = true;
+        }
+
+        // Update nested RatePlanFlatRateDetails
         if (updateRequest.getRatePlanFlatRateDetails() != null) {
             isModified |= updateRatePlanFlatRateDetails(existingRatePlanFlatRate, updateRequest.getRatePlanFlatRateDetails());
         }
 
-        // Save changes if any modifications were made
+        // Map updated DTO back to the entity and save only if modifications were made
         if (isModified) {
+            ratePlanFlatRateMapper.updateRatePlanFlatRate(ratePlanFlatRateDTO, existingRatePlanFlatRate);
             ratePlanFlatRateRepository.save(existingRatePlanFlatRate);
         }
     }
@@ -137,6 +156,7 @@ public class RatePlanFlatRateServiceImpl implements RatePlanFlatRateService {
         boolean isModified = false;
         Set<RatePlanFlatRateDetails> existingDetails = existingRatePlanFlatRate.getRatePlanFlatRateDetails();
 
+        // Update existing details or throw exception if not found
         for (UpdateRatePlanFlatRateDetailsRequest detailRequest : detailsRequests) {
             RatePlanFlatRateDetails detail = existingDetails.stream()
                     .filter(d -> d.getId().equals(detailRequest.getId()))
@@ -152,8 +172,24 @@ public class RatePlanFlatRateServiceImpl implements RatePlanFlatRateService {
                 isModified = true;
             }
         }
+
+        // Save any new details provided in the request
+        for (UpdateRatePlanFlatRateDetailsRequest newDetailRequest : detailsRequests) {
+            if (newDetailRequest.getId() == null) {
+                RatePlanFlatRateDetails newDetail = new RatePlanFlatRateDetails();
+                newDetail.setUnitRate(newDetailRequest.getUnitRate());
+                newDetail.setMaxLimit(newDetailRequest.getMaxLimit());
+                newDetail.setRatePlanFlatRate(existingRatePlanFlatRate);
+                existingRatePlanFlatRate.getRatePlanFlatRateDetails().add(newDetail);
+                isModified = true;
+            }
+        }
+
         return isModified;
     }
+
+
+
 
 
 
@@ -194,12 +230,6 @@ public class RatePlanFlatRateServiceImpl implements RatePlanFlatRateService {
         return ratePlanFlatRateOpt.map(ratePlanFlatRate -> ratePlanFlatRateMapper.updateRatePlanFlatRateDTO(ratePlanFlatRate, new RatePlanFlatRateDTO()));
     }
 
-    @Override
-    public ReferencedWarning getReferencedWarning(Long ratePlanFlatRateId) {
-        final ReferencedWarning referencedWarning = new ReferencedWarning();
-        final RatePlanFlatRate ratePlanFlatRate = ratePlanFlatRateRepository.findById(ratePlanFlatRateId)
-                .orElseThrow(() -> new NotFoundException("RatePlanFlatRate not found with id: " + ratePlanFlatRateId));
-        return referencedWarning;
-    }
+
 
 }

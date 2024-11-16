@@ -14,6 +14,8 @@ import lombok.Setter;
 import java.util.List;
 
 @Data
+@Getter
+@Setter
 public class UpdateRatePlanFlatRateRequest {
 
     @Size(max = 100)
@@ -28,4 +30,7 @@ public class UpdateRatePlanFlatRateRequest {
     @ValidEnum(enumClass = MaxLimitFrequency.class, message = "Invalid MaxLimitFrequency value")
     private MaxLimitFrequency maxLimitFrequency;
     private List<UpdateRatePlanFlatRateDetailsRequest> ratePlanFlatRateDetails;
+
+
+
 }

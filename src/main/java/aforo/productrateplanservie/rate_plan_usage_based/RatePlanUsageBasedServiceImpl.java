@@ -3,6 +3,7 @@ package aforo.productrateplanservie.rate_plan_usage_based;
 import aforo.productrateplanservie.rate_plan.RatePlan;
 import aforo.productrateplanservie.rate_plan.RatePlanRepository;
 import aforo.productrateplanservie.rate_plan_usage_based_rates.RatePlanUsageBasedRates;
+import aforo.productrateplanservie.rate_plan_usage_based_rates.RatePlanUsageBasedRatesDTO;
 import aforo.productrateplanservie.rate_plan_usage_based_rates.RatePlanUsageBasedRatesRepository;
 import aforo.productrateplanservie.exception.NotFoundException;
 import aforo.productrateplanservie.rate_plan_usage_based_rates.UpdateRatePlanUsageBasedRatesRequest;
@@ -98,7 +99,7 @@ public class RatePlanUsageBasedServiceImpl implements RatePlanUsageBasedService 
 
         boolean isModified = false;
 
-        // Check and update fields only if there is a change
+        // Update main RatePlanUsageBased fields directly
         if (updateDTO.getRatePlanUsageDescription() != null &&
                 !Objects.equals(existingRatePlanUsageBased.getRatePlanUsageDescription(), updateDTO.getRatePlanUsageDescription())) {
             existingRatePlanUsageBased.setRatePlanUsageDescription(updateDTO.getRatePlanUsageDescription());
@@ -129,20 +130,22 @@ public class RatePlanUsageBasedServiceImpl implements RatePlanUsageBasedService 
             isModified = true;
         }
 
-        // Check and update nested RatePlanUsageBasedRates if provided
+        // Update nested RatePlanUsageBasedRates
         if (updateDTO.getRatePlanUsageBasedRatesDTO() != null) {
             isModified |= updateRatePlanUsageBasedRates(existingRatePlanUsageBased, updateDTO.getRatePlanUsageBasedRatesDTO());
         }
 
-        // Apply updates to the entity only if modifications were made
+        // Save the updated entity only if modifications were made
         if (isModified) {
             ratePlanUsageBasedRepository.save(existingRatePlanUsageBased);
         }
     }
 
-    // Helper method to handle partial update of RatePlanUsageBasedRates
-    private boolean updateRatePlanUsageBasedRates(RatePlanUsageBased ratePlanUsageBased, Set<UpdateRatePlanUsageBasedRatesRequest> ratesDTO) {
+    private boolean updateRatePlanUsageBasedRates(RatePlanUsageBased ratePlanUsageBased,
+                                                  Set<UpdateRatePlanUsageBasedRatesRequest> ratesDTO) {
         boolean isModified = false;
+
+        // Retrieve existing rates
         Set<RatePlanUsageBasedRates> existingRates = ratePlanUsageBased.getRatePlanUsageBasedRates();
 
         for (UpdateRatePlanUsageBasedRatesRequest rateDTO : ratesDTO) {
@@ -151,13 +154,27 @@ public class RatePlanUsageBasedServiceImpl implements RatePlanUsageBasedService 
                     .findFirst()
                     .orElseThrow(() -> new EntityNotFoundException("RatePlanUsageBasedRates not found for ID: " + rateDTO.getId()));
 
+            // Update fields if they have changed
             if (rateDTO.getUnitRate() != null && !Objects.equals(rate.getUnitRate(), rateDTO.getUnitRate())) {
                 rate.setUnitRate(rateDTO.getUnitRate());
                 isModified = true;
             }
         }
+
+        // Add new rates if not found in the existing set
+        for (UpdateRatePlanUsageBasedRatesRequest newRateDTO : ratesDTO) {
+            if (existingRates.stream().noneMatch(r -> r.getId().equals(newRateDTO.getId()))) {
+                RatePlanUsageBasedRates newRate = new RatePlanUsageBasedRates();
+                newRate.setUnitRate(newRateDTO.getUnitRate());
+                newRate.setRatePlanUsageBased(ratePlanUsageBased);
+                ratePlanUsageBased.getRatePlanUsageBasedRates().add(newRate);
+                isModified = true;
+            }
+        }
+
         return isModified;
     }
+
 
 
     @Override

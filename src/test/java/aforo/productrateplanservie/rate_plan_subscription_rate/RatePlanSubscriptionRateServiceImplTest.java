@@ -3,7 +3,9 @@ package aforo.productrateplanservie.rate_plan_subscription_rate;
 import aforo.productrateplanservie.exception.NotFoundException;
 import aforo.productrateplanservie.rate_plan.RatePlan;
 import aforo.productrateplanservie.rate_plan.RatePlanRepository;
+import aforo.productrateplanservie.rate_plan_subscription_rate_details.RatePlanSubscriptionRateDetails;
 import aforo.productrateplanservie.rate_plan_subscription_rate_details.RatePlanSubscriptionRateDetailsRepository;
+import aforo.productrateplanservie.rate_plan_subscription_rate_details.UpdateRatePlanSubscriptionRateDetailsRequest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -13,8 +15,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
+import java.math.BigDecimal;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -98,31 +103,86 @@ class RatePlanSubscriptionRateServiceImplTest {
         assertThat(result).isEqualTo(1L);
         verify(ratePlanSubscriptionRateRepository, times(1)).save(ratePlanSubscriptionRate);
     }
-
     @Test
     void testUpdate() {
         // Arrange
         Long ratePlanId = 1L;
         Long ratePlanSubscriptionRateId = 1L;
+
+        // Prepare update request
         UpdateRatePlanSubscriptionRateRequest request = new UpdateRatePlanSubscriptionRateRequest();
         request.setRatePlanSubscriptionDescription("Updated Description");
+        request.setDescription("Updated RatePlan Description");
 
+        UpdateRatePlanSubscriptionRateDetailsRequest detailsRequest = new UpdateRatePlanSubscriptionRateDetailsRequest();
+        detailsRequest.setId(1L);
+        detailsRequest.setUnitPriceFixed(BigDecimal.valueOf(50.0));
+        detailsRequest.setSubscriptionMaxUnitQuantity(BigDecimal.valueOf(10L));
+        request.setRatePlanSubscriptionRateDetails(Set.of(detailsRequest));
+
+        // Mock existing RatePlanSubscriptionRate and its details
         RatePlanSubscriptionRate existingRatePlanSubscriptionRate = new RatePlanSubscriptionRate();
         existingRatePlanSubscriptionRate.setRatePlanSubscriptionRateId(ratePlanSubscriptionRateId);
+        existingRatePlanSubscriptionRate.setRatePlanSubscriptionDescription("Old Description");
+        existingRatePlanSubscriptionRate.setDescription("Old RatePlan Description");
 
+        RatePlanSubscriptionRateDetails existingDetail = new RatePlanSubscriptionRateDetails();
+        existingDetail.setId(1L);
+        existingDetail.setUnitPriceFixed(BigDecimal.valueOf(40.0));
+        existingDetail.setSubscriptionMaxUnitQuantity(BigDecimal.valueOf(5L));
+        existingDetail.setRatePlanSubscriptionRate(existingRatePlanSubscriptionRate);
+
+        existingRatePlanSubscriptionRate.setRatePlanSubscriptionRateDetails(new HashSet<>(Set.of(existingDetail)));
+
+        // Prepare DTO for mapping
+        RatePlanSubscriptionRateDTO ratePlanSubscriptionRateDTO = new RatePlanSubscriptionRateDTO();
+        ratePlanSubscriptionRateDTO.setRatePlanSubscriptionDescription("Updated Description");
+        ratePlanSubscriptionRateDTO.setDescription("Updated RatePlan Description");
+
+        // Configure mocks
         when(ratePlanRepository.existsById(ratePlanId)).thenReturn(true);
         when(ratePlanSubscriptionRateRepository.findById(ratePlanSubscriptionRateId))
                 .thenReturn(Optional.of(existingRatePlanSubscriptionRate));
+
+        // Mock mapper to convert DTO to entity
+        doAnswer(invocation -> {
+            RatePlanSubscriptionRateDTO dto = invocation.getArgument(0);
+            RatePlanSubscriptionRate entity = invocation.getArgument(1);
+
+            // Update the entity fields based on the DTO
+            entity.setRatePlanSubscriptionDescription(dto.getRatePlanSubscriptionDescription());
+            entity.setDescription(dto.getDescription());
+
+            // Update the details
+            if (entity.getRatePlanSubscriptionRateDetails() != null) {
+                entity.getRatePlanSubscriptionRateDetails().forEach(detail -> {
+                    detail.setUnitPriceFixed(BigDecimal.valueOf(50.0));
+                    detail.setSubscriptionMaxUnitQuantity(BigDecimal.valueOf(10L));
+                });
+            }
+            return null;
+        }).when(ratePlanSubscriptionRateMapper)
+                .updateRatePlanSubscriptionRate(eq(ratePlanSubscriptionRateDTO), eq(existingRatePlanSubscriptionRate), any());
 
         // Act
         ratePlanSubscriptionRateService.update(ratePlanId, ratePlanSubscriptionRateId, request);
 
         // Assert
         verify(ratePlanSubscriptionRateRepository, times(1)).save(existingRatePlanSubscriptionRate);
+
+        // Verify main RatePlanSubscriptionRate fields
         assertThat(existingRatePlanSubscriptionRate.getRatePlanSubscriptionDescription())
                 .isEqualTo("Updated Description");
-    }
+        assertThat(existingRatePlanSubscriptionRate.getDescription())
+                .isEqualTo("Updated RatePlan Description");
+        assertThat(existingRatePlanSubscriptionRate.getRatePlanSubscriptionRateDetails())
+                .hasSize(1);
 
+        // Verify updated details
+        RatePlanSubscriptionRateDetails updatedDetail = existingRatePlanSubscriptionRate.getRatePlanSubscriptionRateDetails().iterator().next();
+        assertThat(updatedDetail.getUnitPriceFixed()).isEqualTo(BigDecimal.valueOf(50.0));
+        assertThat(updatedDetail.getSubscriptionMaxUnitQuantity()).isEqualTo(BigDecimal.valueOf(10L));
+    }
 
     @Test
     void testDelete() {
