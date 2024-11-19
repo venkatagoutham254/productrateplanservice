@@ -44,32 +44,6 @@ public interface RatePlanFlatRateMapper {
         return ratePlanFlatRate;
     }
 
-    // Map from Entity to DTO, including nested details
-    @Mapping(target = "ratePlanId", source = "ratePlan.ratePlanId")
-    @Mapping(target = "ratePlanFlatRateDetails", source = "ratePlanFlatRateDetails")
-    RatePlanFlatRateDTO toDTO(RatePlanFlatRate entity);
-
-    // Map nested RatePlanFlatRateDetails entity to DTO
-    @Mapping(target = "id", source = "id")
-    @Mapping(target = "unitRate", source = "unitRate")
-    @Mapping(target = "maxLimit", source = "maxLimit")
-    RatePlanFlatRateDetailsDTO toDetailsDTO(RatePlanFlatRateDetails details);
-
-    // Map nested RatePlanFlatRateDetailsDTO to entity
-    default RatePlanFlatRateDetails mapDetailDTOToEntity(RatePlanFlatRateDetailsDTO detailsDTO) {
-        RatePlanFlatRateDetails details = new RatePlanFlatRateDetails();
-        details.setId(detailsDTO.getId());
-        details.setUnitRate(detailsDTO.getUnitRate());
-        details.setMaxLimit(detailsDTO.getMaxLimit());
-        return details;
-    }
-
-    // Update existing RatePlanFlatRate from DTO
-    @Mapping(target = "ratePlanFlatRateId", ignore = true) // ID remains unchanged
-    @Mapping(target = "ratePlan", ignore = true) // Handled manually
-    @Mapping(target = "ratePlanFlatRateDetails", ignore = true) // Handle in after-mapping
-    void updateRatePlanFlatRate(RatePlanFlatRateDTO ratePlanFlatRateDTO, @MappingTarget RatePlanFlatRate ratePlanFlatRate);
-
     // After-mapping logic to update nested RatePlanFlatRateDetails and RatePlan reference
     @AfterMapping
     default void afterUpdateRatePlanFlatRate(RatePlanFlatRateDTO ratePlanFlatRateDTO,
@@ -100,7 +74,7 @@ public interface RatePlanFlatRateMapper {
                 }
             }
 
-            // Remove orphaned details
+            // Retain only matched details, ignore new details
             existingDetails.removeIf(existingDetail -> updatedDetails.stream()
                     .noneMatch(d -> d.getId() != null && d.getId().equals(existingDetail.getId())));
 
@@ -121,5 +95,27 @@ public interface RatePlanFlatRateMapper {
         ratePlanFlatRateDTO.setRatePlanId(ratePlanFlatRate.getRatePlan() != null
                 ? ratePlanFlatRate.getRatePlan().getRatePlanId()
                 : null);
+    }
+
+    @Mapping(target = "ratePlanId", source = "ratePlan.ratePlanId")
+    @Mapping(target = "ratePlanFlatRateDetails", source = "ratePlanFlatRateDetails")
+    RatePlanFlatRateDTO toDTO(RatePlanFlatRate entity);
+
+    @Mapping(target = "ratePlanFlatRateId", ignore = true)
+    @Mapping(target = "ratePlan", ignore = true)
+    @Mapping(target = "ratePlanFlatRateDetails", ignore = true)
+    void updateRatePlanFlatRate(RatePlanFlatRateDTO dto, @MappingTarget RatePlanFlatRate entity);
+
+    @Mapping(target = "id", source = "id")
+    @Mapping(target = "unitRate", source = "unitRate")
+    @Mapping(target = "maxLimit", source = "maxLimit")
+    RatePlanFlatRateDetailsDTO toDetailsDTO(RatePlanFlatRateDetails entity);
+
+    default RatePlanFlatRateDetails mapDetailDTOToEntity(RatePlanFlatRateDetailsDTO dto) {
+        RatePlanFlatRateDetails details = new RatePlanFlatRateDetails();
+        details.setId(dto.getId());
+        details.setUnitRate(dto.getUnitRate());
+        details.setMaxLimit(dto.getMaxLimit());
+        return details;
     }
 }

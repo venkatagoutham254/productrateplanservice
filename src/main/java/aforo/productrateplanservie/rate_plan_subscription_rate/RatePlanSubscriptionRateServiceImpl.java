@@ -14,8 +14,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -81,7 +83,6 @@ public class RatePlanSubscriptionRateServiceImpl implements RatePlanSubscription
 
         return savedRatePlanSubscriptionRate.getRatePlanSubscriptionRateId();
     }
-
     @Override
     @Transactional
     public void update(Long ratePlanId, Long ratePlanSubscriptionRateId, UpdateRatePlanSubscriptionRateRequest updateRequest) {
@@ -94,102 +95,113 @@ public class RatePlanSubscriptionRateServiceImpl implements RatePlanSubscription
         RatePlanSubscriptionRate existingRatePlanSubscriptionRate = ratePlanSubscriptionRateRepository.findById(ratePlanSubscriptionRateId)
                 .orElseThrow(() -> new NotFoundException("RatePlanSubscriptionRate with id " + ratePlanSubscriptionRateId + " not found"));
 
-        // Map existing entity to a DTO
-        RatePlanSubscriptionRateDTO ratePlanSubscriptionRateDTO = new RatePlanSubscriptionRateDTO();
-        ratePlanSubscriptionRateMapper.updateRatePlanSubscriptionRateDTO(existingRatePlanSubscriptionRate, ratePlanSubscriptionRateDTO);
+        boolean isModified = updateMainSubscriptionRateFields(existingRatePlanSubscriptionRate, updateRequest);
 
+        // Handle nested details
+        if (updateRequest.getRatePlanSubscriptionRateDetails() != null) {
+            isModified |= updateSubscriptionRateDetails(existingRatePlanSubscriptionRate, updateRequest.getRatePlanSubscriptionRateDetails());
+        }
+
+        // Save changes only if modifications were made
+        if (isModified) {
+            ratePlanSubscriptionRateRepository.save(existingRatePlanSubscriptionRate);
+        }
+    }
+    private boolean updateMainSubscriptionRateFields(RatePlanSubscriptionRate existingRatePlanSubscriptionRate, UpdateRatePlanSubscriptionRateRequest updateRequest) {
         boolean isModified = false;
 
-        // Update main RatePlanSubscriptionRate fields using the DTO
         if (updateRequest.getRatePlanSubscriptionDescription() != null &&
-                !Objects.equals(ratePlanSubscriptionRateDTO.getRatePlanSubscriptionDescription(), updateRequest.getRatePlanSubscriptionDescription())) {
-            ratePlanSubscriptionRateDTO.setRatePlanSubscriptionDescription(updateRequest.getRatePlanSubscriptionDescription());
+                !Objects.equals(existingRatePlanSubscriptionRate.getRatePlanSubscriptionDescription(), updateRequest.getRatePlanSubscriptionDescription())) {
+            existingRatePlanSubscriptionRate.setRatePlanSubscriptionDescription(updateRequest.getRatePlanSubscriptionDescription());
             isModified = true;
         }
 
         if (updateRequest.getDescription() != null &&
-                !Objects.equals(ratePlanSubscriptionRateDTO.getDescription(), updateRequest.getDescription())) {
-            ratePlanSubscriptionRateDTO.setDescription(updateRequest.getDescription());
+                !Objects.equals(existingRatePlanSubscriptionRate.getDescription(), updateRequest.getDescription())) {
+            existingRatePlanSubscriptionRate.setDescription(updateRequest.getDescription());
             isModified = true;
         }
 
         if (updateRequest.getUnitType() != null &&
-                !Objects.equals(ratePlanSubscriptionRateDTO.getUnitType(), updateRequest.getUnitType())) {
-            ratePlanSubscriptionRateDTO.setUnitType(updateRequest.getUnitType());
+                !Objects.equals(existingRatePlanSubscriptionRate.getUnitType(), updateRequest.getUnitType())) {
+            existingRatePlanSubscriptionRate.setUnitType(updateRequest.getUnitType());
             isModified = true;
         }
 
         if (updateRequest.getUnitMeasurement() != null &&
-                !Objects.equals(ratePlanSubscriptionRateDTO.getUnitMeasurement(), updateRequest.getUnitMeasurement())) {
-            ratePlanSubscriptionRateDTO.setUnitMeasurement(updateRequest.getUnitMeasurement());
+                !Objects.equals(existingRatePlanSubscriptionRate.getUnitMeasurement(), updateRequest.getUnitMeasurement())) {
+            existingRatePlanSubscriptionRate.setUnitMeasurement(updateRequest.getUnitMeasurement());
             isModified = true;
         }
 
         if (updateRequest.getUnitBillingFrequency() != null &&
-                !Objects.equals(ratePlanSubscriptionRateDTO.getUnitBillingFrequency(), updateRequest.getUnitBillingFrequency())) {
-            ratePlanSubscriptionRateDTO.setUnitBillingFrequency(updateRequest.getUnitBillingFrequency());
+                !Objects.equals(existingRatePlanSubscriptionRate.getUnitBillingFrequency(), updateRequest.getUnitBillingFrequency())) {
+            existingRatePlanSubscriptionRate.setUnitBillingFrequency(updateRequest.getUnitBillingFrequency());
             isModified = true;
         }
 
         if (updateRequest.getUnitPriceFixedFrequency() != null &&
-                !Objects.equals(ratePlanSubscriptionRateDTO.getUnitPriceFixedFrequency(), updateRequest.getUnitPriceFixedFrequency())) {
-            ratePlanSubscriptionRateDTO.setUnitPriceFixedFrequency(updateRequest.getUnitPriceFixedFrequency());
+                !Objects.equals(existingRatePlanSubscriptionRate.getUnitPriceFixedFrequency(), updateRequest.getUnitPriceFixedFrequency())) {
+            existingRatePlanSubscriptionRate.setUnitPriceFixedFrequency(updateRequest.getUnitPriceFixedFrequency());
             isModified = true;
         }
 
-        // Update nested RatePlanSubscriptionRateDetails
-        if (updateRequest.getRatePlanSubscriptionRateDetails() != null) {
-            isModified |= updateRatePlanSubscriptionRateDetails(existingRatePlanSubscriptionRate, updateRequest.getRatePlanSubscriptionRateDetails());
-        }
-
-        // Map updated DTO back to the entity and save only if modifications were made
-        if (isModified) {
-            ratePlanSubscriptionRateMapper.updateRatePlanSubscriptionRate(ratePlanSubscriptionRateDTO, existingRatePlanSubscriptionRate, ratePlanRepository);
-            ratePlanSubscriptionRateRepository.save(existingRatePlanSubscriptionRate);
-        }
+        return isModified;
     }
-
-    private boolean updateRatePlanSubscriptionRateDetails(RatePlanSubscriptionRate existingRatePlanSubscriptionRate,
-                                                          Set<UpdateRatePlanSubscriptionRateDetailsRequest> detailsRequests) {
+    private boolean updateSubscriptionRateDetails(RatePlanSubscriptionRate existingRatePlanSubscriptionRate,
+                                                  Set<UpdateRatePlanSubscriptionRateDetailsRequest> detailsRequests) {
         boolean isModified = false;
-
-        // Retrieve existing details from the entity
         Set<RatePlanSubscriptionRateDetails> existingDetails = existingRatePlanSubscriptionRate.getRatePlanSubscriptionRateDetails();
 
-        // Update or delete existing details
-        for (UpdateRatePlanSubscriptionRateDetailsRequest detailRequest : detailsRequests) {
-            RatePlanSubscriptionRateDetails detail = existingDetails.stream()
-                    .filter(d -> d.getId().equals(detailRequest.getId()))
-                    .findFirst()
-                    .orElse(null);
-
-            if (detail != null) {
-                if (detailRequest.getUnitPriceFixed() != null && !Objects.equals(detail.getUnitPriceFixed(), detailRequest.getUnitPriceFixed())) {
-                    detail.setUnitPriceFixed(detailRequest.getUnitPriceFixed());
-                    isModified = true;
-                }
-                if (detailRequest.getSubscriptionMaxUnitQuantity() != null &&
-                        !Objects.equals(detail.getSubscriptionMaxUnitQuantity(), detailRequest.getSubscriptionMaxUnitQuantity())) {
-                    detail.setSubscriptionMaxUnitQuantity(detailRequest.getSubscriptionMaxUnitQuantity());
-                    isModified = true;
-                }
-            } else {
-                // Add new details
-                RatePlanSubscriptionRateDetails newDetail = new RatePlanSubscriptionRateDetails();
-                newDetail.setUnitPriceFixed(detailRequest.getUnitPriceFixed());
-                newDetail.setSubscriptionMaxUnitQuantity(detailRequest.getSubscriptionMaxUnitQuantity());
-                newDetail.setRatePlanSubscriptionRate(existingRatePlanSubscriptionRate);
-                existingRatePlanSubscriptionRate.getRatePlanSubscriptionRateDetails().add(newDetail);
-                isModified = true;
-            }
+        if (detailsRequests.size() == 1 && existingDetails.size() == 1) {
+            // Handle single detail case
+            isModified = updateSingleSubscriptionDetail(existingDetails.iterator().next(), detailsRequests.iterator().next());
+        } else {
+            // Handle multiple detail cases
+            isModified = updateMultipleSubscriptionDetails(existingDetails, detailsRequests);
         }
-
-        // Remove details not present in the update request
-        existingDetails.removeIf(existingDetail -> detailsRequests.stream()
-                .noneMatch(request -> request.getId() != null && request.getId().equals(existingDetail.getId())));
 
         return isModified;
     }
+
+    private boolean updateSingleSubscriptionDetail(RatePlanSubscriptionRateDetails existingDetail, UpdateRatePlanSubscriptionRateDetailsRequest detailRequest) {
+        boolean isModified = false;
+
+        if (detailRequest.getUnitPriceFixed() != null &&
+                !Objects.equals(existingDetail.getUnitPriceFixed(), detailRequest.getUnitPriceFixed())) {
+            existingDetail.setUnitPriceFixed(detailRequest.getUnitPriceFixed());
+            isModified = true;
+        }
+
+        if (detailRequest.getSubscriptionMaxUnitQuantity() != null &&
+                !Objects.equals(existingDetail.getSubscriptionMaxUnitQuantity(), detailRequest.getSubscriptionMaxUnitQuantity())) {
+            existingDetail.setSubscriptionMaxUnitQuantity(detailRequest.getSubscriptionMaxUnitQuantity());
+            isModified = true;
+        }
+
+        return isModified;
+    }
+
+    private boolean updateMultipleSubscriptionDetails(Set<RatePlanSubscriptionRateDetails> existingDetails,
+                                                      Set<UpdateRatePlanSubscriptionRateDetailsRequest> detailsRequests) {
+        boolean isModified = false;
+
+        Map<Long, UpdateRatePlanSubscriptionRateDetailsRequest> requestMap = detailsRequests.stream()
+                .filter(request -> request.getId() != null) // Ensure ID is present
+                .collect(Collectors.toMap(UpdateRatePlanSubscriptionRateDetailsRequest::getId, request -> request));
+
+        for (RatePlanSubscriptionRateDetails existingDetail : existingDetails) {
+            if (requestMap.containsKey(existingDetail.getId())) {
+                UpdateRatePlanSubscriptionRateDetailsRequest detailRequest = requestMap.get(existingDetail.getId());
+                isModified |= updateSingleSubscriptionDetail(existingDetail, detailRequest);
+            }
+        }
+
+
+
+        return isModified;
+    }
+
 
 
 

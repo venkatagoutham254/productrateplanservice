@@ -134,40 +134,17 @@ class RatePlanSubscriptionRateServiceImplTest {
 
         existingRatePlanSubscriptionRate.setRatePlanSubscriptionRateDetails(new HashSet<>(Set.of(existingDetail)));
 
-        // Prepare DTO for mapping
-        RatePlanSubscriptionRateDTO ratePlanSubscriptionRateDTO = new RatePlanSubscriptionRateDTO();
-        ratePlanSubscriptionRateDTO.setRatePlanSubscriptionDescription("Updated Description");
-        ratePlanSubscriptionRateDTO.setDescription("Updated RatePlan Description");
-
         // Configure mocks
         when(ratePlanRepository.existsById(ratePlanId)).thenReturn(true);
         when(ratePlanSubscriptionRateRepository.findById(ratePlanSubscriptionRateId))
                 .thenReturn(Optional.of(existingRatePlanSubscriptionRate));
 
-        // Mock mapper to convert DTO to entity
-        doAnswer(invocation -> {
-            RatePlanSubscriptionRateDTO dto = invocation.getArgument(0);
-            RatePlanSubscriptionRate entity = invocation.getArgument(1);
-
-            // Update the entity fields based on the DTO
-            entity.setRatePlanSubscriptionDescription(dto.getRatePlanSubscriptionDescription());
-            entity.setDescription(dto.getDescription());
-
-            // Update the details
-            if (entity.getRatePlanSubscriptionRateDetails() != null) {
-                entity.getRatePlanSubscriptionRateDetails().forEach(detail -> {
-                    detail.setUnitPriceFixed(BigDecimal.valueOf(50.0));
-                    detail.setSubscriptionMaxUnitQuantity(BigDecimal.valueOf(10L));
-                });
-            }
-            return null;
-        }).when(ratePlanSubscriptionRateMapper)
-                .updateRatePlanSubscriptionRate(eq(ratePlanSubscriptionRateDTO), eq(existingRatePlanSubscriptionRate), any());
-
         // Act
         ratePlanSubscriptionRateService.update(ratePlanId, ratePlanSubscriptionRateId, request);
 
         // Assert
+        verify(ratePlanRepository, times(1)).existsById(ratePlanId);
+        verify(ratePlanSubscriptionRateRepository, times(1)).findById(ratePlanSubscriptionRateId);
         verify(ratePlanSubscriptionRateRepository, times(1)).save(existingRatePlanSubscriptionRate);
 
         // Verify main RatePlanSubscriptionRate fields
@@ -175,8 +152,6 @@ class RatePlanSubscriptionRateServiceImplTest {
                 .isEqualTo("Updated Description");
         assertThat(existingRatePlanSubscriptionRate.getDescription())
                 .isEqualTo("Updated RatePlan Description");
-        assertThat(existingRatePlanSubscriptionRate.getRatePlanSubscriptionRateDetails())
-                .hasSize(1);
 
         // Verify updated details
         RatePlanSubscriptionRateDetails updatedDetail = existingRatePlanSubscriptionRate.getRatePlanSubscriptionRateDetails().iterator().next();

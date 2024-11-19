@@ -122,6 +122,7 @@ class RatePlanTieredRateServiceImplTest {
         verify(ratePlanTieredRateRepository, times(1)).save(ratePlanTieredRate);
         verify(ratePlanTieredRateDetailsRepository, times(1)).save(ratePlanTieredRateDetails);
     }
+
     @Test
     void testUpdateRatePlanTieredRate() {
         // Arrange
@@ -141,10 +142,9 @@ class RatePlanTieredRateServiceImplTest {
         detailRequest.setTierStart(BigDecimal.valueOf(100.0));
         detailRequest.setTierRate(BigDecimal.valueOf(50.0));
         detailRequest.setTierEnd(BigDecimal.valueOf(200.0));
-
         updateRequest.setRatePlanTieredRateDetails(Set.of(detailRequest));
 
-        // Mock the existing entity
+        // Mock the existing RatePlanTieredRate
         RatePlanTieredRate existingRatePlanTieredRate = new RatePlanTieredRate();
         existingRatePlanTieredRate.setRatePlanTieredRateId(ratePlanTieredRateId);
         existingRatePlanTieredRate.setRatePlanTieredDescription("Old Tiered Description");
@@ -152,35 +152,17 @@ class RatePlanTieredRateServiceImplTest {
         existingRatePlanTieredRate.setUnitType(UnitType.API);
         existingRatePlanTieredRate.setUnitMeasurement(UnitMeasurement.MB);
         existingRatePlanTieredRate.setUnitCalculation(UnitCalculation.DAILY);
-        existingRatePlanTieredRate.setRatePlanTieredRateDetails(new HashSet<>());
 
-        // Mock repository and mapper behavior
+        RatePlanTieredRateDetails existingDetail = new RatePlanTieredRateDetails();
+        existingDetail.setTierNumber(1L);
+        existingDetail.setTierStart(BigDecimal.valueOf(50.0));
+        existingDetail.setTierRate(BigDecimal.valueOf(25.0));
+        existingDetail.setTierEnd(BigDecimal.valueOf(150.0));
+        existingRatePlanTieredRate.setRatePlanTieredRateDetails(new HashSet<>(Set.of(existingDetail)));
+
+        // Mock repository behavior
         when(ratePlanRepository.existsById(ratePlanId)).thenReturn(true);
         when(ratePlanTieredRateRepository.findById(ratePlanTieredRateId)).thenReturn(Optional.of(existingRatePlanTieredRate));
-
-        doAnswer(invocation -> {
-            RatePlanTieredRateDTO dto = invocation.getArgument(0);
-            RatePlanTieredRate entity = invocation.getArgument(1);
-            // Simulate mapping by copying fields from DTO to entity
-            entity.setRatePlanTieredDescription(dto.getRatePlanTieredDescription());
-            entity.setDescription(dto.getDescription());
-            entity.setUnitType(dto.getUnitType());
-            entity.setUnitMeasurement(dto.getUnitMeasurement());
-            entity.setUnitCalculation(dto.getUnitCalculation());
-            return null;
-        }).when(ratePlanTieredRateMapper).updateRatePlanTieredRate(any(RatePlanTieredRateDTO.class), any(RatePlanTieredRate.class), any(RatePlanRepository.class));
-
-        doAnswer(invocation -> {
-            RatePlanTieredRate entity = invocation.getArgument(0);
-            RatePlanTieredRateDTO dto = invocation.getArgument(1);
-            // Simulate mapping by copying fields from entity to DTO
-            dto.setRatePlanTieredDescription(entity.getRatePlanTieredDescription());
-            dto.setDescription(entity.getDescription());
-            dto.setUnitType(entity.getUnitType());
-            dto.setUnitMeasurement(entity.getUnitMeasurement());
-            dto.setUnitCalculation(entity.getUnitCalculation());
-            return null;
-        }).when(ratePlanTieredRateMapper).updateRatePlanTieredRateDTO(any(RatePlanTieredRate.class), any(RatePlanTieredRateDTO.class));
 
         // Act
         ratePlanTieredRateService.update(ratePlanId, ratePlanTieredRateId, updateRequest);
@@ -188,23 +170,23 @@ class RatePlanTieredRateServiceImplTest {
         // Assert
         verify(ratePlanRepository, times(1)).existsById(ratePlanId);
         verify(ratePlanTieredRateRepository, times(1)).findById(ratePlanTieredRateId);
-        verify(ratePlanTieredRateMapper, times(1)).updateRatePlanTieredRate(any(RatePlanTieredRateDTO.class), eq(existingRatePlanTieredRate), any(RatePlanRepository.class));
         verify(ratePlanTieredRateRepository, times(1)).save(existingRatePlanTieredRate);
 
-        // Assert updates
+        // Validate updated main fields
         assertThat(existingRatePlanTieredRate.getRatePlanTieredDescription()).isEqualTo("Updated Tiered Description");
         assertThat(existingRatePlanTieredRate.getDescription()).isEqualTo("Updated Description");
         assertThat(existingRatePlanTieredRate.getUnitType()).isEqualTo(UnitType.API);
         assertThat(existingRatePlanTieredRate.getUnitMeasurement()).isEqualTo(UnitMeasurement.MB);
         assertThat(existingRatePlanTieredRate.getUnitCalculation()).isEqualTo(UnitCalculation.DAILY);
 
-        // Assert new detail
-        RatePlanTieredRateDetails newDetail = existingRatePlanTieredRate.getRatePlanTieredRateDetails().iterator().next();
-        assertThat(newDetail.getTierNumber()).isEqualTo(1L);
-        assertThat(newDetail.getTierStart()).isEqualTo(BigDecimal.valueOf(100.0));
-        assertThat(newDetail.getTierRate()).isEqualTo(BigDecimal.valueOf(50.0));
-        assertThat(newDetail.getTierEnd()).isEqualTo(BigDecimal.valueOf(200.0));
+        // Validate updated details
+        RatePlanTieredRateDetails updatedDetail = existingRatePlanTieredRate.getRatePlanTieredRateDetails().iterator().next();
+        assertThat(updatedDetail.getTierNumber()).isEqualTo(1L);
+        assertThat(updatedDetail.getTierStart()).isEqualTo(BigDecimal.valueOf(100.0));
+        assertThat(updatedDetail.getTierRate()).isEqualTo(BigDecimal.valueOf(50.0));
+        assertThat(updatedDetail.getTierEnd()).isEqualTo(BigDecimal.valueOf(200.0));
     }
+
 
 
 

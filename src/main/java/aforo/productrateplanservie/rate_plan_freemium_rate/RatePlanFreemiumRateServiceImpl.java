@@ -14,8 +14,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class RatePlanFreemiumRateServiceImpl implements RatePlanFreemiumRateService {
@@ -74,79 +76,106 @@ public class RatePlanFreemiumRateServiceImpl implements RatePlanFreemiumRateServ
         RatePlanFreemiumRate existingRatePlanFreemiumRate = ratePlanFreemiumRateRepository.findById(ratePlanFreemiumRateId)
                 .orElseThrow(() -> new EntityNotFoundException("RatePlanFreemiumRate with id " + ratePlanFreemiumRateId + " not found"));
 
-        // Initialize a DTO to store updates
-        RatePlanFreemiumRateDTO ratePlanFreemiumRateDTO = ratePlanFreemiumRateMapper.updateRatePlanFreemiumRateDTO(existingRatePlanFreemiumRate, new RatePlanFreemiumRateDTO());
+        boolean isModified = updateMainFreemiumRateFields(existingRatePlanFreemiumRate, updateDTO);
+
+        // Handle nested details
+        if (updateDTO.getRatePlanFreemiumRateDetailsDTO() != null) {
+            isModified |= updateFreemiumRateDetails(existingRatePlanFreemiumRate, updateDTO.getRatePlanFreemiumRateDetailsDTO());
+        }
+
+        // Save changes only if modifications were made
+        if (isModified) {
+            ratePlanFreemiumRateRepository.save(existingRatePlanFreemiumRate);
+        }
+    }
+    private boolean updateMainFreemiumRateFields(RatePlanFreemiumRate existingRatePlanFreemiumRate, UpdateRatePlanFreemiumRateRequest updateDTO) {
         boolean isModified = false;
 
-        // Check and update fields only if there is a change
         if (updateDTO.getFreemiumRateDescription() != null &&
                 !updateDTO.getFreemiumRateDescription().trim().isEmpty() &&
                 !Objects.equals(existingRatePlanFreemiumRate.getFreemiumRateDescription(), updateDTO.getFreemiumRateDescription())) {
-            ratePlanFreemiumRateDTO.setFreemiumRateDescription(updateDTO.getFreemiumRateDescription());
+            existingRatePlanFreemiumRate.setFreemiumRateDescription(updateDTO.getFreemiumRateDescription());
             isModified = true;
         }
 
         if (updateDTO.getDescription() != null &&
                 !Objects.equals(existingRatePlanFreemiumRate.getDescription(), updateDTO.getDescription())) {
-            ratePlanFreemiumRateDTO.setDescription(updateDTO.getDescription());
+            existingRatePlanFreemiumRate.setDescription(updateDTO.getDescription());
             isModified = true;
         }
 
         if (updateDTO.getUnitType() != null &&
                 !Objects.equals(existingRatePlanFreemiumRate.getUnitType(), updateDTO.getUnitType())) {
-            ratePlanFreemiumRateDTO.setUnitType(updateDTO.getUnitType());
+            existingRatePlanFreemiumRate.setUnitType(updateDTO.getUnitType());
             isModified = true;
         }
 
         if (updateDTO.getUnitMeasurement() != null &&
                 !Objects.equals(existingRatePlanFreemiumRate.getUnitMeasurement(), updateDTO.getUnitMeasurement())) {
-            ratePlanFreemiumRateDTO.setUnitMeasurement(updateDTO.getUnitMeasurement());
+            existingRatePlanFreemiumRate.setUnitMeasurement(updateDTO.getUnitMeasurement());
             isModified = true;
         }
 
         if (updateDTO.getUnitBillingFrequency() != null &&
                 !Objects.equals(existingRatePlanFreemiumRate.getUnitBillingFrequency(), updateDTO.getUnitBillingFrequency())) {
-            ratePlanFreemiumRateDTO.setUnitBillingFrequency(updateDTO.getUnitBillingFrequency());
+            existingRatePlanFreemiumRate.setUnitBillingFrequency(updateDTO.getUnitBillingFrequency());
             isModified = true;
         }
 
         if (updateDTO.getUnitFreePriceFixedFrequency() != null &&
                 !Objects.equals(existingRatePlanFreemiumRate.getUnitFreePriceFixedFrequency(), updateDTO.getUnitFreePriceFixedFrequency())) {
-            ratePlanFreemiumRateDTO.setUnitFreePriceFixedFrequency(updateDTO.getUnitFreePriceFixedFrequency());
+            existingRatePlanFreemiumRate.setUnitFreePriceFixedFrequency(updateDTO.getUnitFreePriceFixedFrequency());
             isModified = true;
         }
 
-        // Check and update nested RatePlanFreemiumRateDetails if provided
-        if (updateDTO.getRatePlanFreemiumRateDetailsDTO() != null) {
-            isModified |= updateRatePlanFreemiumRateDetails(existingRatePlanFreemiumRate, updateDTO.getRatePlanFreemiumRateDetailsDTO());
-        }
-
-        // Apply updates to the entity only if modifications were made
-        if (isModified) {
-            ratePlanFreemiumRateMapper.updateRatePlanFreemiumRate(ratePlanFreemiumRateDTO, existingRatePlanFreemiumRate);
-            ratePlanFreemiumRateRepository.save(existingRatePlanFreemiumRate);
-        }
-    }
-
-    // Helper method to handle partial update of RatePlanFreemiumRateDetails
-    private boolean updateRatePlanFreemiumRateDetails(RatePlanFreemiumRate ratePlanFreemiumRate, Set<UpdateRatePlanFreemiumRateDetailsRequest> detailsDTO) {
-        boolean isModified = false;
-        Set<RatePlanFreemiumRateDetails> existingDetails = ratePlanFreemiumRate.getRatePlanFreemiumRateDetails();
-
-        for (UpdateRatePlanFreemiumRateDetailsRequest detailDTO : detailsDTO) {
-            RatePlanFreemiumRateDetails detail = existingDetails.stream()
-                    .filter(d -> d.getId().equals(detailDTO.getId()))
-                    .findFirst()
-                    .orElseThrow(() -> new EntityNotFoundException("RatePlanFreemiumRateDetails not found for ID: " + detailDTO.getId()));
-
-            if (detailDTO.getFreemiumMaxUnitQuantity() != null &&
-                    !Objects.equals(detail.getFreemiumMaxUnitQuantity(), detailDTO.getFreemiumMaxUnitQuantity())) {
-                detail.setFreemiumMaxUnitQuantity(detailDTO.getFreemiumMaxUnitQuantity());
-                isModified = true;
-            }
-        }
         return isModified;
     }
+    private boolean updateFreemiumRateDetails(RatePlanFreemiumRate existingRatePlanFreemiumRate,
+                                              Set<UpdateRatePlanFreemiumRateDetailsRequest> detailsDTO) {
+        boolean isModified = false;
+        Set<RatePlanFreemiumRateDetails> existingDetails = existingRatePlanFreemiumRate.getRatePlanFreemiumRateDetails();
+
+        if (detailsDTO.size() == 1 && existingDetails.size() == 1) {
+            // Handle single detail case
+            isModified = updateSingleFreemiumRateDetail(existingDetails.iterator().next(), detailsDTO.iterator().next());
+        } else {
+            // Handle multiple detail cases
+            isModified = updateMultipleFreemiumRateDetails(existingDetails, detailsDTO);
+        }
+
+        return isModified;
+    }
+
+    private boolean updateSingleFreemiumRateDetail(RatePlanFreemiumRateDetails existingDetail, UpdateRatePlanFreemiumRateDetailsRequest detailDTO) {
+        boolean isModified = false;
+
+        if (detailDTO.getFreemiumMaxUnitQuantity() != null &&
+                !Objects.equals(existingDetail.getFreemiumMaxUnitQuantity(), detailDTO.getFreemiumMaxUnitQuantity())) {
+            existingDetail.setFreemiumMaxUnitQuantity(detailDTO.getFreemiumMaxUnitQuantity());
+            isModified = true;
+        }
+
+        return isModified;
+    }
+
+    private boolean updateMultipleFreemiumRateDetails(Set<RatePlanFreemiumRateDetails> existingDetails,
+                                                      Set<UpdateRatePlanFreemiumRateDetailsRequest> detailsDTO) {
+        boolean isModified = false;
+
+        Map<Long, UpdateRatePlanFreemiumRateDetailsRequest> requestMap = detailsDTO.stream()
+                .filter(request -> request.getId() != null) // Ensure ID is present
+                .collect(Collectors.toMap(UpdateRatePlanFreemiumRateDetailsRequest::getId, request -> request));
+
+        for (RatePlanFreemiumRateDetails existingDetail : existingDetails) {
+            if (requestMap.containsKey(existingDetail.getId())) {
+                UpdateRatePlanFreemiumRateDetailsRequest detailDTO = requestMap.get(existingDetail.getId());
+                isModified |= updateSingleFreemiumRateDetail(existingDetail, detailDTO);
+            }
+        }
+
+        return isModified;
+    }
+
 
     @Override
     public void delete(Long ratePlanFreemiumRateId) {

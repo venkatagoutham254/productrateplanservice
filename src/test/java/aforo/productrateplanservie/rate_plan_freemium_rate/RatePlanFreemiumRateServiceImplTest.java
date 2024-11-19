@@ -51,7 +51,8 @@ class RatePlanFreemiumRateServiceImplTest {
         Page<RatePlanFreemiumRate> ratePlanPage = new PageImpl<>(List.of(ratePlanFreemiumRate));
 
         when(ratePlanFreemiumRateRepository.findAll(pageable)).thenReturn(ratePlanPage);
-        when(ratePlanFreemiumRateMapper.updateRatePlanFreemiumRateDTO(any(), any())).thenReturn(new RatePlanFreemiumRateDTO());
+        when(ratePlanFreemiumRateMapper.updateRatePlanFreemiumRateDTO(any(RatePlanFreemiumRate.class), any(RatePlanFreemiumRateDTO.class)))
+                .thenReturn(new RatePlanFreemiumRateDTO());
 
         // Act
         Page<RatePlanFreemiumRateDTO> result = ratePlanFreemiumRateService.findAll(null, pageable);
@@ -59,8 +60,33 @@ class RatePlanFreemiumRateServiceImplTest {
         // Assert
         assertThat(result).hasSize(1);
         verify(ratePlanFreemiumRateRepository, times(1)).findAll(pageable);
+        verify(ratePlanFreemiumRateMapper, times(1)).updateRatePlanFreemiumRateDTO(any(RatePlanFreemiumRate.class), any(RatePlanFreemiumRateDTO.class));
     }
 
+    @Test
+    void testUpdate() {
+        // Arrange
+        Long ratePlanId = 1L;
+        Long ratePlanFreemiumRateId = 1L;
+        UpdateRatePlanFreemiumRateRequest request = new UpdateRatePlanFreemiumRateRequest();
+        request.setFreemiumRateDescription("Updated Description");
+
+        RatePlanFreemiumRate existingRatePlanFreemiumRate = new RatePlanFreemiumRate();
+        existingRatePlanFreemiumRate.setRatePlanFreemiumRateId(ratePlanFreemiumRateId);
+
+        when(ratePlanRepository.existsById(ratePlanId)).thenReturn(true);
+        when(ratePlanFreemiumRateRepository.findById(ratePlanFreemiumRateId)).thenReturn(Optional.of(existingRatePlanFreemiumRate));
+
+        // Remove unnecessary stubbing
+        // When stubbing is required, ensure it directly relates to the test logic.
+
+        // Act
+        ratePlanFreemiumRateService.update(ratePlanId, ratePlanFreemiumRateId, request);
+
+        // Assert
+        verify(ratePlanFreemiumRateRepository, times(1)).save(existingRatePlanFreemiumRate);
+        assertThat(existingRatePlanFreemiumRate.getFreemiumRateDescription()).isEqualTo("Updated Description");
+    }
 
     @Test
     void testGet() {
@@ -93,24 +119,6 @@ class RatePlanFreemiumRateServiceImplTest {
         verify(ratePlanFreemiumRateRepository, times(1)).save(ratePlanFreemiumRate);
     }
 
-    @Test
-    void testUpdate() {
-        Long ratePlanId = 1L;
-        Long ratePlanFreemiumRateId = 1L;
-        UpdateRatePlanFreemiumRateRequest request = new UpdateRatePlanFreemiumRateRequest();
-        request.setFreemiumRateDescription("Updated Description");
-
-        RatePlanFreemiumRate existingRatePlanFreemiumRate = new RatePlanFreemiumRate();
-        existingRatePlanFreemiumRate.setRatePlanFreemiumRateId(ratePlanFreemiumRateId);
-
-        when(ratePlanRepository.existsById(ratePlanId)).thenReturn(true);
-        when(ratePlanFreemiumRateRepository.findById(ratePlanFreemiumRateId)).thenReturn(Optional.of(existingRatePlanFreemiumRate));
-        when(ratePlanFreemiumRateMapper.updateRatePlanFreemiumRateDTO(any(), any())).thenReturn(new RatePlanFreemiumRateDTO());
-
-        ratePlanFreemiumRateService.update(ratePlanId, ratePlanFreemiumRateId, request);
-
-        verify(ratePlanFreemiumRateRepository, times(1)).save(existingRatePlanFreemiumRate);
-    }
 
     @Test
     void testDelete() {

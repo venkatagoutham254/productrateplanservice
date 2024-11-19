@@ -17,8 +17,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -80,114 +82,122 @@ public class RatePlanTieredRateServiceImpl implements RatePlanTieredRateService 
     }
     @Override
     @Transactional
-    public void update(Long ratePlanId, Long ratePlanTieredRateId, @Valid UpdateRatePlanTieredRateRequest updateRequest) {
+    public void update(Long ratePlanId, Long ratePlanTieredRateId, UpdateRatePlanTieredRateRequest updateRequest) {
         // Check if RatePlan exists
         if (!ratePlanRepository.existsById(ratePlanId)) {
-            throw new EntityNotFoundException("RatePlan with id " + ratePlanId + " not found");
+            throw new NotFoundException("RatePlan with id " + ratePlanId + " not found");
         }
 
         // Retrieve the existing RatePlanTieredRate entity
         RatePlanTieredRate existingRatePlanTieredRate = ratePlanTieredRateRepository.findById(ratePlanTieredRateId)
-                .orElseThrow(() -> new EntityNotFoundException("RatePlanTieredRate with id " + ratePlanTieredRateId + " not found"));
+                .orElseThrow(() -> new NotFoundException("RatePlanTieredRate with id " + ratePlanTieredRateId + " not found"));
 
-        // Map existing entity to a DTO
-        RatePlanTieredRateDTO ratePlanTieredRateDTO = new RatePlanTieredRateDTO();
-        ratePlanTieredRateMapper.updateRatePlanTieredRateDTO(existingRatePlanTieredRate, ratePlanTieredRateDTO);
+        boolean isModified = updateMainTieredRateFields(existingRatePlanTieredRate, updateRequest);
 
-        boolean isModified = false;
-
-        // Update main RatePlanTieredRate fields
-        if (updateRequest.getRatePlanTieredDescription() != null &&
-                !updateRequest.getRatePlanTieredDescription().trim().isEmpty() &&
-                !Objects.equals(ratePlanTieredRateDTO.getRatePlanTieredDescription(), updateRequest.getRatePlanTieredDescription())) {
-            ratePlanTieredRateDTO.setRatePlanTieredDescription(updateRequest.getRatePlanTieredDescription());
-            isModified = true;
-        }
-
-        if (updateRequest.getDescription() != null &&
-                !Objects.equals(ratePlanTieredRateDTO.getDescription(), updateRequest.getDescription())) {
-            ratePlanTieredRateDTO.setDescription(updateRequest.getDescription());
-            isModified = true;
-        }
-
-        if (updateRequest.getUnitType() != null &&
-                !Objects.equals(ratePlanTieredRateDTO.getUnitType(), updateRequest.getUnitType())) {
-            ratePlanTieredRateDTO.setUnitType(updateRequest.getUnitType());
-            isModified = true;
-        }
-
-        if (updateRequest.getUnitMeasurement() != null &&
-                !Objects.equals(ratePlanTieredRateDTO.getUnitMeasurement(), updateRequest.getUnitMeasurement())) {
-            ratePlanTieredRateDTO.setUnitMeasurement(updateRequest.getUnitMeasurement());
-            isModified = true;
-        }
-
-        if (updateRequest.getUnitCalculation() != null &&
-                !Objects.equals(ratePlanTieredRateDTO.getUnitCalculation(), updateRequest.getUnitCalculation())) {
-            ratePlanTieredRateDTO.setUnitCalculation(updateRequest.getUnitCalculation());
-            isModified = true;
-        }
-
-        // Update nested RatePlanTieredRateDetails
+        // Handle nested details
         if (updateRequest.getRatePlanTieredRateDetails() != null) {
-            isModified |= updateRatePlanTieredRateDetails(existingRatePlanTieredRate, updateRequest.getRatePlanTieredRateDetails());
+            isModified |= updateTieredRateDetails(existingRatePlanTieredRate, updateRequest.getRatePlanTieredRateDetails());
         }
 
-        // Map updated DTO back to the entity and save only if modifications were made
+        // Save changes only if modifications were made
         if (isModified) {
-            ratePlanTieredRateMapper.updateRatePlanTieredRate(ratePlanTieredRateDTO, existingRatePlanTieredRate, ratePlanRepository);
             ratePlanTieredRateRepository.save(existingRatePlanTieredRate);
         }
     }
 
-    private boolean updateRatePlanTieredRateDetails(RatePlanTieredRate existingRatePlanTieredRate,
-                                                    Set<UpdateRatePlanTieredRateDetailsRequest> detailsRequests) {
+    private boolean updateMainTieredRateFields(RatePlanTieredRate existingRatePlanTieredRate, UpdateRatePlanTieredRateRequest updateRequest) {
         boolean isModified = false;
 
-        Set<RatePlanTieredRateDetails> existingDetails = existingRatePlanTieredRate.getRatePlanTieredRateDetails();
+        if (updateRequest.getRatePlanTieredDescription() != null &&
+                !Objects.equals(existingRatePlanTieredRate.getRatePlanTieredDescription(), updateRequest.getRatePlanTieredDescription())) {
+            existingRatePlanTieredRate.setRatePlanTieredDescription(updateRequest.getRatePlanTieredDescription());
+            isModified = true;
+        }
 
-        for (UpdateRatePlanTieredRateDetailsRequest detailRequest : detailsRequests) {
-            RatePlanTieredRateDetails detail = existingDetails.stream()
-                    .filter(d -> d.getTierNumber().equals(detailRequest.getTierNumber()))
-                    .findFirst()
-                    .orElse(null);
+        if (updateRequest.getDescription() != null &&
+                !Objects.equals(existingRatePlanTieredRate.getDescription(), updateRequest.getDescription())) {
+            existingRatePlanTieredRate.setDescription(updateRequest.getDescription());
+            isModified = true;
+        }
 
-            if (detail != null) {
-                // Update existing details
-                if (detailRequest.getTierStart() != null && !Objects.equals(detail.getTierStart(), detailRequest.getTierStart())) {
-                    detail.setTierStart(detailRequest.getTierStart());
-                    isModified = true;
-                }
-                if (detailRequest.getTierRate() != null && !Objects.equals(detail.getTierRate(), detailRequest.getTierRate())) {
-                    detail.setTierRate(detailRequest.getTierRate());
-                    isModified = true;
-                }
-                if (detailRequest.getTierEnd() != null && !Objects.equals(detail.getTierEnd(), detailRequest.getTierEnd())) {
-                    detail.setTierEnd(detailRequest.getTierEnd());
-                    isModified = true;
-                }
-            } else {
-                // Add new details if not found
-                RatePlanTieredRateDetails newDetail = new RatePlanTieredRateDetails();
-                newDetail.setTierNumber(detailRequest.getTierNumber());
-                newDetail.setTierStart(detailRequest.getTierStart());
-                newDetail.setTierRate(detailRequest.getTierRate());
-                newDetail.setTierEnd(detailRequest.getTierEnd());
-                newDetail.setRatePlanTieredRate(existingRatePlanTieredRate);
-                existingDetails.add(newDetail);
-                isModified = true;
-            }
+        if (updateRequest.getUnitType() != null &&
+                !Objects.equals(existingRatePlanTieredRate.getUnitType(), updateRequest.getUnitType())) {
+            existingRatePlanTieredRate.setUnitType(updateRequest.getUnitType());
+            isModified = true;
+        }
+
+        if (updateRequest.getUnitMeasurement() != null &&
+                !Objects.equals(existingRatePlanTieredRate.getUnitMeasurement(), updateRequest.getUnitMeasurement())) {
+            existingRatePlanTieredRate.setUnitMeasurement(updateRequest.getUnitMeasurement());
+            isModified = true;
+        }
+
+        if (updateRequest.getUnitCalculation() != null &&
+                !Objects.equals(existingRatePlanTieredRate.getUnitCalculation(), updateRequest.getUnitCalculation())) {
+            existingRatePlanTieredRate.setUnitCalculation(updateRequest.getUnitCalculation());
+            isModified = true;
         }
 
         return isModified;
     }
 
+    private boolean updateTieredRateDetails(RatePlanTieredRate existingRatePlanTieredRate,
+                                            Set<UpdateRatePlanTieredRateDetailsRequest> detailsRequests) {
+        boolean isModified = false;
+        Set<RatePlanTieredRateDetails> existingDetails = existingRatePlanTieredRate.getRatePlanTieredRateDetails();
 
+        if (detailsRequests.size() == 1 && existingDetails.size() == 1) {
+            // Handle single detail case
+            isModified = updateSingleTieredDetail(existingDetails.iterator().next(), detailsRequests.iterator().next());
+        } else {
+            // Handle multiple detail cases
+            isModified = updateMultipleTieredDetails(existingDetails, detailsRequests);
+        }
 
+        return isModified;
+    }
 
+    private boolean updateSingleTieredDetail(RatePlanTieredRateDetails existingDetail, UpdateRatePlanTieredRateDetailsRequest detailRequest) {
+        boolean isModified = false;
 
+        if (detailRequest.getTierStart() != null &&
+                !Objects.equals(existingDetail.getTierStart(), detailRequest.getTierStart())) {
+            existingDetail.setTierStart(detailRequest.getTierStart());
+            isModified = true;
+        }
 
+        if (detailRequest.getTierRate() != null &&
+                !Objects.equals(existingDetail.getTierRate(), detailRequest.getTierRate())) {
+            existingDetail.setTierRate(detailRequest.getTierRate());
+            isModified = true;
+        }
 
+        if (detailRequest.getTierEnd() != null &&
+                !Objects.equals(existingDetail.getTierEnd(), detailRequest.getTierEnd())) {
+            existingDetail.setTierEnd(detailRequest.getTierEnd());
+            isModified = true;
+        }
+
+        return isModified;
+    }
+
+    private boolean updateMultipleTieredDetails(Set<RatePlanTieredRateDetails> existingDetails,
+                                                Set<UpdateRatePlanTieredRateDetailsRequest> detailsRequests) {
+        boolean isModified = false;
+
+        Map<Long, UpdateRatePlanTieredRateDetailsRequest> requestMap = detailsRequests.stream()
+                .filter(request -> request.getTierNumber() != null) // Ensure ID is present
+                .collect(Collectors.toMap(UpdateRatePlanTieredRateDetailsRequest::getTierNumber, request -> request));
+
+        for (RatePlanTieredRateDetails existingDetail : existingDetails) {
+            if (requestMap.containsKey(existingDetail.getTierNumber())) {
+                UpdateRatePlanTieredRateDetailsRequest detailRequest = requestMap.get(existingDetail.getTierNumber());
+                isModified |= updateSingleTieredDetail(existingDetail, detailRequest);
+            }
+        }
+
+        return isModified;
+    }
 
     @Transactional
     @Override

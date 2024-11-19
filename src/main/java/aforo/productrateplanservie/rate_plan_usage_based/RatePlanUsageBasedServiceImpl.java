@@ -15,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -85,21 +86,34 @@ public class RatePlanUsageBasedServiceImpl implements RatePlanUsageBasedService 
     }
 
 
-    @Transactional
     @Override
+    @Transactional
     public void update(Long ratePlanId, Long ratePlanUsageRateId, @Valid UpdateRatePlanUsageBasedRequest updateDTO) {
         // Check if RatePlan exists
         if (!ratePlanRepository.existsById(ratePlanId)) {
-            throw new EntityNotFoundException("RatePlan with id " + ratePlanId + " not found");
+            throw new NotFoundException("RatePlan with id " + ratePlanId + " not found");
         }
 
         // Retrieve the existing RatePlanUsageBased entity
         RatePlanUsageBased existingRatePlanUsageBased = ratePlanUsageBasedRepository.findById(ratePlanUsageRateId)
-                .orElseThrow(() -> new EntityNotFoundException("RatePlanUsageBased with id " + ratePlanUsageRateId + " not found"));
+                .orElseThrow(() -> new NotFoundException("RatePlanUsageBased with id " + ratePlanUsageRateId + " not found"));
 
+        boolean isModified = updateMainUsageRateFields(existingRatePlanUsageBased, updateDTO);
+
+        // Handle nested rates
+        if (updateDTO.getRatePlanUsageBasedRatesDTO() != null) {
+            isModified |= updateUsageBasedRates(existingRatePlanUsageBased, updateDTO.getRatePlanUsageBasedRatesDTO());
+        }
+
+        // Save changes only if modifications were made
+        if (isModified) {
+            ratePlanUsageBasedRepository.save(existingRatePlanUsageBased);
+        }
+    }
+
+    private boolean updateMainUsageRateFields(RatePlanUsageBased existingRatePlanUsageBased, UpdateRatePlanUsageBasedRequest updateDTO) {
         boolean isModified = false;
 
-        // Update main RatePlanUsageBased fields directly
         if (updateDTO.getRatePlanUsageDescription() != null &&
                 !Objects.equals(existingRatePlanUsageBased.getRatePlanUsageDescription(), updateDTO.getRatePlanUsageDescription())) {
             existingRatePlanUsageBased.setRatePlanUsageDescription(updateDTO.getRatePlanUsageDescription());
@@ -130,45 +144,49 @@ public class RatePlanUsageBasedServiceImpl implements RatePlanUsageBasedService 
             isModified = true;
         }
 
-        // Update nested RatePlanUsageBasedRates
-        if (updateDTO.getRatePlanUsageBasedRatesDTO() != null) {
-            isModified |= updateRatePlanUsageBasedRates(existingRatePlanUsageBased, updateDTO.getRatePlanUsageBasedRatesDTO());
-        }
-
-        // Save the updated entity only if modifications were made
-        if (isModified) {
-            ratePlanUsageBasedRepository.save(existingRatePlanUsageBased);
-        }
+        return isModified;
     }
 
-    private boolean updateRatePlanUsageBasedRates(RatePlanUsageBased ratePlanUsageBased,
-                                                  Set<UpdateRatePlanUsageBasedRatesRequest> ratesDTO) {
+    private boolean updateUsageBasedRates(RatePlanUsageBased ratePlanUsageBased,
+                                          Set<UpdateRatePlanUsageBasedRatesRequest> ratesDTO) {
         boolean isModified = false;
-
-        // Retrieve existing rates
         Set<RatePlanUsageBasedRates> existingRates = ratePlanUsageBased.getRatePlanUsageBasedRates();
 
-        for (UpdateRatePlanUsageBasedRatesRequest rateDTO : ratesDTO) {
-            RatePlanUsageBasedRates rate = existingRates.stream()
-                    .filter(r -> r.getId().equals(rateDTO.getId()))
-                    .findFirst()
-                    .orElseThrow(() -> new EntityNotFoundException("RatePlanUsageBasedRates not found for ID: " + rateDTO.getId()));
-
-            // Update fields if they have changed
-            if (rateDTO.getUnitRate() != null && !Objects.equals(rate.getUnitRate(), rateDTO.getUnitRate())) {
-                rate.setUnitRate(rateDTO.getUnitRate());
-                isModified = true;
-            }
+        if (ratesDTO.size() == 1 && existingRates.size() == 1) {
+            // Handle single rate case
+            isModified = updateSingleUsageRate(existingRates.iterator().next(), ratesDTO.iterator().next());
+        } else {
+            // Handle multiple rate cases
+            isModified = updateMultipleUsageRates(existingRates, ratesDTO);
         }
 
-        // Add new rates if not found in the existing set
-        for (UpdateRatePlanUsageBasedRatesRequest newRateDTO : ratesDTO) {
-            if (existingRates.stream().noneMatch(r -> r.getId().equals(newRateDTO.getId()))) {
-                RatePlanUsageBasedRates newRate = new RatePlanUsageBasedRates();
-                newRate.setUnitRate(newRateDTO.getUnitRate());
-                newRate.setRatePlanUsageBased(ratePlanUsageBased);
-                ratePlanUsageBased.getRatePlanUsageBasedRates().add(newRate);
-                isModified = true;
+        return isModified;
+    }
+
+    private boolean updateSingleUsageRate(RatePlanUsageBasedRates existingRate, UpdateRatePlanUsageBasedRatesRequest rateDTO) {
+        boolean isModified = false;
+
+        if (rateDTO.getUnitRate() != null &&
+                !Objects.equals(existingRate.getUnitRate(), rateDTO.getUnitRate())) {
+            existingRate.setUnitRate(rateDTO.getUnitRate());
+            isModified = true;
+        }
+
+        return isModified;
+    }
+
+    private boolean updateMultipleUsageRates(Set<RatePlanUsageBasedRates> existingRates,
+                                             Set<UpdateRatePlanUsageBasedRatesRequest> ratesDTO) {
+        boolean isModified = false;
+
+        Map<Long, UpdateRatePlanUsageBasedRatesRequest> requestMap = ratesDTO.stream()
+                .filter(request -> request.getId() != null) // Ensure ID is present
+                .collect(Collectors.toMap(UpdateRatePlanUsageBasedRatesRequest::getId, request -> request));
+
+        for (RatePlanUsageBasedRates existingRate : existingRates) {
+            if (requestMap.containsKey(existingRate.getId())) {
+                UpdateRatePlanUsageBasedRatesRequest rateDTO = requestMap.get(existingRate.getId());
+                isModified |= updateSingleUsageRate(existingRate, rateDTO);
             }
         }
 
