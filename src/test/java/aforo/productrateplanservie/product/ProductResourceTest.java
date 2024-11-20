@@ -1,6 +1,8 @@
 package aforo.productrateplanservie.product;
+
 import aforo.productrateplanservie.exception.ReferencedException;
 import aforo.productrateplanservie.exception.ReferencedWarning;
+import aforo.productrateplanservie.model.SimpleValue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -8,75 +10,128 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
+import java.util.Collections;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
+
 class ProductResourceTest {
-	@Mock
-	private ProductService productService;
-	@Mock
-	private ProductAssembler productAssembler;
-	@Mock
-	private PagedResourcesAssembler<ProductDTO> pagedResourcesAssembler;
-	@InjectMocks
-	private ProductResource productResource;
-	private ProductDTO productDTO;
-	private ProductDTO updatedProductDTO;
-	private Long productId = 1L;
-	@BeforeEach
-	void setUp() {
-		MockitoAnnotations.openMocks(this);
-		// Initialize mock data
-		productDTO = new ProductDTO(); // Populate as necessary
-		updatedProductDTO = new ProductDTO(); // Populate as necessary
-	}
-	@Test
-	void testGetProduct() {
-		when(productService.get(anyLong())).thenReturn(productDTO);
-		when(productAssembler.toModel(productDTO)).thenReturn(EntityModel.of(productDTO));
-		ResponseEntity<EntityModel<ProductDTO>> response = productResource.getProduct(productId);
-		assertEquals(HttpStatus.OK, response.getStatusCode());
-		assertNotNull(response.getBody());
-		assertEquals(EntityModel.of(productDTO), response.getBody());
-	}
-//	@Test
-//	void testCreateProduct() {
-//		when(productService.create(any(ProductDTO.class))).thenReturn(productId);
-//		when(productAssembler.toSimpleModel(productId)).thenReturn(EntityModel.of(new SimpleValue<>(productId)));
-//		ResponseEntity<EntityModel<SimpleValue<Long>>> response = productResource.createProduct(productDTO);
-//		assertEquals(HttpStatus.CREATED, response.getStatusCode());
-//		assertNotNull(response.getBody());
-//		assertEquals(productId, response.getBody().getContent().getValue());
-//	}
-//	@Test
-//	void testUpdateProduct() {
-//		doNothing().when(productService).update(anyLong(), any(ProductDTO.class));
-//		when(productAssembler.toSimpleModel(productId)).thenReturn(EntityModel.of(new SimpleValue<>(productId)));
-//		ResponseEntity<EntityModel<SimpleValue<Long>>> response = productResource.updateProduct(productId, updatedProductDTO);
-//		assertEquals(HttpStatus.OK, response.getStatusCode());
-//		assertNotNull(response.getBody());
-//		assertEquals(productId, response.getBody().getContent().getValue());
-//	}
-	@Test
-	void testDeleteProduct() {
-		@SuppressWarnings("unused")
-		ReferencedWarning warning = new ReferencedWarning(); // Initialize as needed
-		when(productService.getReferencedWarning(productId)).thenReturn(null);
-		doNothing().when(productService).delete(anyLong());
-		ResponseEntity<Void> response = productResource.deleteProduct(productId);
-		assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
-		verify(productService, times(1)).delete(productId);
-	}
-	@Test
-	void testDeleteProduct_withReferencedWarning() {
-		ReferencedWarning warning = new ReferencedWarning(); // Initialize as needed
-		when(productService.getReferencedWarning(productId)).thenReturn(warning);
-		ReferencedException thrown = assertThrows(ReferencedException.class, () -> productResource.deleteProduct(productId));
-		assertNotNull(thrown);
-		assertEquals(warning, thrown.getReferencedWarning());
-		verify(productService, times(0)).delete(productId);
-	}
+
+    @Mock
+    private ProductService productService;
+
+    @Mock
+    private ProductAssembler productAssembler;
+
+    @Mock
+    private PagedResourcesAssembler<ProductDTO> pagedResourcesAssembler;
+
+    @InjectMocks
+    private ProductResource productResource;
+
+    private ProductDTO productDTO;
+    private ProductDTO updatedProductDTO;
+    private Long productId = 1L;
+
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
+        // Initialize mock data
+        productDTO = new ProductDTO(); // Populate as necessary
+        updatedProductDTO = new ProductDTO(); // Populate as necessary
+    }
+
+    @Test
+    void testGetProduct() {
+        when(productService.get(anyLong())).thenReturn(productDTO);
+        when(productAssembler.toModel(productDTO)).thenReturn(EntityModel.of(productDTO));
+
+        ResponseEntity<EntityModel<ProductDTO>> response = productResource.getProduct(productId);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals(EntityModel.of(productDTO), response.getBody());
+    }
+
+    @Test
+    void testCreateProduct() {
+        CreateProductRequest createProductRequest = new CreateProductRequest(); // Populate if needed
+        when(productService.create(any(CreateProductRequest.class))).thenReturn(productId);
+        when(productAssembler.toSimpleModel(productId)).thenReturn(EntityModel.of(new SimpleValue<>(productId)));
+
+        ResponseEntity<EntityModel<SimpleValue<Long>>> response = productResource.createProduct(createProductRequest);
+
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals(productId, response.getBody().getContent().getValue());
+    }
+
+    @Test
+    void testUpdateProduct() {
+        CreateProductRequest updateProductRequest = new CreateProductRequest(); // Populate if needed
+        doNothing().when(productService).update(anyLong(), any(CreateProductRequest.class));
+        when(productAssembler.toSimpleModel(productId)).thenReturn(EntityModel.of(new SimpleValue<>(productId)));
+
+        ResponseEntity<EntityModel<SimpleValue<Long>>> response = productResource.updateProduct(productId, updateProductRequest);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals(productId, response.getBody().getContent().getValue());
+    }
+
+    @Test
+    void testDeleteProduct() {
+        when(productService.getReferencedWarning(productId)).thenReturn(null);
+        doNothing().when(productService).delete(anyLong());
+
+        ResponseEntity<Void> response = productResource.deleteProduct(productId);
+
+        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
+        verify(productService, times(1)).delete(productId);
+    }
+
+    @Test
+    void testDeleteProduct_withReferencedWarning() {
+        // Create the ReferencedWarning object using the correct constructor
+        ReferencedWarning warning = new ReferencedWarning(); // Adjust initialization if parameters are required
+
+        // Mock the productService to return the warning
+        when(productService.getReferencedWarning(productId)).thenReturn(warning);
+
+        // Perform the test and assert that the ReferencedException is thrown
+        ReferencedException thrown = assertThrows(ReferencedException.class, () -> productResource.deleteProduct(productId));
+
+        // Assert that the thrown exception contains the correct warning object
+        assertNotNull(thrown);
+        assertEquals(warning, thrown.getReferencedWarning());
+
+        // Verify that the delete method was never called
+        verify(productService, times(0)).delete(productId);
+    }
+
+    @Test
+    void testGetAllProducts() {
+        // Mock PagedModel and ProductDTO
+        PagedModel<EntityModel<ProductDTO>> mockPagedModel = PagedModel.of(
+                Collections.singletonList(EntityModel.of(productDTO)),
+                new PagedModel.PageMetadata(1, 0, 1)
+        );
+
+        when(productService.findAll(any(), any(), any(), any(), any())).thenReturn(null);
+        when(pagedResourcesAssembler.toModel(any(), any(ProductAssembler.class))).thenReturn(mockPagedModel);
+
+        ResponseEntity<PagedModel<EntityModel<ProductDTO>>> response = productResource.getAllProducts(
+                "filter", 1L, 2L, 3L, null
+        );
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals(mockPagedModel, response.getBody());
+    }
 }

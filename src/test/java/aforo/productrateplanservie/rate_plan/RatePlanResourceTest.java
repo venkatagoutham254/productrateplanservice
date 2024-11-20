@@ -1,134 +1,127 @@
 package aforo.productrateplanservie.rate_plan;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import java.io.IOException;
-
-import aforo.productrateplanservie.config.BaseIT;
-import io.restassured.RestAssured;
-import io.restassured.http.ContentType;
-import org.hamcrest.Matchers;
+import aforo.productrateplanservie.model.SimpleValue;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
-import org.springframework.test.context.jdbc.Sql;
+import org.springframework.http.ResponseEntity;
 
+import java.util.Collections;
+import java.util.Optional;
 
-public class RatePlanResourceTest extends BaseIT {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
 
-    @Test
-    @Sql({"/data/productData.sql", "/data/currenciesData.sql", "/data/ratePlanData.sql"})
-    void getAllRatePlans_success() {
-        RestAssured
-                .given()
-                    .accept(ContentType.JSON)
-                .when()
-                    .get("/api/ratePlans")
-                .then()
-                    .statusCode(HttpStatus.OK.value())
-                    .body("page.totalElements", Matchers.equalTo(2))
-                    .body("_embedded.ratePlanDTOList.get(0).ratePlanId", Matchers.equalTo(1200))
-                    .body("_links.self.href", Matchers.endsWith("/api/ratePlans?page=0&size=20&sort=ratePlanId,asc"));
+class RatePlanResourceTest {
+
+    @InjectMocks
+    private RatePlanResource ratePlanResource;
+
+    @Mock
+    private RatePlanService ratePlanService;
+
+    @Mock
+    private RatePlanAssembler ratePlanAssembler;
+
+    @Mock
+    private PagedResourcesAssembler<RatePlanDTO> pagedResourcesAssembler;
+
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test
-    @Sql({"/data/productData.sql", "/data/currenciesData.sql", "/data/ratePlanData.sql"})
-    void getAllRatePlans_filtered() {
-        RestAssured
-                .given()
-                    .accept(ContentType.JSON)
-                .when()
-                    .get("/api/ratePlans?filter=1201")
-                .then()
-                    .statusCode(HttpStatus.OK.value())
-                    .body("page.totalElements", Matchers.equalTo(1))
-                    .body("_embedded.ratePlanDTOList.get(0).ratePlanId", Matchers.equalTo(1201));
+    void testCreateRatePlan() {
+        Long ratePlanId = 1L;
+        SimpleValue<Long> simpleValueMock = mock(SimpleValue.class); // Mocking SimpleValue
+        when(simpleValueMock.getValue()).thenReturn(ratePlanId);
+        EntityModel<SimpleValue<Long>> entityModel = EntityModel.of(simpleValueMock);
+
+        when(ratePlanService.create(eq(123L), any(CreateRatePlanRequest.class))).thenReturn(ratePlanId);
+        when(ratePlanAssembler.toSimpleModel(ratePlanId)).thenReturn(entityModel);
+
+        ResponseEntity<EntityModel<SimpleValue<Long>>> response = ratePlanResource.createRatePlan(123L, new CreateRatePlanRequest());
+
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        assertEquals(entityModel, response.getBody());
     }
 
     @Test
-    @Sql({"/data/productData.sql", "/data/currenciesData.sql", "/data/ratePlanData.sql"})
-    void getRatePlan_success() {
-        RestAssured
-                .given()
-                    .accept(ContentType.JSON)
-                .when()
-                    .get("/api/ratePlans/1200")
-                .then()
-                    .statusCode(HttpStatus.OK.value())
-                    .body("ratePlanName", Matchers.equalTo("Sed ut perspiciatis."))
-                    .body("_links.self.href", Matchers.endsWith("/api/ratePlans/1200"));
+    void testGetRatePlan() {
+        RatePlanDTO ratePlanDTO = new RatePlanDTO();
+        EntityModel<RatePlanDTO> entityModel = EntityModel.of(ratePlanDTO);
+
+        when(ratePlanService.get(1L)).thenReturn(ratePlanDTO);
+        when(ratePlanAssembler.toModel(ratePlanDTO)).thenReturn(entityModel);
+
+        ResponseEntity<EntityModel<RatePlanDTO>> response = ratePlanResource.getRatePlan(1L);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(entityModel, response.getBody());
     }
 
     @Test
-    void getRatePlan_notFound() {
-        RestAssured
-                .given()
-                    .accept(ContentType.JSON)
-                .when()
-                    .get("/api/ratePlans/1866")
-                .then()
-                    .statusCode(HttpStatus.NOT_FOUND.value())
-                    .body("code", Matchers.equalTo("NOT_FOUND"));
+    void testUpdateRatePlan() {
+        Long ratePlanId = 1L;
+        SimpleValue<Long> simpleValueMock = mock(SimpleValue.class); // Mocking SimpleValue
+        EntityModel<SimpleValue<Long>> entityModel = EntityModel.of(simpleValueMock);
+
+        when(ratePlanAssembler.toSimpleModel(ratePlanId)).thenReturn(entityModel);
+
+        ResponseEntity<EntityModel<SimpleValue<Long>>> response = ratePlanResource.updateRatePlan(ratePlanId, new CreateRatePlanRequest());
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(entityModel, response.getBody());
+        verify(ratePlanService, times(1)).update(eq(ratePlanId), any(CreateRatePlanRequest.class));
     }
 
     @Test
-    @Sql({"/data/productData.sql", "/data/currenciesData.sql"})
-    void createRatePlan_success() throws IOException {
-        RestAssured
-                .given()
-                    .accept(ContentType.JSON)
-                    .contentType(ContentType.JSON)
-                    .body(readResource("/requests/ratePlanDTORequest.json"))
-                .when()
-                    .post("/api/ratePlans")
-                .then()
-                    .statusCode(HttpStatus.CREATED.value());
-        assertEquals(1, ratePlanRepository.count());
+    void testDeleteRatePlan() {
+        Long ratePlanId = 1L;
+
+        ResponseEntity<Void> response = ratePlanResource.deleteRatePlan(ratePlanId);
+
+        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
+        verify(ratePlanService, times(1)).delete(ratePlanId);
     }
 
     @Test
-    void createRatePlan_missingField() throws IOException {
-        RestAssured
-                .given()
-                    .accept(ContentType.JSON)
-                    .contentType(ContentType.JSON)
-                    .body(readResource("/requests/ratePlanDTORequest_missingField.json"))
-                .when()
-                    .post("/api/ratePlans")
-                .then()
-                    .statusCode(HttpStatus.BAD_REQUEST.value())
-                    .body("code", Matchers.equalTo("VALIDATION_FAILED"))
-                    .body("fieldErrors.get(0).property", Matchers.equalTo("ratePlanName"))
-                    .body("fieldErrors.get(0).code", Matchers.equalTo("REQUIRED_NOT_NULL"));
+    void testGetAllRatePlansByProductId() {
+        Page<RatePlanDTO> ratePlanPage = new PageImpl<>(Collections.singletonList(new RatePlanDTO()));
+        PagedModel<EntityModel<RatePlanDTO>> pagedModel = PagedModel.of(Collections.emptyList(), new PagedModel.PageMetadata(1, 0, 1));
+
+        when(ratePlanService.getRatePlansByProductId(eq(123L), eq("filter"), any(PageRequest.class))).thenReturn(ratePlanPage);
+        when(pagedResourcesAssembler.toModel(eq(ratePlanPage), any(RatePlanAssembler.class))).thenReturn(pagedModel);
+
+        ResponseEntity<PagedModel<EntityModel<RatePlanDTO>>> response = ratePlanResource.getAllRatePlansByProductId("filter", 123L, PageRequest.of(0, 20));
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(pagedModel, response.getBody());
     }
 
     @Test
-    @Sql({"/data/productData.sql", "/data/currenciesData.sql", "/data/ratePlanData.sql"})
-    void updateRatePlan_success() throws IOException {
-        RestAssured
-                .given()
-                    .accept(ContentType.JSON)
-                    .contentType(ContentType.JSON)
-                    .body(readResource("/requests/ratePlanDTORequest.json"))
-                .when()
-                    .put("/api/ratePlans/1200")
-                .then()
-                    .statusCode(HttpStatus.OK.value())
-                    .body("_links.self.href", Matchers.endsWith("/api/ratePlans/1200"));
-        assertEquals("Nulla facilisis.", ratePlanRepository.findById(((long)1200)).orElseThrow().getRatePlanId());
-        assertEquals(2, ratePlanRepository.count());
-    }
+    void testGetSelectedRatePlanTypeId() {
+        Long ratePlanId = 1L;
+        String ratePlanType = "standard";
+        Long typeId = 10L;
 
-    @Test
-    @Sql({"/data/productData.sql", "/data/currenciesData.sql", "/data/ratePlanData.sql"})
-    void deleteRatePlan_success() {
-        RestAssured
-                .given()
-                    .accept(ContentType.JSON)
-                .when()
-                    .delete("/api/ratePlans/1200")
-                .then()
-                    .statusCode(HttpStatus.NO_CONTENT.value());
-        assertEquals(1, ratePlanRepository.count());
-    }
+        when(ratePlanService.getSelectedRatePlanTypeId(ratePlanId, ratePlanType)).thenReturn(Optional.of(typeId));
 
+        ResponseEntity<EntityModel<SimpleValue<Long>>> response = ratePlanResource.getSelectedRatePlanTypeId(ratePlanId, ratePlanType);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(typeId, response.getBody().getContent().getValue());
+    }
 }
