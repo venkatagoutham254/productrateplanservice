@@ -21,6 +21,7 @@ import java.util.Set;
 @Data
 @Entity
 @EntityListeners(AuditingEntityListener.class)
+@Table(name="aforo_rate_plan_freemium_rate")
 public class RatePlanFreemiumRate {
 
     @Id

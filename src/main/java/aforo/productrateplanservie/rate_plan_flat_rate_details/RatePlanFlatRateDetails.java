@@ -16,6 +16,7 @@ import java.time.OffsetDateTime;
 @EntityListeners(AuditingEntityListener.class)
 @Getter
 @Setter
+@Table(name="aforo_rate_plan_flat_rate_details")
 public class RatePlanFlatRateDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

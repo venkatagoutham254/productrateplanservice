@@ -24,6 +24,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
+@Table(name="aforo_rate_plan")
 public class RatePlan {
 
     @Id
@@ -34,7 +35,7 @@ public class RatePlan {
     @Column(nullable = false, length = 100)
     private String ratePlanName;
 
-    @Column(name = "\"description\"", columnDefinition = "longtext")
+    @Column(name = "\"description\"")
     private String description;
 
     @Enumerated(EnumType.STRING)

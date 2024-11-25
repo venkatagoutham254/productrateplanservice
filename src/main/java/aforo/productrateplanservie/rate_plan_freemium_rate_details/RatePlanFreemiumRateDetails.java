@@ -15,6 +15,7 @@ import java.time.OffsetDateTime;
 @Data
 @Entity
 @EntityListeners(AuditingEntityListener.class)
+@Table(name="aforo_rate_plan_freemium_rate_details")
 public class RatePlanFreemiumRateDetails {
 
     @Id

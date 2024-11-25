@@ -19,6 +19,7 @@ import aforo.productrateplanservie.util.enums.UnitType;
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 @Data
+@Table(name="aforo_rate_plan_tiered_rate")
 public class RatePlanTieredRate {
 
     @Id
@@ -29,7 +30,7 @@ public class RatePlanTieredRate {
     @Column(nullable = false, length = 100)
     private String ratePlanTieredDescription;
 
-    @Column(name = "\"description\"", columnDefinition = "longtext")
+    @Column(name = "\"description\"")
     private String description;
 
     @Enumerated(EnumType.STRING)

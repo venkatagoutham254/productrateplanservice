@@ -16,15 +16,20 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: product_name
-                  type: character varying(100)
+                  type: varchar(100)
+
+
                   constraints:
                     nullable: false
               - column:
                   name: product_description
-                  type: clob
+                  type: text
+
               - column:
                   name: status
-                  type: character varying(255)
+                  type: varchar(100)
+
+
                   constraints:
                     nullable: false
               - column:
@@ -50,12 +55,12 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: currency_code
-                  type: character varying(3)
+                  type: varchar(3)
                   constraints:
                     nullable: false
               - column:
                   name: currency_name
-                  type: character varying(50)
+                  type: varchar(50)
                   constraints:
                     nullable: false
               - column:
@@ -86,15 +91,20 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: rate_plan_name
-                  type: character varying(100)
+                  type: varchar(100)
+
+
                   constraints:
                     nullable: false
               - column:
                   name: description
-                  type: clob
+                  type: text
+
               - column:
                   name: rate_plan_type
-                  type: character varying(255)
+                  type: varchar(100)
+
+
                   constraints:
                     nullable: false
               - column:
@@ -109,7 +119,9 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: status
-                  type: character varying(255)
+                  type: varchar(100)
+
+
                   constraints:
                     nullable: false
               - column:
@@ -145,25 +157,34 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: rate_plan_usage_description
-                  type: character varying(100)
+                  type: varchar(100)
+
+
                   constraints:
                     nullable: false
               - column:
                   name: description
-                  type: clob
+                  type: text
+
               - column:
                   name: unit_type
-                  type: character varying(255)
+                  type: varchar(100)
+
+
                   constraints:
                     nullable: false
               - column:
                   name: unit_measurement
-                  type: character varying(255)
+                  type: varchar(100)
+
+
                   constraints:
                     nullable: false
               - column:
                   name: unit_calculation
-                  type: character varying(255)
+                  type: varchar(100)
+
+
                   constraints:
                     nullable: false
               - column:
@@ -225,25 +246,34 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: rate_plan_tiered_description
-                  type: character varying(100)
+                  type: varchar(100)
+
+
                   constraints:
                     nullable: false
               - column:
                   name: description
-                  type: clob
+                  type: text
+
               - column:
                   name: unit_type
-                  type: character varying(255)
+                  type: varchar(100)
+
+
                   constraints:
                     nullable: false
               - column:
                   name: unit_measurement
-                  type: character varying(255)
+                  type: varchar(100)
+
+
                   constraints:
                     nullable: false
               - column:
                   name: unit_calculation
-                  type: character varying(255)
+                  type: varchar(100)
+
+
                   constraints:
                     nullable: false
               - column:
@@ -315,30 +345,41 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: rate_plan_flat_description
-                  type: character varying(100)
+                  type: varchar(100)
+
+
                   constraints:
                     nullable: false
               - column:
                   name: description
-                  type: clob
+                  type: text
+
               - column:
                   name: unit_type
-                  type: character varying(255)
+                  type: varchar(100)
+
+
                   constraints:
                     nullable: false
               - column:
                   name: unit_measurement
-                  type: character varying(255)
+                  type: varchar(100)
+
+
                   constraints:
                     nullable: false
               - column:
                   name: flat_rate_unit_calculation
-                  type: character varying(255)
+                  type: varchar(100)
+
+
                   constraints:
                     nullable: false
               - column:
                   name: max_limit_frequency
-                  type: character varying(255)
+                  type: varchar(100)
+
+
                   constraints:
                     nullable: false
               - column:
@@ -405,30 +446,41 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: rate_plan_subscription_description
-                  type: character varying(100)
+                  type: varchar(100)
+
+
                   constraints:
                     nullable: false
               - column:
                   name: description
-                  type: clob
+                  type: text
+
               - column:
                   name: unit_type
-                  type: character varying(255)
+                  type: varchar(100)
+
+
                   constraints:
                     nullable: false
               - column:
                   name: unit_measurement
-                  type: character varying(255)
+                  type: varchar(100)
+
+
                   constraints:
                     nullable: false
               - column:
                   name: unit_billing_frequency
-                  type: character varying(255)
+                  type: varchar(100)
+
+
                   constraints:
                     nullable: false
               - column:
                   name: unit_price_fixed_frequency
-                  type: character varying(255)
+                  type: varchar(100)
+
+
                   constraints:
                     nullable: false
               - column:
@@ -495,30 +547,40 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: rate_plan_freemium_description
-                  type: character varying(100)
+                  type: varchar(100)
+
                   constraints:
                     nullable: false
               - column:
                   name: description
-                  type: clob
+                  type: text
+
               - column:
                   name: unit_type
-                  type: character varying(255)
+                  type: varchar(100)
+
+
                   constraints:
                     nullable: false
               - column:
                   name: unit_measurement
-                  type: character varying(255)
+                  type: varchar(100)
+
+
                   constraints:
                     nullable: false
               - column:
                   name: unit_billing_frequency
-                  type: character varying(255)
+                  type: varchar(100)
+
+
                   constraints:
                     nullable: false
               - column:
                   name: unit_free_price_fixed_frequency
-                  type: character varying(255)
+                  type: varchar(100)
+
+
                   constraints:
                     nullable: false
               - column:

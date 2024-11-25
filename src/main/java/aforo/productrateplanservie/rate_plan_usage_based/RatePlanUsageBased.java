@@ -19,6 +19,7 @@ import aforo.productrateplanservie.rate_plan.RatePlan;
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 @Data
+@Table(name="aforo_rate_plan_usage_based")
 public class RatePlanUsageBased {
 
     @Id
@@ -29,7 +30,7 @@ public class RatePlanUsageBased {
     @Column(nullable = false, length = 100)
     private String ratePlanUsageDescription;
 
-    @Column(name = "\"description\"", columnDefinition = "longtext")
+    @Column(name = "\"description\"")
     private String description;
 
     @ManyToOne(fetch = FetchType.LAZY)

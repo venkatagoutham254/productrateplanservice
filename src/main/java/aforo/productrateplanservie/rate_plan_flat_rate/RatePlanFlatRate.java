@@ -20,6 +20,7 @@ import aforo.productrateplanservie.util.enums.UnitType;
 @Data
 @Entity
 @EntityListeners(AuditingEntityListener.class)
+@Table(name="aforo_rate_plan_flat_rate")
 public class RatePlanFlatRate {
     @Id
     @Column(nullable = false, updatable = false)
@@ -29,7 +30,7 @@ public class RatePlanFlatRate {
     @Column(nullable = false, length = 100)
     private String ratePlanFlatDescription;
 
-    @Column(name = "\"description\"", columnDefinition = "longtext")
+    @Column(name = "\"description\"")
     private String description;
 
     @Enumerated(EnumType.STRING)

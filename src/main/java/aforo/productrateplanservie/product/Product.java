@@ -11,6 +11,7 @@ import jakarta.persistence.OneToMany;
 import java.time.OffsetDateTime;
 import java.util.Set;
 
+import jakarta.persistence.Table;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -20,6 +21,7 @@ import aforo.productrateplanservie.util.enums.Status;
 @Entity
 @Data
 @EntityListeners(AuditingEntityListener.class)
+@Table(name="aforo_product")
 public class Product {
 	@Id
 	@Column(nullable = false, updatable = false)
@@ -27,7 +29,7 @@ public class Product {
 	private Long productId;
 	@Column(nullable = false, length = 100,unique=true)
 	private String productName;
-	@Column(columnDefinition = "longtext")
+	@Column(nullable = true)
 	private String productDescription;
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)

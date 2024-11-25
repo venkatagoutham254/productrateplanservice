@@ -17,6 +17,7 @@ import aforo.productrateplanservie.util.enums.UnitType;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
+@Table(name="aforo_rate_plan_subscription_rate")
 public class RatePlanSubscriptionRate {
 
     @Id
@@ -27,7 +28,7 @@ public class RatePlanSubscriptionRate {
     @Column(nullable = false, length = 100)
     private String ratePlanSubscriptionDescription;
 
-    @Column(name = "\"description\"", columnDefinition = "longtext")
+    @Column(name = "\"description\"")
     private String description;
 
     @Enumerated(EnumType.STRING)

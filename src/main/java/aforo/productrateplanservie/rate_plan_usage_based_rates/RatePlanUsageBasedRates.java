@@ -12,6 +12,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
+
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
@@ -23,6 +25,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @EntityListeners(AuditingEntityListener.class)
 @Getter
 @Setter
+@Table(name="aforo_rate_plan_usage_based_rates")
 public class RatePlanUsageBasedRates {
 
     @Id

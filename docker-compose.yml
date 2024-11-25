@@ -1,8 +1,32 @@
+
 services:
-  mysql:
-    image: mysql:9.0
+  # MySQL Service
+#  mysql:
+#    image: mysql:8.0 # Use a stable MySQL version
+#    container_name: mysql
+#    environment:
+#      MYSQL_DATABASE: productrateplanservice
+#      MYSQL_ROOT_PASSWORD: P4ssword! # Root user password
+#    ports:
+#      - "3312:3306"
+#    networks:
+#      - db-network
+#    restart: always
+
+  # PostgreSQL Service
+  postgres:
+    image: postgres:15 # Use a stable PostgreSQL version
+    container_name: postgres
     environment:
-    - MYSQL_DATABASE=productrateplanservie
-    - MYSQL_ROOT_PASSWORD=P4ssword!
+      POSTGRES_DB: productrateplanservice
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: P4ssword! # Root user password
     ports:
-    - 3312:3306
+      - "5433:5432"
+    networks:
+      - db-network
+    restart: always
+
+networks:
+  db-network:
+    driver: bridge
