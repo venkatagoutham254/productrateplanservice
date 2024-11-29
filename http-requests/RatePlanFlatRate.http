@@ -1,5 +1,5 @@
 ### Create RatePlanFlatRate
-POST http://localhost:8082/v1/api/rateplans/10000/flat_rate
+POST http://localhost:8081/v1/api/rateplans/10000/flat_rate
 Content-Type: application/json
 
 {

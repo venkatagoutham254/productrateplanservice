@@ -7,7 +7,7 @@ public interface ProductService {
 	Long create(CreateProductRequest createProductRequest);
 	void update(Long productId,CreateProductRequest createProductRequest);
 	void delete(Long productId);
-	ReferencedWarning getReferencedWarning(Long productId);
+//	ReferencedWarning getReferencedWarning(Long productId);
 	Page<ProductDTO> findAll(String filter, Long producerId, Long organizationId, Long divisionId, Pageable pageable);	
 }
 

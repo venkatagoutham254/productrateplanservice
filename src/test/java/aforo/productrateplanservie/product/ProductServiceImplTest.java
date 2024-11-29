@@ -158,28 +158,5 @@ class ProductServiceImplTest {
 		verify(productRepository).existsById(PRODUCT_ID);
 	}
 
-	@Test
-	void getReferencedWarning_WithExistingRatePlan_ShouldReturnWarning() {
-		RatePlan ratePlan = new RatePlan();
-		ratePlan.setRatePlanId(1L);
-		when(productRepository.findById(PRODUCT_ID)).thenReturn(Optional.of(product));
-		when(ratePlanRepository.findFirstByProduct(product)).thenReturn(ratePlan);
 
-		ReferencedWarning warning = productService.getReferencedWarning(PRODUCT_ID);
-
-		assertNotNull(warning);
-		assertEquals("product.ratePlan.product.referenced", warning.getKey());
-		verify(ratePlanRepository).findFirstByProduct(product);
-	}
-
-	@Test
-	void getReferencedWarning_WithNoRatePlan_ShouldReturnNull() {
-		when(productRepository.findById(PRODUCT_ID)).thenReturn(Optional.of(product));
-		when(ratePlanRepository.findFirstByProduct(product)).thenReturn(null);
-
-		ReferencedWarning warning = productService.getReferencedWarning(PRODUCT_ID);
-
-		assertNull(warning);
-		verify(ratePlanRepository).findFirstByProduct(product);
-	}
 }

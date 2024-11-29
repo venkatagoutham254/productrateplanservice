@@ -150,19 +150,7 @@ public class ProductServiceImpl implements ProductService {
 		// Perform deletion logic here (clean up related entities if necessary)
 		productRepository.deleteById(productId);
 	}
-	@Override
-	public ReferencedWarning getReferencedWarning(final Long productId) {
-		final ReferencedWarning referencedWarning = new ReferencedWarning();
-		final Product product = productRepository.findById(productId)
-				.orElseThrow(() -> new NotFoundException("Product not found with ID: " + productId));
-		final RatePlan productRatePlan = ratePlanRepository.findFirstByProduct(product);
-		if (productRatePlan != null) {
-			referencedWarning.setKey("product.ratePlan.product.referenced");
-			referencedWarning.addParam(productRatePlan.getRatePlanId());
-			return referencedWarning;
-		}
-		return null;
-	}
+
 
 	private void validateProducerDetails(CreateProductRequest createProductRequest) {
 		if (createProductRequest.getProducerId() != null) {

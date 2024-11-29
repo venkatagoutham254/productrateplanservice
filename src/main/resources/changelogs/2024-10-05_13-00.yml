@@ -546,7 +546,7 @@ databaseChangeLog:
                     primaryKey: true
                     nullable: false
               - column:
-                  name: rate_plan_freemium_description
+                  name: freemium_rate_description
                   type: varchar(100)
 
                   constraints:
@@ -635,7 +635,7 @@ databaseChangeLog:
             baseColumnNames: product_id
             referencedTableName: aforo_product
             referencedColumnNames: product_id
-            onDelete: NO ACTION
+            onDelete: CASCADE
             onUpdate: NO ACTION
         - addForeignKeyConstraint:
             constraintName: fk_rate_plan_currency_id
@@ -643,7 +643,7 @@ databaseChangeLog:
             baseColumnNames: currency_id
             referencedTableName: aforo_currencies
             referencedColumnNames: currency_id
-            onDelete: NO ACTION
+            onDelete: CASCADE
             onUpdate: NO ACTION
         - addForeignKeyConstraint:
             constraintName: fk_rate_plan_usage_based_rate_plan_id
@@ -651,7 +651,7 @@ databaseChangeLog:
             baseColumnNames: rate_plan_id
             referencedTableName: aforo_rate_plan
             referencedColumnNames: rate_plan_id
-            onDelete: NO ACTION
+            onDelete: CASCADE
             onUpdate: NO ACTION
         - addForeignKeyConstraint:
             constraintName: fk_rate_plan_usage_based_rates_rate_plan_usage_rate_id
@@ -659,7 +659,7 @@ databaseChangeLog:
             baseColumnNames: rate_plan_usage_rate_id
             referencedTableName: aforo_rate_plan_usage_based
             referencedColumnNames: rate_plan_usage_rate_id
-            onDelete: NO ACTION
+            onDelete: CASCADE
             onUpdate: NO ACTION
         - addForeignKeyConstraint:
             constraintName: fk_rate_plan_tiered_rate_rate_plan_id
@@ -667,7 +667,7 @@ databaseChangeLog:
             baseColumnNames: rate_plan_id
             referencedTableName: aforo_rate_plan
             referencedColumnNames: rate_plan_id
-            onDelete: NO ACTION
+            onDelete: CASCADE
             onUpdate: NO ACTION
         - addForeignKeyConstraint:
             constraintName: fk_rate_plan_tiered_rate_details_rate_plan_tiered_rate_id
@@ -675,7 +675,7 @@ databaseChangeLog:
             baseColumnNames: rate_plan_tiered_rate_id
             referencedTableName: aforo_rate_plan_tiered_rate
             referencedColumnNames: rate_plan_tiered_rate_id
-            onDelete: NO ACTION
+            onDelete: CASCADE
             onUpdate: NO ACTION
         - addForeignKeyConstraint:
             constraintName: fk_rate_plan_flat_rate_rate_plan_id
@@ -683,7 +683,7 @@ databaseChangeLog:
             baseColumnNames: rate_plan_id
             referencedTableName: aforo_rate_plan
             referencedColumnNames: rate_plan_id
-            onDelete: NO ACTION
+            onDelete: CASCADE
             onUpdate: NO ACTION
         - addForeignKeyConstraint:
             constraintName: fk_rate_plan_flat_rate_details_rate_plan_flat_rate_id
@@ -691,7 +691,7 @@ databaseChangeLog:
             baseColumnNames: rate_plan_flat_rate_id
             referencedTableName: aforo_rate_plan_flat_rate
             referencedColumnNames: rate_plan_flat_rate_id
-            onDelete: NO ACTION
+            onDelete: CASCADE
             onUpdate: NO ACTION
         - addForeignKeyConstraint:
             constraintName: fk_rate_plan_subscription_rate_rate_plan_id
@@ -699,7 +699,7 @@ databaseChangeLog:
             baseColumnNames: rate_plan_id
             referencedTableName: aforo_rate_plan
             referencedColumnNames: rate_plan_id
-            onDelete: NO ACTION
+            onDelete: CASCADE
             onUpdate: NO ACTION
         - addForeignKeyConstraint:
             constraintName: fk_rate_plan_subs_rate_details_rate_plan_subs_rate_id
@@ -707,7 +707,7 @@ databaseChangeLog:
             baseColumnNames: rate_plan_subscription_rate_id
             referencedTableName: aforo_rate_plan_subscription_rate
             referencedColumnNames: rate_plan_subscription_rate_id
-            onDelete: NO ACTION
+            onDelete: CASCADE
             onUpdate: NO ACTION
         - addForeignKeyConstraint:
             constraintName: fk_rate_plan_freemium_rate_rate_plan_id
@@ -715,7 +715,7 @@ databaseChangeLog:
             baseColumnNames: rate_plan_id
             referencedTableName: aforo_rate_plan
             referencedColumnNames: rate_plan_id
-            onDelete: NO ACTION
+            onDelete: CASCADE
             onUpdate: NO ACTION
         - addForeignKeyConstraint:
             constraintName: fk_rate_plan_freemium_rate_details_rate_plan_freemium_rate_id
@@ -723,5 +723,5 @@ databaseChangeLog:
             baseColumnNames: rate_plan_freemium_rate_id
             referencedTableName: aforo_rate_plan_freemium_rate
             referencedColumnNames: rate_plan_freemium_rate_id
-            onDelete: NO ACTION
+            onDelete: CASCADE
             onUpdate: NO ACTION

@@ -28,7 +28,7 @@ public class RatePlanFreemiumRate {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long ratePlanFreemiumRateId;
 
-    @Column(length = 100)
+    @Column(name="freemium_rate_description",length = 100)
     private String freemiumRateDescription;
 
     @Column

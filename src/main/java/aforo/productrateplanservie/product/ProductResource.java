@@ -181,10 +181,7 @@ public class ProductResource {
 	@ApiResponse(responseCode = "204")
 	public ResponseEntity<Void> deleteProduct(
 			@PathVariable(name = "productId") final Long productId) {
-		final ReferencedWarning referencedWarning = productService.getReferencedWarning(productId);
-		if (referencedWarning != null) {
-			throw new ReferencedException(referencedWarning);
-		}
+
 		productService.delete(productId);
 
 		return ResponseEntity.noContent().build();

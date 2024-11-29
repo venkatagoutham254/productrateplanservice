@@ -1,0 +1,50 @@
+### Get All RatePlans
+GET http://localhost:8081/v1/api/ratePlans
+Content-Type: application/json
+Authorization: Bearer <token>
+
+### Get All RatePlans by Product ID
+GET http://localhost:8081/v1/api/products/10001/ratePlans
+Content-Type: application/json
+Authorization: Bearer <token>
+
+### Get RatePlan by ID
+GET http://localhost:8081/v1/api/ratePlans/20001
+Content-Type: application/json
+Authorization: Bearer <token>
+
+### Create RatePlan
+POST http://localhost:8081/v1/api/products/10001/ratePlans
+Content-Type: application/json
+Authorization: Bearer <token>
+
+{
+  "name": "Basic RatePlan",
+  "description": "This is a basic rate plan for testing.",
+  "billingCycle": "MONTHLY",
+  "price": 100.50,
+  "currency": "USD"
+}
+
+### Update RatePlan
+PUT http://localhost:8081/v1/api/ratePlans/10000
+Content-Type: application/json
+Authorization: Bearer <token>
+
+{
+  "name": "Updated RatePlan",
+  "description": "Updated description for the rate plan.",
+  "billingCycle": "YEARLY",
+  "price": 1200.75,
+  "currency": "USD"
+}
+
+### Delete RatePlan
+DELETE http://localhost:8081/v1/api/ratePlans/10000
+Content-Type: application/json
+Authorization: Bearer <token>
+
+### Get Selected RatePlan Type by ID
+GET http://localhost:8081/v1/api/ratePlans/20001/type/PREMIUM
+Content-Type: application/json
+Authorization: Bearer <token>

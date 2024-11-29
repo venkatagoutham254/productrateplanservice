@@ -1,0 +1,41 @@
+### Get All Currencies
+GET http://localhost:8081/v1/api/currencies
+Content-Type: application/json
+Authorization: Bearer <token>
+
+### Get All Currencies with Query Parameters
+GET http://localhost:8081/v1/api/currencies?filter=example&page=0&size=10&sort=currencyId,asc
+Content-Type: application/json
+Authorization: Bearer <token>
+
+### Get Currency by ID
+GET http://localhost:8081/v1/api/currencies/10000
+Content-Type: application/json
+Authorization: Bearer <token>
+
+### Create Currency
+POST http://localhost:8081/v1/api/currencies
+Content-Type: application/json
+Authorization: Bearer <token>
+
+{
+  "currencyCode": "USD",
+  "currencyName": "US Dollar",
+  "isActive": true
+}
+
+### Update Currency
+PUT http://localhost:8081/v1/api/currencies/10000
+Content-Type: application/json
+Authorization: Bearer <token>
+
+{
+  "currencyCode": "EUR",
+  "currencyName": "Euro",
+  "isActive": false
+}
+
+### Delete Currency
+DELETE http://localhost:8081/v1/api/currencies/10001
+Content-Type: application/json
+Authorization: Bearer <token>

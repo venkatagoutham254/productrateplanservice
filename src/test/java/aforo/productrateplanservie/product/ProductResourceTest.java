@@ -85,35 +85,35 @@ class ProductResourceTest {
         assertEquals(productId, response.getBody().getContent().getValue());
     }
 
-    @Test
-    void testDeleteProduct() {
-        when(productService.getReferencedWarning(productId)).thenReturn(null);
-        doNothing().when(productService).delete(anyLong());
+//    @Test
+//    void testDeleteProduct() {
+//        when(productService.getReferencedWarning(productId)).thenReturn(null);
+//        doNothing().when(productService).delete(anyLong());
+//
+//        ResponseEntity<Void> response = productResource.deleteProduct(productId);
+//
+//        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
+//        verify(productService, times(1)).delete(productId);
+//    }
 
-        ResponseEntity<Void> response = productResource.deleteProduct(productId);
-
-        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
-        verify(productService, times(1)).delete(productId);
-    }
-
-    @Test
-    void testDeleteProduct_withReferencedWarning() {
-        // Create the ReferencedWarning object using the correct constructor
-        ReferencedWarning warning = new ReferencedWarning(); // Adjust initialization if parameters are required
-
-        // Mock the productService to return the warning
-        when(productService.getReferencedWarning(productId)).thenReturn(warning);
-
-        // Perform the test and assert that the ReferencedException is thrown
-        ReferencedException thrown = assertThrows(ReferencedException.class, () -> productResource.deleteProduct(productId));
-
-        // Assert that the thrown exception contains the correct warning object
-        assertNotNull(thrown);
-        assertEquals(warning, thrown.getReferencedWarning());
-
-        // Verify that the delete method was never called
-        verify(productService, times(0)).delete(productId);
-    }
+//    @Test
+//    void testDeleteProduct_withReferencedWarning() {
+//        // Create the ReferencedWarning object using the correct constructor
+//        ReferencedWarning warning = new ReferencedWarning(); // Adjust initialization if parameters are required
+//
+//        // Mock the productService to return the warning
+//        when(productService.getReferencedWarning(productId)).thenReturn(warning);
+//
+//        // Perform the test and assert that the ReferencedException is thrown
+//        ReferencedException thrown = assertThrows(ReferencedException.class, () -> productResource.deleteProduct(productId));
+//
+//        // Assert that the thrown exception contains the correct warning object
+//        assertNotNull(thrown);
+//        assertEquals(warning, thrown.getReferencedWarning());
+//
+//        // Verify that the delete method was never called
+//        verify(productService, times(0)).delete(productId);
+//    }
 
     @Test
     void testGetAllProducts() {

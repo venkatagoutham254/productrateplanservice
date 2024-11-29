@@ -1,0 +1,46 @@
+### Get All Products
+GET http://localhost:8081/v1/api/products
+Content-Type: application/json
+Authorization: Bearer <token>
+
+### Get All Products with Query Parameters
+GET http://localhost:8081/v1/api/products?filter=example&producerId=1&organizationId=2&divisionId=3
+Content-Type: application/json
+Authorization: Bearer <token>
+
+### Get Product by ID
+GET http://localhost:8081/v1/api/products/10000
+Content-Type: application/json
+Authorization: Bearer <token>
+
+### Create Product
+POST http://localhost:8081/v1/api/products
+Content-Type: application/json
+Authorization: Bearer <token>
+
+{
+  "productName": "New Product",
+  "productDescription": "This is a sample product description.",
+  "organizationId": 1,
+  "divisionId": 1,
+  "producerId": 1,
+  "status": "ACTIVE"
+}
+
+### Update Product
+PUT http://localhost:8081/v1/api/products/10000
+Content-Type: application/json
+Authorization: Bearer <token>
+
+{
+  "productName": "Updated Product Name",
+  "productDescription": "Updated product description.",
+  "organizationId": 1,
+  "divisionId": 1,
+  "producerId": 1
+}
+
+### Delete Product
+DELETE http://localhost:8081/v1/api/products/10001
+Content-Type: application/json
+Authorization: Bearer <token>
