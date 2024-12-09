@@ -186,4 +186,9 @@ public class RatePlanFreemiumRateServiceImpl implements RatePlanFreemiumRateServ
 
         ratePlanFreemiumRateRepository.deleteById(ratePlanFreemiumRateId);
     }
+
+    @Override
+    public long getRatePlanFreemiumRateCount() {
+        return ratePlanFreemiumRateRepository.count();
+    }
 }

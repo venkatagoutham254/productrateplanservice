@@ -218,4 +218,18 @@ class RatePlanTieredRateServiceImplTest {
         // Act & Assert
         assertThrows(NotFoundException.class, () -> ratePlanTieredRateService.delete(ratePlanTieredRateId));
     }
+    @Test
+    void testGetRatePlanTieredRateCount() {
+        // Arrange
+        long expectedCount = 42L;
+        when(ratePlanTieredRateRepository.count()).thenReturn(expectedCount);
+
+        // Act
+        long result = ratePlanTieredRateService.getRatePlanTieredRateCount();
+
+        // Assert
+        assertThat(result).isEqualTo(expectedCount);
+        verify(ratePlanTieredRateRepository, times(1)).count();
+    }
+
 }

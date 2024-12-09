@@ -28,7 +28,7 @@ Authorization: Bearer <token>
 }
 
 ### Update Product
-PUT http://localhost:8081/v1/api/products/10000
+PUT http://localhost:8081/v1/api/products/10002
 Content-Type: application/json
 Authorization: Bearer <token>
 
@@ -44,3 +44,7 @@ Authorization: Bearer <token>
 DELETE http://localhost:8081/v1/api/products/10001
 Content-Type: application/json
 Authorization: Bearer <token>
+
+### Get Product Count
+GET http://localhost:8081/v1/api/products/count
+Content-Type: application/json

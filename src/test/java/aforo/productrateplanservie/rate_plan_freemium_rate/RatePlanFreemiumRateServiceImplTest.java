@@ -141,4 +141,18 @@ class RatePlanFreemiumRateServiceImplTest {
 
         assertThrows(NotFoundException.class, () -> ratePlanFreemiumRateService.delete(ratePlanFreemiumRateId));
     }
+    @Test
+    void testGetRatePlanFreemiumRateCount() {
+        // Arrange
+        long expectedCount = 42L; // Example count value
+        when(ratePlanFreemiumRateRepository.count()).thenReturn(expectedCount);
+
+        // Act
+        long actualCount = ratePlanFreemiumRateService.getRatePlanFreemiumRateCount();
+
+        // Assert
+        assertThat(actualCount).isEqualTo(expectedCount);
+        verify(ratePlanFreemiumRateRepository, times(1)).count();
+    }
+
 }

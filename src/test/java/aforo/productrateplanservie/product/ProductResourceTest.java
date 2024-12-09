@@ -134,4 +134,34 @@ class ProductResourceTest {
         assertNotNull(response.getBody());
         assertEquals(mockPagedModel, response.getBody());
     }
+    @Test
+    void testGetProductCount() {
+        // Mocking the service
+        long expectedCount = 42;
+        when(productService.getProductCount()).thenReturn(expectedCount);
+
+        // Calling the method under test
+        ResponseEntity<Long> response = productResource.getProductCount();
+
+        // Verifying the response
+        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(expectedCount, response.getBody());
+
+        // Verifying the interaction
+        verify(productService, times(1)).getProductCount();
+    }
+    @Test
+    void getProductCount_ShouldReturnTotalProductCount() {
+        // Arrange
+        long expectedCount = 42L;
+        when(productService.getProductCount()).thenReturn(expectedCount);
+
+        // Act
+        ResponseEntity<Long> response = productResource.getProductCount();
+
+        // Assert
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(expectedCount, response.getBody());
+        verify(productService).getProductCount();
+    }
 }

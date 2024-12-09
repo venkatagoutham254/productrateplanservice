@@ -133,4 +133,18 @@ class RatePlanUsageBasedResourceTest {
         assertThat(response.getStatusCodeValue()).isEqualTo(204);
         verify(ratePlanUsageBasedService, times(1)).delete(ratePlanUsageRateId);
     }
+    @Test
+    void getRatePlanUsageBasedCount() {
+        // Arrange
+        long expectedCount = 5L;  // The expected count to be returned from the service
+        when(ratePlanUsageBasedService.getRatePlanUsageBasedCount()).thenReturn(expectedCount);
+
+        // Act
+        ResponseEntity<Long> response = ratePlanUsageBasedResource.getRatePlanUsageBasedCount();
+
+        // Assert
+        assertThat(response.getBody()).isEqualTo(expectedCount);
+        assertThat(response.getStatusCodeValue()).isEqualTo(200);
+        verify(ratePlanUsageBasedService, times(1)).getRatePlanUsageBasedCount();
+    }
 }

@@ -117,4 +117,10 @@ public class RatePlanResource {
 				.map(typeId -> ResponseEntity.ok(EntityModel.of(new SimpleValue<>(typeId))))
 				.orElseGet(() -> ResponseEntity.notFound().build());
 	}
+
+	@GetMapping("ratePlan/count")
+	public ResponseEntity<Long> getRatePlanCount() {
+		long count = ratePlanService.getRatePlanCount();
+		return ResponseEntity.ok(count);
+	}
 }

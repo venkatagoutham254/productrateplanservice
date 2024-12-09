@@ -111,4 +111,10 @@ public class RatePlanFlatRateResource {
         ratePlanFlatRateService.delete(ratePlanFlatRateId);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("ratePlanFlatRate/count")
+    public ResponseEntity<Long> getRatePlanFlatRateCount() {
+        long count = ratePlanFlatRateService.getRatePlanFlatRateCount();
+        return ResponseEntity.ok(count);
+    }
 }

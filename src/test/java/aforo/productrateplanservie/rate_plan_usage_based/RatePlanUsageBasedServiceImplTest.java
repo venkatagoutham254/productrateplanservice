@@ -149,4 +149,18 @@ class RatePlanUsageBasedServiceImplTest {
 
         assertThrows(NotFoundException.class, () -> ratePlanUsageBasedService.delete(ratePlanUsageRateId));
     }
+    @Test
+    void testGetRatePlanUsageBasedCount() {
+        // Arrange
+        long expectedCount = 42L;
+        when(ratePlanUsageBasedRepository.count()).thenReturn(expectedCount);
+
+        // Act
+        long actualCount = ratePlanUsageBasedService.getRatePlanUsageBasedCount();
+
+        // Assert
+        assertThat(actualCount).isEqualTo(expectedCount);
+        verify(ratePlanUsageBasedRepository, times(1)).count();
+    }
+
 }

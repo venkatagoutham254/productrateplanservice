@@ -74,7 +74,7 @@ public class ProductServiceImpl implements ProductService {
 	@Override
 	public Long create(final CreateProductRequest createProductRequest) {
 		validateCreateRequest(createProductRequest);
-		validateProducerDetails(createProductRequest);
+//		validateProducerDetails(createProductRequest);
 
 		final Product product = new Product();
 		ProductDTO productDTO = productMapper.createProductRequestToProductDTO(createProductRequest);
@@ -94,7 +94,7 @@ public class ProductServiceImpl implements ProductService {
 
 		final Product product = productRepository.findById(productId)
 				.orElseThrow(() -> new NotFoundException("Product not found with ID: " + productId));
-		validateProducerDetails(createProductRequest);
+//		validateProducerDetails(createProductRequest);
 		ProductDTO productDTO = productMapper.updateProductDTO(product, new ProductDTO());
 		boolean isModified = false;
 
@@ -172,4 +172,8 @@ public class ProductServiceImpl implements ProductService {
 		}
 	}
 
+	@Override
+	public long getProductCount() {
+		return productRepository.count();
+	}
 }

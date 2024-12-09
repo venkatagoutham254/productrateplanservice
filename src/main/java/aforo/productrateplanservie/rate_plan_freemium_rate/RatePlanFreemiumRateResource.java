@@ -82,4 +82,10 @@ public class RatePlanFreemiumRateResource {
         ratePlanFreemiumRateService.delete(ratePlanFreemiumRateId);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/freemium/count")
+    public ResponseEntity<Long> getRatePlanFreemiumRateCount() {
+        long count = ratePlanFreemiumRateService.getRatePlanFreemiumRateCount();
+        return ResponseEntity.ok(count);
+    }
 }

@@ -112,4 +112,9 @@ public class RatePlanTieredRateResource {
         return ResponseEntity.noContent().build();
     }
 
+    @GetMapping("TieredRate/count")
+    public ResponseEntity<Long> getRatePlanTieredRateCount() {
+        long count = ratePlanTieredRateService.getRatePlanTieredRateCount();
+        return ResponseEntity.ok(count);
+    }
 }

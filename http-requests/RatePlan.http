@@ -14,16 +14,18 @@ Content-Type: application/json
 Authorization: Bearer <token>
 
 ### Create RatePlan
-POST http://localhost:8081/v1/api/products/10001/ratePlans
+POST http://localhost:8081/v1/api/products/10002/ratePlans
 Content-Type: application/json
 Authorization: Bearer <token>
 
 {
-  "name": "Basic RatePlan",
+  "ratePlanName": "Basic RatePlan",
   "description": "This is a basic rate plan for testing.",
-  "billingCycle": "MONTHLY",
-  "price": 100.50,
-  "currency": "USD"
+  "ratePlanType": "FLAT_RATE",
+  "startDate": "2024-12-04",
+  "endDate": "2025-12-04",
+  "status": "ACTIVE",
+  "currencyId":10002
 }
 
 ### Update RatePlan
@@ -48,3 +50,9 @@ Authorization: Bearer <token>
 GET http://localhost:8081/v1/api/ratePlans/20001/type/PREMIUM
 Content-Type: application/json
 Authorization: Bearer <token>
+
+###count rateplan
+GET http://localhost:8081/v1/api/ratePlan/count
+Content-Type: application/json
+Authorization: Bearer <token>
+

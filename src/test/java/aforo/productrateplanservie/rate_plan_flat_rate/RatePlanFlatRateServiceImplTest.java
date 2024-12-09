@@ -162,4 +162,21 @@ class RatePlanFlatRateServiceImplTest {
 
         assertThrows(NotFoundException.class, () -> ratePlanFlatRateService.delete(1L));
     }
+    @Test
+    void getRatePlanFlatRateCountShouldReturnCorrectCount() {
+        // Arrange
+        long expectedCount = 42L;
+
+        // Mock the repository count method
+        when(ratePlanFlatRateRepository.count()).thenReturn(expectedCount);
+
+        // Act
+        long actualCount = ratePlanFlatRateService.getRatePlanFlatRateCount();
+
+        // Assert
+        assertThat(actualCount).isEqualTo(expectedCount);
+
+        // Verify that the repository count method was called
+        verify(ratePlanFlatRateRepository, times(1)).count();
+    }
 }

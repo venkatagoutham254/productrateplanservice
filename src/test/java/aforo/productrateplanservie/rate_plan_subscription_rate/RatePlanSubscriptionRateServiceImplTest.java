@@ -192,4 +192,18 @@ class RatePlanSubscriptionRateServiceImplTest {
 
         verify(ratePlanSubscriptionRateRepository, never()).deleteById(ratePlanSubscriptionRateId);
     }
+    @Test
+    void testGetRatePlanSubscriptionRateCount() {
+        // Arrange
+        long expectedCount = 42L; // Example value
+        when(ratePlanSubscriptionRateRepository.count()).thenReturn(expectedCount);
+
+        // Act
+        long actualCount = ratePlanSubscriptionRateService.getRatePlanSubscriptionRateCount();
+
+        // Assert
+        assertThat(actualCount).isEqualTo(expectedCount);
+        verify(ratePlanSubscriptionRateRepository, times(1)).count();
+    }
+
 }

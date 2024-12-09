@@ -130,4 +130,19 @@ class RatePlanFreemiumRateResourceTest {
         assertThat(response.getStatusCodeValue()).isEqualTo(204);
         verify(ratePlanFreemiumRateService, times(1)).delete(ratePlanFreemiumRateId);
     }
+    @Test
+    void getRatePlanFreemiumRateCount() {
+        // Arrange
+        long expectedCount = 42L; // Example count value
+        when(ratePlanFreemiumRateService.getRatePlanFreemiumRateCount()).thenReturn(expectedCount);
+
+        // Act
+        ResponseEntity<Long> response = ratePlanFreemiumRateResource.getRatePlanFreemiumRateCount();
+
+        // Assert
+        assertEquals(expectedCount, response.getBody());
+        assertThat(response.getStatusCodeValue()).isEqualTo(200);
+        verify(ratePlanFreemiumRateService, times(1)).getRatePlanFreemiumRateCount();
+    }
+
 }

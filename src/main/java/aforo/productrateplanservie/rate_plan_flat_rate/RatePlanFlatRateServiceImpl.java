@@ -240,6 +240,8 @@ public class RatePlanFlatRateServiceImpl implements RatePlanFlatRateService {
         return ratePlanFlatRateOpt.map(ratePlanFlatRate -> ratePlanFlatRateMapper.updateRatePlanFlatRateDTO(ratePlanFlatRate, new RatePlanFlatRateDTO()));
     }
 
-
-
+    @Override
+    public long getRatePlanFlatRateCount() {
+        return ratePlanFlatRateRepository.count();
+    }
 }

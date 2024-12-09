@@ -48,3 +48,7 @@ Content-Type: application/json
 ### Delete RatePlanTieredRate by ID
 DELETE http://localhost:8082/v1/api/ratePlanTieredRates/{ratePlanTieredRateId}
 Content-Type: application/json
+
+### Get RatePlanTieredRate Count
+GET http://localhost:8081/v1/api/rateplans/tieredrate/count
+Content-Type: application/json

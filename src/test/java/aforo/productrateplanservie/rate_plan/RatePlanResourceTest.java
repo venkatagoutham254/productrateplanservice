@@ -22,6 +22,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.jsonPath;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 
 class RatePlanResourceTest {
 
@@ -123,5 +127,21 @@ class RatePlanResourceTest {
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(typeId, response.getBody().getContent().getValue());
+    }
+    @Test
+    void testGetRatePlanCount() {
+        // Mocking the service
+        long expectedCount = 42;
+        when(ratePlanService.getRatePlanCount()).thenReturn(expectedCount);
+
+        // Calling the method under test
+        ResponseEntity<Long> response = ratePlanResource.getRatePlanCount();
+
+        // Verifying the response
+        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(expectedCount, response.getBody());
+
+        // Verifying the interaction
+        verify(ratePlanService, times(1)).getRatePlanCount();
     }
 }

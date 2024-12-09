@@ -113,4 +113,10 @@ public class CurrenciesResource {
         return ResponseEntity.noContent().build();
     }
 
+    @GetMapping("/count")
+    public ResponseEntity<Long> getCurrencyCount() {
+        long count = currenciesService.getCurrencyCount();
+
+        return ResponseEntity.ok(count);
+    }
 }

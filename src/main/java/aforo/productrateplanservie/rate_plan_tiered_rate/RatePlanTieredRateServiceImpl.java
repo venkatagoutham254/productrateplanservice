@@ -221,4 +221,8 @@ public class RatePlanTieredRateServiceImpl implements RatePlanTieredRateService 
 //        return null;
 //    }
 
+@Override
+public long getRatePlanTieredRateCount() {
+    return ratePlanTieredRateRepository.count();
+    }
 }

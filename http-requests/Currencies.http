@@ -9,7 +9,7 @@ Content-Type: application/json
 Authorization: Bearer <token>
 
 ### Get Currency by ID
-GET http://localhost:8081/v1/api/currencies/10000
+GET http://localhost:8081/v1/api/currencies/10002
 Content-Type: application/json
 Authorization: Bearer <token>
 
@@ -19,13 +19,13 @@ Content-Type: application/json
 Authorization: Bearer <token>
 
 {
-  "currencyCode": "USD",
+  "currencyCode": "INR",
   "currencyName": "US Dollar",
   "isActive": true
 }
 
 ### Update Currency
-PUT http://localhost:8081/v1/api/currencies/10000
+PUT http://localhost:8081/v1/api/currencies/10003
 Content-Type: application/json
 Authorization: Bearer <token>
 
@@ -36,6 +36,10 @@ Authorization: Bearer <token>
 }
 
 ### Delete Currency
-DELETE http://localhost:8081/v1/api/currencies/10001
+DELETE http://localhost:8081/v1/api/currencies/10004
 Content-Type: application/json
 Authorization: Bearer <token>
+
+### Get Currency Count
+GET http://localhost:8081/v1/api/currencies/count
+Content-Type: application/json

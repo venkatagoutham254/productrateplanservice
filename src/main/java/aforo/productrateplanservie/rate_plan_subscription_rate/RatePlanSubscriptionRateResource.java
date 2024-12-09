@@ -110,4 +110,9 @@ public class RatePlanSubscriptionRateResource {
         return ResponseEntity.noContent().build();
     }
 
+    @GetMapping("/subscription/count")
+    public ResponseEntity<Long> getRatePlanSubscriptionRateCount() {
+        long count = ratePlanSubscriptionRateService.getRatePlanSubscriptionRateCount();
+        return ResponseEntity.ok(count);
+    }
 }

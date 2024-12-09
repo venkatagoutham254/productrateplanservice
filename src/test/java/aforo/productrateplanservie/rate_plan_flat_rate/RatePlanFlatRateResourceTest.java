@@ -184,6 +184,22 @@ class RatePlanFlatRateResourceTest {
         assertNotNull(thrownException.getReferencedWarning());
         assertEquals("Reference exists,RatePlanFlatRate", thrownException.getMessage());
     }
+    @Test
+    void getRatePlanFlatRateCountShouldReturnCorrectCount() {
+        // Arrange
+        long expectedCount = 42L;
 
+        // Mock the service method to return the expected count
+        when(ratePlanFlatRateService.getRatePlanFlatRateCount()).thenReturn(expectedCount);
 
+        // Act
+        ResponseEntity<Long> response = ratePlanFlatRateResource.getRatePlanFlatRateCount();
+
+        // Assert
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).isEqualTo(expectedCount);
+
+        // Verify that the service method was called
+        verify(ratePlanFlatRateService).getRatePlanFlatRateCount();
+    }
 }

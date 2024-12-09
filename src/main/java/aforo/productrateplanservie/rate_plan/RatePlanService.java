@@ -20,4 +20,6 @@ public interface RatePlanService {
 
     // New method to fetch SelectedRatePlanTypeId based on ratePlanId and ratePlanType
     Optional<Long> getSelectedRatePlanTypeId(Long ratePlanId, String ratePlanType);
+
+    long getRatePlanCount();
 }

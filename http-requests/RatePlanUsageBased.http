@@ -7,7 +7,7 @@ GET http://localhost:8082/v1/api/rateplans/usageBased/10002
 Content-Type: application/json
 
 ### Create RatePlanUsageBased
-POST http://localhost:8082/v1/api/rateplans/10000/usageBased
+POST http://localhost:8081/v1/api/rateplans/10000/usageBased
 Content-Type: application/json
 
 {
@@ -43,4 +43,8 @@ Content-Type: application/json
 
 ### Delete RatePlanUsageBased
 DELETE http://localhost:8082/v1/api/rateplans/usageBased/10002
+Content-Type: application/json
+
+### Get RatePlanUsageBased Count
+GET http://localhost:8081/v1/api/rateplans/usagebased/count
 Content-Type: application/json

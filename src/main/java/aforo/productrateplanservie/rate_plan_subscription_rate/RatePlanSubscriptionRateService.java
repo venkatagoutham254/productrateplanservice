@@ -18,4 +18,5 @@ public interface RatePlanSubscriptionRateService {
 
 //    ReferencedWarning getReferencedWarning(Long ratePlanSubscriptionRateId);
 
+    long getRatePlanSubscriptionRateCount();
 }

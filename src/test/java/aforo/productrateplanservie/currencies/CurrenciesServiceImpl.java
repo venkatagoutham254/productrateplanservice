@@ -184,5 +184,14 @@ class CurrenciesServiceImplTest {
 
         assertNull(result);
     }
+    @Test
+    void getCurrencyCount_ShouldReturnTotalCurrenciesCount() {
+        when(currenciesRepository.count()).thenReturn(5L);
+
+        long result = currenciesService.getCurrencyCount();
+
+        assertEquals(5L, result);
+        verify(currenciesRepository).count();
+    }
 }
 

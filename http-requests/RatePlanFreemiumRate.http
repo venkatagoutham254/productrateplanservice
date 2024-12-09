@@ -46,3 +46,7 @@ Content-Type: application/json
 ### Delete RatePlanFreemiumRate by ID
 DELETE http://localhost:8082/v1/api/rateplans/freemium/10003
 Content-Type: application/json
+
+### Get RatePlanFreemiumRate Count
+GET http://localhost:8081/v1/api/rateplans/freemium/count
+Content-Type: application/json

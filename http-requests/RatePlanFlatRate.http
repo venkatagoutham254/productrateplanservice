@@ -52,3 +52,7 @@ Content-Type: application/json
 ### Delete RatePlanFlatRate
 DELETE http://localhost:8082/v1/api/rateplans/flat_rate/1
 Content-Type: application/json
+
+### Get RatePlanFlatRate Count
+GET http://localhost:8081/v1/api/rateplans/ratePlanFlatRate/count
+Content-Type: application/json

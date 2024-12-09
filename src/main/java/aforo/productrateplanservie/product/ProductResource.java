@@ -186,4 +186,10 @@ public class ProductResource {
 
 		return ResponseEntity.noContent().build();
 	}
+
+	@GetMapping("product/count")
+	public ResponseEntity<Long> getProductCount() {
+		long count = productService.getProductCount();
+		return ResponseEntity.ok(count);
+	}
 }

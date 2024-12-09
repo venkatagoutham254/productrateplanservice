@@ -251,4 +251,18 @@ class RatePlanServiceImplTest {
         assertTrue(result.isPresent(), "Expected result to be present");
         assertEquals(1L, result.get(), "Expected the ID to match the mocked flat rate ID");
     }
+    @Test
+    void testGetRatePlanCount() {
+        // Mock the repository count method to return a specific value
+        when(ratePlanRepository.count()).thenReturn(10L);
+
+        // Call the method
+        long count = ratePlanService.getRatePlanCount();
+
+        // Assert the count
+        assertEquals(10L, count);
+
+        // Verify that the repository count method was called
+        verify(ratePlanRepository, times(1)).count();
+    }
 }

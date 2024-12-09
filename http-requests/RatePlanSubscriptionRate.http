@@ -48,3 +48,7 @@ Content-Type: application/json
 ### Delete RatePlanSubscriptionRate
 DELETE http://localhost:8082/v1/api/rateplans/subscription/10004
 Content-Type: application/json
+
+### Get RatePlanSubscriptionRate Count
+GET http://localhost:8081/v1/api/rateplans/subscription/count
+Content-Type: application/json

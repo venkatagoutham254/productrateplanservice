@@ -32,7 +32,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @Tag(name = "RatePlanUsageBased", description = "Operations related to RatePlanUsageBased")
 @RequestMapping(value = "/v1/api/rateplans", produces = MediaType.APPLICATION_JSON_VALUE)
-public class RatePlanUsageBasedResource {
+public class    RatePlanUsageBasedResource {
 
     private final RatePlanUsageBasedService ratePlanUsageBasedService;
     private final RatePlanUsageBasedAssembler ratePlanUsageBasedAssembler;
@@ -111,4 +111,9 @@ public class RatePlanUsageBasedResource {
         return ResponseEntity.noContent().build();
     }
 
+    @GetMapping("ratePlanUsageBased/count")
+    public ResponseEntity<Long> getRatePlanUsageBasedCount() {
+        long count = ratePlanUsageBasedService.getRatePlanUsageBasedCount();
+        return ResponseEntity.ok(count);
+    }
 }

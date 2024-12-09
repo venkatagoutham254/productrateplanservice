@@ -201,4 +201,9 @@ public class RatePlanServiceImpl implements RatePlanService {
                     default -> Optional.empty();
                 });
     }
+
+    @Override
+    public long getRatePlanCount() {
+        return ratePlanRepository.count();
+    }
 }

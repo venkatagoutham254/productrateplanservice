@@ -221,4 +221,9 @@ public class RatePlanUsageBasedServiceImpl implements RatePlanUsageBasedService 
 //        }
 //        return null;
 //    }
+
+@Override
+public long getRatePlanUsageBasedCount() {
+    return ratePlanUsageBasedRepository.count();
+    }
 }

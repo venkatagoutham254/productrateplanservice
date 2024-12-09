@@ -130,4 +130,19 @@ class RatePlanTieredRateResourceTest {
         assertThat(response.getStatusCodeValue()).isEqualTo(204);
         verify(ratePlanTieredRateService, times(1)).delete(ratePlanTieredRateId);
     }
+    @Test
+    void getRatePlanTieredRateCount() {
+        // Arrange
+        long expectedCount = 42L; // Example value
+        when(ratePlanTieredRateService.getRatePlanTieredRateCount()).thenReturn(expectedCount);
+
+        // Act
+        ResponseEntity<Long> response = ratePlanTieredRateResource.getRatePlanTieredRateCount();
+
+        // Assert
+        assertEquals(expectedCount, response.getBody());
+        assertThat(response.getStatusCodeValue()).isEqualTo(200);
+        verify(ratePlanTieredRateService, times(1)).getRatePlanTieredRateCount();
+    }
+
 }

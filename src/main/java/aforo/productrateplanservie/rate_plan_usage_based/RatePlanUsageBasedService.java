@@ -19,4 +19,5 @@ public interface RatePlanUsageBasedService {
     void update(Long ratePlanId, Long ratePlanUsageRateId, @Valid UpdateRatePlanUsageBasedRequest updateDTO);
 
     void delete(Long ratePlanUsageRateId);
+    long getRatePlanUsageBasedCount();
 }

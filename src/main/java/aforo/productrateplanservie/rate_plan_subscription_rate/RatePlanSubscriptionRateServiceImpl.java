@@ -230,4 +230,8 @@ public class RatePlanSubscriptionRateServiceImpl implements RatePlanSubscription
 //            return null;
 //        }
 
+@Override
+public long getRatePlanSubscriptionRateCount() {
+    return ratePlanSubscriptionRateRepository.count();
     }
+}

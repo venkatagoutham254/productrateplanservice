@@ -19,5 +19,5 @@ public interface RatePlanTieredRateService {
     void delete(Long ratePlanTieredRateId);
 
 //    ReferencedWarning getReferencedWarning(Long ratePlanTieredRateId);
-
+    long getRatePlanTieredRateCount();
 }

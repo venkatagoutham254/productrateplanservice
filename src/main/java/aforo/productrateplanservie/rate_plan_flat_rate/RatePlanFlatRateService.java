@@ -26,5 +26,5 @@ public interface RatePlanFlatRateService {
     // New method to find the first RatePlanFlatRate by RatePlan ID
     Optional<RatePlanFlatRateDTO> findFirstByRatePlanId(Long ratePlanId);
 
-
+    long getRatePlanFlatRateCount();
 }

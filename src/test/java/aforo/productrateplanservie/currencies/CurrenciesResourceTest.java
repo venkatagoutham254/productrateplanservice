@@ -126,4 +126,21 @@ class CurrenciesResourceTest {
         assertEquals(warning, thrown.getReferencedWarning());
         verify(currenciesService, times(0)).delete(currencyId);
     }
+    @Test
+    void testGetCurrencyCount() {
+        // Mock the service method to return a specific count
+        when(currenciesService.getCurrencyCount()).thenReturn(10L);
+
+        // Call the method
+        ResponseEntity<Long> response = currenciesResource.getCurrencyCount();
+
+        // Assert the response
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals(10L, response.getBody());
+
+        // Verify that the service method was called
+        verify(currenciesService, times(1)).getCurrencyCount();
+    }
+
 }

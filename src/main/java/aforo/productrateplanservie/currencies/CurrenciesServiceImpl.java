@@ -126,4 +126,9 @@ public class CurrenciesServiceImpl implements CurrenciesService {
         }
         return null;
     }
+
+    @Override
+    public long getCurrencyCount() {
+        return currenciesRepository.count();
+    }
 }
