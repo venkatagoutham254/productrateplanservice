@@ -9,7 +9,7 @@ public class WebClientConfig {
     @Bean(name = "producerWebClient")
     public WebClient producerWebClient(WebClient.Builder webClientBuilder) {
         return webClientBuilder
-                .baseUrl("http://localhost:8084")
+                .baseUrl("http://localhost:8082")
                 .build();
 
     }

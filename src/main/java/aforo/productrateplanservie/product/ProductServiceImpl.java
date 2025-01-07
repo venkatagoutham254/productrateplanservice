@@ -74,7 +74,7 @@ public class ProductServiceImpl implements ProductService {
 	@Override
 	public Long create(final CreateProductRequest createProductRequest) {
 		validateCreateRequest(createProductRequest);
-//		validateProducerDetails(createProductRequest);
+		validateProducerDetails(createProductRequest);
 
 		final Product product = new Product();
 		ProductDTO productDTO = productMapper.createProductRequestToProductDTO(createProductRequest);
@@ -153,24 +153,38 @@ public class ProductServiceImpl implements ProductService {
 
 
 	private void validateProducerDetails(CreateProductRequest createProductRequest) {
-		if (createProductRequest.getProducerId() != null) {
-			if (!producerClientServiceImpl.validateProducerId(createProductRequest.getProducerId())) {
-				throw new ValidationException("Producer ID not found");
-			};
+		// Ensure producerId is always present and valid
+		if (createProductRequest.getProducerId() == null) {
+			throw new ValidationException("Producer ID is required");
+		}
 
-			if (createProductRequest.getOrganizationId() != null) {
-				if (!producerClientServiceImpl.validateOrganizationId(createProductRequest.getOrganizationId())) {
-					throw new ValidationException("Organization ID not found");
-				};
-			}
+		if (!producerClientServiceImpl.validateProducerId(createProductRequest.getProducerId())) {
+			throw new ValidationException("Producer ID not found");
+		}
 
-			if (createProductRequest.getDivisionId() != null) {
-				if (!producerClientServiceImpl.validateDivisionId(createProductRequest.getDivisionId())) {
-					throw new ValidationException("Division ID not found");
-				};
-			}
+		// Check that exactly one of organizationId or divisionId is provided
+		boolean hasOrganizationId = createProductRequest.getOrganizationId() != null;
+		boolean hasDivisionId = createProductRequest.getDivisionId() != null;
+
+		if (hasOrganizationId && hasDivisionId) {
+			throw new ValidationException("Both Organization ID and Division ID cannot be provided simultaneously. Provide only one.");
+		}
+
+		if (!hasOrganizationId && !hasDivisionId) {
+			throw new ValidationException("Either Organization ID or Division ID must be provided.");
+		}
+
+		// Validate organizationId if it is provided
+		if (hasOrganizationId && !producerClientServiceImpl.validateOrganizationId(createProductRequest.getOrganizationId())) {
+			throw new ValidationException("Organization ID not found");
+		}
+
+		// Validate divisionId if it is provided
+		if (hasDivisionId && !producerClientServiceImpl.validateDivisionId(createProductRequest.getDivisionId())) {
+			throw new ValidationException("Division ID not found");
 		}
 	}
+
 
 	@Override
 	public long getProductCount() {
