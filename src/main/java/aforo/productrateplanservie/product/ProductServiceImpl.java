@@ -16,25 +16,25 @@ public class ProductServiceImpl implements ProductService {
 	private final ProductRepository productRepository;
 	private final ProductMapper productMapper;
 	private final RatePlanRepository ratePlanRepository;
-	private final ProducerClientServiceImpl producerClientServiceImpl;
+	private final CustomerClientServiceImpl customerClientServiceImpl;
 	public ProductServiceImpl(final ProductRepository productRepository,
-                              final ProductMapper productMapper, final RatePlanRepository ratePlanRepository, ProducerClientServiceImpl producerClientServiceImpl) {
+                              final ProductMapper productMapper, final RatePlanRepository ratePlanRepository, CustomerClientServiceImpl customerClientServiceImpl) {
 		this.productRepository = productRepository;
 		this.productMapper = productMapper;
 		this.ratePlanRepository = ratePlanRepository;
-        this.producerClientServiceImpl = producerClientServiceImpl;
+        this.customerClientServiceImpl = customerClientServiceImpl;
     }
 
 	@Override
-	public Page<ProductDTO> findAll(final String filter, final Long producerId,
+	public Page<ProductDTO> findAll(final String filter, final Long customerId,
 			final Long organizationId, final Long divisionId,
 			final Pageable pageable) {
 		Page<Product> page;
-		if (producerId != null && organizationId != null && divisionId != null) {
-			page = productRepository.findAllByProducerIdAndOrganizationIdAndDivisionId(
-					producerId, organizationId, divisionId, pageable);
-		} else if (producerId != null) {
-			page = productRepository.findAllByProducerId(producerId, pageable);
+		if (customerId != null && organizationId != null && divisionId != null) {
+			page = productRepository.findAllByCustomerIdAndOrganizationIdAndDivisionId(
+					customerId, organizationId, divisionId, pageable);
+		} else if (customerId != null) {
+			page = productRepository.findAllByCustomerId(customerId, pageable);
 		} else if (organizationId != null) {
 			page = productRepository.findAllByOrganizationId(organizationId, pageable);
 		} else if (divisionId != null) {
@@ -74,7 +74,7 @@ public class ProductServiceImpl implements ProductService {
 	@Override
 	public Long create(final CreateProductRequest createProductRequest) {
 		validateCreateRequest(createProductRequest);
-		validateProducerDetails(createProductRequest);
+		validateCustomerDetails(createProductRequest);
 
 		final Product product = new Product();
 		ProductDTO productDTO = productMapper.createProductRequestToProductDTO(createProductRequest);
@@ -85,7 +85,7 @@ public class ProductServiceImpl implements ProductService {
 
 	private void validateCreateRequest(CreateProductRequest createProductRequest) {
 		if (createProductRequest.getProductName().trim().isEmpty()) {
-			throw new ValidationException("ProducerName is required");
+			throw new ValidationException("CustomerName is required");
 		}
 	}
 
@@ -94,7 +94,7 @@ public class ProductServiceImpl implements ProductService {
 
 		final Product product = productRepository.findById(productId)
 				.orElseThrow(() -> new NotFoundException("Product not found with ID: " + productId));
-//		validateProducerDetails(createProductRequest);
+//		validateCustomerDetails(createProductRequest);
 		ProductDTO productDTO = productMapper.updateProductDTO(product, new ProductDTO());
 		boolean isModified = false;
 
@@ -116,9 +116,9 @@ public class ProductServiceImpl implements ProductService {
 			isModified = true;
 		}
 
-		if (createProductRequest.getProducerId() != null &&
-				!Objects.equals(product.getProducerId(), createProductRequest.getProducerId())) {
-			productDTO.setProducerId(createProductRequest.getProducerId());
+		if (createProductRequest.getCustomerId() != null &&
+				!Objects.equals(product.getCustomerId(), createProductRequest.getCustomerId())) {
+			productDTO.setCustomerId(createProductRequest.getCustomerId());
 			isModified = true;
 		}
 
@@ -152,35 +152,25 @@ public class ProductServiceImpl implements ProductService {
 	}
 
 
-	private void validateProducerDetails(CreateProductRequest createProductRequest) {
-		// Ensure producerId is always present and valid
-		if (createProductRequest.getProducerId() == null) {
-			throw new ValidationException("Producer ID is required");
+	private void validateCustomerDetails(CreateProductRequest createProductRequest) {
+		// Ensure customerId is always present and valid
+		if (createProductRequest.getCustomerId() == null) {
+			throw new ValidationException("Customer ID is required");
 		}
 
-		if (!producerClientServiceImpl.validateProducerId(createProductRequest.getProducerId())) {
-			throw new ValidationException("Producer ID not found");
+		if (!customerClientServiceImpl.validateCustomerId(createProductRequest.getCustomerId())) {
+			throw new ValidationException("Customer ID not found");
 		}
 
-		// Check that exactly one of organizationId or divisionId is provided
+		// Organization and Division are optional, but if provided, they must be valid
 		boolean hasOrganizationId = createProductRequest.getOrganizationId() != null;
 		boolean hasDivisionId = createProductRequest.getDivisionId() != null;
 
-		if (hasOrganizationId && hasDivisionId) {
-			throw new ValidationException("Both Organization ID and Division ID cannot be provided simultaneously. Provide only one.");
-		}
-
-		if (!hasOrganizationId && !hasDivisionId) {
-			throw new ValidationException("Either Organization ID or Division ID must be provided.");
-		}
-
-		// Validate organizationId if it is provided
-		if (hasOrganizationId && !producerClientServiceImpl.validateOrganizationId(createProductRequest.getOrganizationId())) {
+		if (hasOrganizationId && !customerClientServiceImpl.validateOrganizationId(createProductRequest.getOrganizationId())) {
 			throw new ValidationException("Organization ID not found");
 		}
 
-		// Validate divisionId if it is provided
-		if (hasDivisionId && !producerClientServiceImpl.validateDivisionId(createProductRequest.getDivisionId())) {
+		if (hasDivisionId && !customerClientServiceImpl.validateDivisionId(createProductRequest.getDivisionId())) {
 			throw new ValidationException("Division ID not found");
 		}
 	}

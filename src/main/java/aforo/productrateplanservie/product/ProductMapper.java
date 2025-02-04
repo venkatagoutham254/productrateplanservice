@@ -16,10 +16,8 @@ public interface ProductMapper {
 	ProductDTO updateProductRequestToProductDTO (CreateProductRequest createProductRequest);
 	ProductDTO updateProductDTO(Product product, @MappingTarget ProductDTO productDTO);
 	@Mapping(target = "productId", ignore = true)
-	@Mapping(target = "producerId", source = "productDTO.producerId")  // Explicit mapping for producerId
+	@Mapping(target = "customerId", source = "productDTO.customerId")  // Explicit mapping for customerId
 	@Mapping(target = "organizationId", source = "productDTO.organizationId")  // Explicit mapping for organizationId
 	@Mapping(target = "divisionId", source = "productDTO.divisionId")  // Explicit mapping for divisionId
 	Product updateProduct(ProductDTO productDTO, @MappingTarget Product product);
 }
-
-

@@ -50,7 +50,7 @@ public class ProductResource {
 	@Operation(
 			parameters = {
 					@Parameter(
-							name = "producerId",
+							name = "customerId",
 							in = ParameterIn.QUERY,
 							schema = @Schema(implementation = Long.class)
 							),
@@ -74,13 +74,13 @@ public class ProductResource {
 	@GetMapping
 	public ResponseEntity<PagedModel<EntityModel<ProductDTO>>> getAllProducts(
 			@RequestParam(name = "filter", required = false) final String filter,
-			@RequestParam(name = "producerId", required = false) final Long producerId,
+			@RequestParam(name = "customerId", required = false) final Long customerId,
 			@RequestParam(name = "organizationId", required = false) final Long organizationId,
 			@RequestParam(name = "divisionId", required = false) final Long divisionId,
 			@Parameter(hidden = true) @SortDefault(sort = "productId") @PageableDefault(size = 20) final Pageable pageable) {
 
 		// Fetch paginated products
-		final Page<ProductDTO> productDTOs = productService.findAll(filter, producerId, organizationId, divisionId, pageable);
+		final Page<ProductDTO> productDTOs = productService.findAll(filter, customerId, organizationId, divisionId, pageable);
 
 		// Convert to PagedModel using PagedResourcesAssembler
 		PagedModel<EntityModel<ProductDTO>> pagedModel = pagedResourcesAssembler.toModel(productDTOs, productAssembler);

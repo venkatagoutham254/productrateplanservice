@@ -17,8 +17,8 @@ public class CreateProductRequest {
     private String productDescription;
     @NotNull(message = "status cannot be null")
     private Status status;
-    @NotNull(message = "producerId cannot be null")
-    private Long producerId;
+    @NotNull(message = "customerId cannot be null")
+    private Long customerId;
     private Long organizationId;
     private Long divisionId;
 }

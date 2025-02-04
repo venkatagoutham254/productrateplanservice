@@ -14,18 +14,18 @@ public class ProductDTO {
     private String productDescription;
     @NotNull
     private Status status;
-    private Long producerId;
+    private Long customerId;
     private Long organizationId;
     private Long divisionId;
 
     public ProductDTO(Long productId, @NotNull @Size(max = 100) String productName, String productDescription,
-			@NotNull Status status, Long producerId, Long organizationId, Long divisionId) {
+			@NotNull Status status, Long customerId, Long organizationId, Long divisionId) {
 		super();
 		this.productId = productId;
 		this.productName = productName;
 		this.productDescription = productDescription;
 		this.status = status;
-		this.producerId = producerId;
+		this.customerId = customerId;
 		this.organizationId = organizationId;
 		this.divisionId = divisionId;
 	}
@@ -33,4 +33,3 @@ public class ProductDTO {
 		super();
 	}
 }
-

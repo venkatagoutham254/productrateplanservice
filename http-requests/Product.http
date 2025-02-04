@@ -4,7 +4,7 @@ Content-Type: application/json
 Authorization: Bearer <token>
 
 ### Get All Products with Query Parameters
-GET http://localhost:8081/v1/api/products?filter=example&producerId=1&organizationId=2&divisionId=3
+GET http://localhost:8081/v1/api/products?filter=example&customerId=1&organizationId=2&divisionId=3
 Content-Type: application/json
 Authorization: Bearer <token>
 
@@ -23,7 +23,7 @@ Authorization: Bearer <token>
   "productDescription": "This is a sample product description.",
   "organizationId": 1,
   "divisionId": 1,
-  "producerId": 1,
+  "customerId": 1,
   "status": "ACTIVE"
 }
 
@@ -37,7 +37,7 @@ Authorization: Bearer <token>
   "productDescription": "Updated product description.",
   "organizationId": 1,
   "divisionId": 1,
-  "producerId": 1
+  "customerId": 1
 }
 
 ### Delete Product

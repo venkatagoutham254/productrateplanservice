@@ -43,11 +43,10 @@ public class Product {
 	@Column(nullable = false)
 	private OffsetDateTime lastUpdated;  
 	@Column
-	private Long producerId;
+	private Long customerId;
 	@Column
 	private Long organizationId;
 	@Column
 	private Long divisionId;
 
 }
-

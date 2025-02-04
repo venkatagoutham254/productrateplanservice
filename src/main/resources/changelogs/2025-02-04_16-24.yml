@@ -1,0 +1,33 @@
+databaseChangeLog:
+  - changeSet:
+      id: add-producer-id-if-not-exists
+      author: cascade
+      changes:
+        - addColumn:
+            tableName: aforo_product
+            columns:
+              - column:
+                  name: producer_id
+                  type: bigint
+                  constraints:
+                    nullable: true
+      rollback:
+        - dropColumn:
+            tableName: aforo_product
+            columnName: producer_id
+
+  - changeSet:
+      id: rename-producer-to-customer
+      author: cascade
+      changes:
+        - renameColumn:
+            tableName: aforo_product
+            oldColumnName: producer_id
+            newColumnName: customer_id
+            columnDataType: bigint
+      rollback:
+        - renameColumn:
+            tableName: aforo_product
+            oldColumnName: customer_id
+            newColumnName: producer_id
+            columnDataType: bigint

@@ -3,7 +3,7 @@ package aforo.productrateplanservie.product;
 import aforo.productrateplanservie.exception.NotFoundException;
 import aforo.productrateplanservie.exception.ValidationException;
 import aforo.productrateplanservie.product.CreateProductRequest;
-import aforo.productrateplanservie.product.ProducerClientServiceImpl;
+import aforo.productrateplanservie.product.CustomerClientServiceImpl;
 import aforo.productrateplanservie.product.Product;
 import aforo.productrateplanservie.product.ProductDTO;
 import aforo.productrateplanservie.product.ProductMapper;
@@ -43,7 +43,7 @@ class ProductServiceImplTest {
 	private RatePlanRepository ratePlanRepository;
 
 	@Mock
-	private ProducerClientServiceImpl producerClientServiceImpl;
+	private CustomerClientServiceImpl customerClientServiceImpl;
 
 	@InjectMocks
 	private ProductServiceImpl productService;

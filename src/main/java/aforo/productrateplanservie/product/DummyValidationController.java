@@ -1,17 +1,19 @@
 package aforo.productrateplanservie.product;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
 /**
  * This is a dummy validation controller that simulates the validation of 
- * Producer, Organization, and Division IDs.
+ * Customer, Organization, and Division IDs.
  * 
  * Why this is needed:
  * -------------------
- * In the final implementation, these IDs (Producer, Organization, and Division) 
+ * In the final implementation, these IDs (Customer, Organization, and Division) 
  * would be validated by making API calls to their respective microservices. However, 
  * since these microservices have not been implemented yet, we are using this 
  * dummy controller as a temporary solution. It allows us to validate these IDs 
@@ -32,16 +34,16 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/validate")
 public class DummyValidationController {
 	/**
-	 * Dummy validation endpoint for validating the Producer ID.
+	 * Dummy validation endpoint for validating the Customer ID.
 	 * 
-	 * @param producerId The Producer ID to be validated.
+	 * @param customerId The Customer ID to be validated.
 	 * @return ResponseEntity with validation status: "ACTIVE" if valid, 
 	 *         "INACTIVE" if invalid.
 	 */
-	@GetMapping("/producer/{producerId}")
-	public ResponseEntity<String> validateProducerId(@PathVariable Long producerId) {
+	@GetMapping("/customer/{customerId}")
+	public ResponseEntity<String> validateCustomerId(@PathVariable Long customerId) {
 		// Dummy logic for validation
-		if (producerId != null && producerId > 0) {
+		if (customerId != null && customerId > 0) {
 			return ResponseEntity.ok("ACTIVE");
 		}
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body("INACTIVE");

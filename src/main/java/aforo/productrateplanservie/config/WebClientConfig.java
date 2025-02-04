@@ -6,8 +6,8 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 @Configuration
 public class WebClientConfig {
-    @Bean(name = "producerWebClient")
-    public WebClient producerWebClient(WebClient.Builder webClientBuilder) {
+    @Bean(name = "customerWebClient")
+    public WebClient customerWebClient(WebClient.Builder webClientBuilder) {
         return webClientBuilder
                 .baseUrl("http://localhost:8082")
                 .build();

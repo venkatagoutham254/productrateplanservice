@@ -9,18 +9,18 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 import org.springframework.web.server.ResponseStatusException;
 
 @Component
-public class ProducerServiceClient {
+public class CustomerServiceClient {
     private final WebClient webClient;
 
     @Autowired
-    public ProducerServiceClient(@Qualifier("producerWebClient") WebClient webClient) {
+    public CustomerServiceClient(@Qualifier("customerWebClient") WebClient webClient) {
         this.webClient = webClient;
     }
 
-    public boolean validateProducerId(Long producerId) {
+    public boolean validateCustomerId(Long customerId) {
         try {
             webClient.get()
-                    .uri("/v1/api/producers/{producerId}", producerId)
+                    .uri("/v1/api/customers/{customerId}", customerId)
                     .retrieve()
                     .toBodilessEntity()
                     .block();
@@ -29,7 +29,7 @@ public class ProducerServiceClient {
         } catch (WebClientResponseException.NotFound e) {
             return false;
         } catch (WebClientResponseException.InternalServerError e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to validate producerId");
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to validate customerId");
         }
     }
     

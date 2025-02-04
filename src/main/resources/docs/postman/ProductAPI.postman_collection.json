@@ -24,7 +24,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "\r\n{\r\n  \"productName\":\"Redmi 19\",\r\n  \"productDescription\": \"IOS Mobile\",\r\n  \"status\": \"ACTIVE\",\r\n  \"producerId\":9398,\r\n  \"organizationId\":2960,\r\n  \"divisionId\":1004  \r\n\r\n}\r\n",
+					"raw": "\r\n{\r\n  \"productName\":\"Redmi 19\",\r\n  \"productDescription\": \"IOS Mobile\",\r\n  \"status\": \"ACTIVE\",\r\n  \"customerId\":9398,\r\n  \"organizationId\":2960,\r\n  \"divisionId\":1004  \r\n\r\n}\r\n",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -52,7 +52,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": " \r\n {\r\n    \"productName\": \"Samsung S23\",\r\n    \"productDescription\": \"Latest Samsung Android Phone\",\r\n    \"status\": \"ACTIVE\",\r\n    \"producerId\":101,\r\n    \"organizationId\":1011,\r\n    \"divisionId\":10101\r\n\r\n\r\n\r\n }",
+					"raw": " \r\n {\r\n    \"productName\": \"Samsung S23\",\r\n    \"productDescription\": \"Latest Samsung Android Phone\",\r\n    \"status\": \"ACTIVE\",\r\n    \"customerId\":101,\r\n    \"organizationId\":1011,\r\n    \"divisionId\":10101\r\n\r\n\r\n\r\n }",
 					"options": {
 						"raw": {
 							"language": "json"

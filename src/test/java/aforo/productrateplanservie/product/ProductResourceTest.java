@@ -127,7 +127,7 @@ class ProductResourceTest {
         when(pagedResourcesAssembler.toModel(any(), any(ProductAssembler.class))).thenReturn(mockPagedModel);
 
         ResponseEntity<PagedModel<EntityModel<ProductDTO>>> response = productResource.getAllProducts(
-                "filter", 1L, 2L, 3L, null
+                "filter", 1L, 2L, 3L, 4L
         );
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
