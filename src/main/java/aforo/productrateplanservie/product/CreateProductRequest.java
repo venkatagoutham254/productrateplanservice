@@ -1,5 +1,6 @@
 package aforo.productrateplanservie.product;
 
+import aforo.productrateplanservie.util.enums.ProductType;
 import aforo.productrateplanservie.util.enums.Status;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
@@ -21,4 +22,13 @@ public class CreateProductRequest {
     private Long customerId;
     private Long organizationId;
     private Long divisionId;
+    
+
+    private String fileName;
+    private String customerName;
+    private String apiEndpoint;
+    private String documentation;
+    private ProductType productType;
+    private String productFileLocation;
+    private String documentationFileLocation;
 }

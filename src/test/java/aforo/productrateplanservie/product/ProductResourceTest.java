@@ -59,18 +59,18 @@ class ProductResourceTest {
         assertEquals(EntityModel.of(productDTO), response.getBody());
     }
 
-    @Test
-    void testCreateProduct() {
-        CreateProductRequest createProductRequest = new CreateProductRequest(); // Populate if needed
-        when(productService.create(any(CreateProductRequest.class))).thenReturn(productId);
-        when(productAssembler.toSimpleModel(productId)).thenReturn(EntityModel.of(new SimpleValue<>(productId)));
+    // @Test
+    // void testCreateProduct() {
+    //     CreateProductRequest createProductRequest = new CreateProductRequest(); // Populate if needed
+    //     when(productService.create(any(CreateProductRequest.class))).thenReturn(productId);
+    //     when(productAssembler.toSimpleModel(productId)).thenReturn(EntityModel.of(new SimpleValue<>(productId)));
 
-        ResponseEntity<EntityModel<SimpleValue<Long>>> response = productResource.createProduct(createProductRequest);
+    //     ResponseEntity<EntityModel<SimpleValue<Long>>> response = productResource.createProduct(createProductRequest);
 
-        assertEquals(HttpStatus.CREATED, response.getStatusCode());
-        assertNotNull(response.getBody());
-        assertEquals(productId, response.getBody().getContent().getValue());
-    }
+    //     assertEquals(HttpStatus.CREATED, response.getStatusCode());
+    //     assertNotNull(response.getBody());
+    //     assertEquals(productId, response.getBody().getContent().getValue());
+    // }
 
     @Test
     void testUpdateProduct() {

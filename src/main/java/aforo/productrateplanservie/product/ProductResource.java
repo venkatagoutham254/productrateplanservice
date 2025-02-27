@@ -27,7 +27,13 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import aforo.productrateplanservie.model.SimpleValue;
 import aforo.productrateplanservie.exception.ReferencedException;
 import aforo.productrateplanservie.exception.ReferencedWarning;
@@ -122,13 +128,41 @@ public class ProductResource {
 					)
 			)
 	})
-	@PostMapping
-	public ResponseEntity<EntityModel<SimpleValue<Long>>> createProduct(
-			@Valid @RequestBody final CreateProductRequest createProductRequest) {
-		final Long createdProductId = productService.create(createProductRequest);
+	// @PostMapping
+	// public ResponseEntity<EntityModel<SimpleValue<Long>>> createProduct(
+	// 		@Valid @RequestBody final CreateProductRequest createProductRequest) {
+	// 	final Long createdProductId = productService.create(createProductRequest);
 
-		return new ResponseEntity<>(productAssembler.toSimpleModel(createdProductId), HttpStatus.CREATED);
-	}
+	// 	return new ResponseEntity<>(productAssembler.toSimpleModel(createdProductId), HttpStatus.CREATED);
+	// }
+
+
+	
+@PostMapping(value = "/productFile", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<EntityModel<SimpleValue<Long>>> createProduct(
+//          @RequestPart (value = "request") final @Valid @JsonProperty CreateProductRequest createProductRequest,
+            @RequestPart (value = "request") final @Valid String requestJson,
+            @RequestPart(value = "file", required = false) MultipartFile file,
+            @RequestPart(value = "documentFile", required = false) MultipartFile documentFile) throws JsonProcessingException {
+
+        if (file != null) {
+            System.out.println("Received file: " + file.getOriginalFilename());
+        }
+        if (documentFile != null) {
+//          log.info("Received documentFile: " + documentFile.getOriginalFilename());
+        }
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        CreateProductRequest createProductRequest = objectMapper.readValue(requestJson, CreateProductRequest.class);
+
+//      createProductRequest.setFile(file);
+        final Long createdProductId = productService.create(createProductRequest, file, documentFile);
+
+        return new ResponseEntity<>(productAssembler.toSimpleModel(createdProductId), HttpStatus.CREATED);
+    }
+
+
+
 
 	@Operation(
 			summary = "Update existing Product",

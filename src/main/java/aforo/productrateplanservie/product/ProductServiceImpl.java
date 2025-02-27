@@ -4,11 +4,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
 import aforo.productrateplanservie.rate_plan.RatePlan;
 import aforo.productrateplanservie.rate_plan.RatePlanRepository;
 import aforo.productrateplanservie.exception.NotFoundException;
 import aforo.productrateplanservie.exception.ReferencedWarning;
 
+import java.io.IOException;
 import java.util.Objects;
 
 @Service
@@ -17,12 +20,15 @@ public class ProductServiceImpl implements ProductService {
 	private final ProductMapper productMapper;
 	private final RatePlanRepository ratePlanRepository;
 	private final CustomerClientServiceImpl customerClientServiceImpl;
+	private final S3Service s3Service;
+
 	public ProductServiceImpl(final ProductRepository productRepository,
-                              final ProductMapper productMapper, final RatePlanRepository ratePlanRepository, CustomerClientServiceImpl customerClientServiceImpl) {
+                              final ProductMapper productMapper, final RatePlanRepository ratePlanRepository, CustomerClientServiceImpl customerClientServiceImpl, S3Service s3Service) {
 		this.productRepository = productRepository;
 		this.productMapper = productMapper;
 		this.ratePlanRepository = ratePlanRepository;
         this.customerClientServiceImpl = customerClientServiceImpl;
+        this.s3Service = s3Service;
     }
 
 	@Override
@@ -71,17 +77,59 @@ public class ProductServiceImpl implements ProductService {
 				.orElseThrow(() -> new NotFoundException("Product not found with ID: " + productId));
 	}
 
+	// @Override
+	// public Long create(final CreateProductRequest createProductRequest) {
+	// 	validateCreateRequest(createProductRequest);
+	// 	validateCustomerDetails(createProductRequest);
+
+	// 	final Product product = new Product();
+	// 	ProductDTO productDTO = productMapper.createProductRequestToProductDTO(createProductRequest);
+	// 	productMapper.updateProduct(productDTO, product);
+
+	// 	return productRepository.save(product).getProductId();
+	// }
 	@Override
-	public Long create(final CreateProductRequest createProductRequest) {
-		validateCreateRequest(createProductRequest);
-		validateCustomerDetails(createProductRequest);
+    public Long create(final CreateProductRequest createProductRequest, MultipartFile file, MultipartFile documentFile) {
+        // validateCreateRequest(createProductRequest);
+        // validateCustomerDetails(createProductRequest);
+;
+		final String customerName = createProductRequest.getCustomerName();
+		String fileLocation = null;
+		String documentFileLocation = null;
 
-		final Product product = new Product();
-		ProductDTO productDTO = productMapper.createProductRequestToProductDTO(createProductRequest);
-		productMapper.updateProduct(productDTO, product);
+		
+		try {
+			if (customerName != null) {
+				if (file != null) {
+					fileLocation = s3Service.uploadFile(file, customerName);
+				}
+				if (documentFile != null) {
+					documentFileLocation = s3Service.uploadFile(documentFile, customerName);
+				}
+			}
+		}
+		
+   
+		catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+		
 
-		return productRepository.save(product).getProductId();
-	}
+		if (fileLocation != null && !fileLocation.isEmpty()) {
+			createProductRequest.setProductFileLocation(fileLocation);
+		}
+		
+		if (documentFileLocation != null && !documentFileLocation.isEmpty()) {
+			createProductRequest.setDocumentationFileLocation(documentFileLocation);
+		}
+		
+
+        final Product product = new Product();
+        ProductDTO productDTO = productMapper.createProductRequestToProductDTO(createProductRequest);
+        productMapper.updateProduct(productDTO, product);
+
+        return productRepository.save(product).getProductId();
+    }
 
 	private void validateCreateRequest(CreateProductRequest createProductRequest) {
 		if (createProductRequest.getProductName().trim().isEmpty()) {

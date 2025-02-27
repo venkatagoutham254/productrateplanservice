@@ -17,6 +17,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import aforo.productrateplanservie.rate_plan.RatePlan;
+import aforo.productrateplanservie.util.enums.ProductType;
 import aforo.productrateplanservie.util.enums.Status;
 @Entity
 @Data
@@ -31,6 +32,23 @@ public class Product {
 	private String productName;
 	@Column(nullable = true)
 	private String productDescription;
+
+	@Column(nullable = false)
+	@Enumerated(EnumType.STRING)
+    private ProductType productType;
+    @Column
+    private String apiEndpoint;
+    @Column
+    private String productFileLocation;
+    @Column
+    private String documentation;
+    @Column
+    private String documentationFileLocation;
+	@Column
+	private String fileName;
+	@Column
+    private String customerName;
+
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
 	private Status status;
