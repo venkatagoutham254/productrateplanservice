@@ -4,18 +4,14 @@ import aforo.productrateplanservie.util.enums.Status;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+
 @Data
 public class ProductDTO {
     private Long productId;
     @NotNull
     @Size(max = 100)
     private String productName;
-    private String productDescription;
-
-
-	
+    private String productDescription;	
 	private ProductType productType;
 	private String apiEndpoint;
 	private String productFileLocation;
@@ -23,7 +19,6 @@ public class ProductDTO {
 	private String documentationFileLocation;
 	private String fileName;
 	private String customerName;
-
     @NotNull
     private Status status;
     private Long customerId;
@@ -48,6 +43,7 @@ public class ProductDTO {
 		this.documentation = documentation;
 		this.documentationFileLocation = documentationFileLocation;
 	}
+	
 	public ProductDTO() {
 		super();
 	}

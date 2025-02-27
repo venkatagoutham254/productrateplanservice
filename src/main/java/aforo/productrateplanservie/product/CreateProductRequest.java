@@ -22,8 +22,6 @@ public class CreateProductRequest {
     private Long customerId;
     private Long organizationId;
     private Long divisionId;
-    
-
     private String fileName;
     private String customerName;
     private String apiEndpoint;

@@ -19,6 +19,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import aforo.productrateplanservie.rate_plan.RatePlan;
 import aforo.productrateplanservie.util.enums.ProductType;
 import aforo.productrateplanservie.util.enums.Status;
+
 @Entity
 @Data
 @EntityListeners(AuditingEntityListener.class)
@@ -32,7 +33,6 @@ public class Product {
 	private String productName;
 	@Column(nullable = true)
 	private String productDescription;
-
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
     private ProductType productType;
@@ -48,7 +48,6 @@ public class Product {
 	private String fileName;
 	@Column
     private String customerName;
-
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
 	private Status status;
@@ -66,5 +65,4 @@ public class Product {
 	private Long organizationId;
 	@Column
 	private Long divisionId;
-
 }
