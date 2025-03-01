@@ -79,6 +79,8 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Long create(final CreateProductRequest createProductRequest, MultipartFile file, MultipartFile documentFile) {
+        validateCreateRequest(createProductRequest);
+        validateCustomerDetails(createProductRequest);
         final String customerName = createProductRequest.getCustomerName();
         String fileLocation = null;
         String documentFileLocation = null;
