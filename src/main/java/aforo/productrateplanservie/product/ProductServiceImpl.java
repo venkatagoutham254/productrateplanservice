@@ -9,6 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import aforo.productrateplanservie.rate_plan.RatePlanRepository;
 import aforo.productrateplanservie.exception.NotFoundException;
+import aforo.productrateplanservie.exception.ResourceNotFoundException;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -81,6 +82,7 @@ public class ProductServiceImpl implements ProductService {
     public Long create(final CreateProductRequest createProductRequest, MultipartFile file, MultipartFile documentFile) {
         validateCreateRequest(createProductRequest);
         validateCustomerDetails(createProductRequest);
+
         final String customerName = createProductRequest.getCustomerName();
         String fileLocation = null;
         String documentFileLocation = null;
@@ -119,31 +121,141 @@ public class ProductServiceImpl implements ProductService {
         }
     }
 
-    @Override
-    public void update(final Long productId, final CreateProductRequest createProductRequest) {
-        final Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new NotFoundException("Product not found with ID: " + productId));
+    // @Override
+    // public void update(final Long productId, final CreateProductRequest createProductRequest) {
+    //     final Product product = productRepository.findById(productId)
+    //             .orElseThrow(() -> new NotFoundException("Product not found with ID: " + productId));
 
-        ProductDTO productDTO = productMapper.updateProductDTO(product, new ProductDTO());
-        boolean isModified = false;
+    //     ProductDTO productDTO = productMapper.updateProductDTO(product, new ProductDTO());
+    //     boolean isModified = false;
 
-        if (createProductRequest.getProductName() != null && !createProductRequest.getProductName().trim().isEmpty() &&
-                !Objects.equals(product.getProductName(), createProductRequest.getProductName())) {
-            productDTO.setProductName(createProductRequest.getProductName());
-            isModified = true;
-        }
+    //     if (createProductRequest.getProductName() != null && !createProductRequest.getProductName().trim().isEmpty() &&
+    //             !Objects.equals(product.getProductName(), createProductRequest.getProductName())) {
+    //         productDTO.setProductName(createProductRequest.getProductName());
+    //         isModified = true;
+    //     }
 
-        if (createProductRequest.getProductDescription() != null && !createProductRequest.getProductDescription().trim().isEmpty() &&
-                !Objects.equals(product.getProductDescription(), createProductRequest.getProductDescription())) {
-            productDTO.setProductDescription(createProductRequest.getProductDescription());
-            isModified = true;
-        }
+    //     if (createProductRequest.getProductDescription() != null && !createProductRequest.getProductDescription().trim().isEmpty() &&
+    //             !Objects.equals(product.getProductDescription(), createProductRequest.getProductDescription())) {
+    //         productDTO.setProductDescription(createProductRequest.getProductDescription());
+    //         isModified = true;
+    //     }
 
-        if (isModified) {
-            productMapper.updateProduct(productDTO, product);
-            productRepository.save(product);
-        }
+    //     if (isModified) {
+    //         productMapper.updateProduct(productDTO, product);
+    //         productRepository.save(product);
+    //     }
+    // }
+
+@Override
+public Long update(final Long productId, final CreateProductRequest createProductRequest, MultipartFile file, MultipartFile documentFile) {
+    final Product product = productRepository.findById(productId)
+            .orElseThrow(() -> new NotFoundException("Product not found with ID " + productId));
+
+    ProductDTO productDTO = productMapper.updateProductDTO(product, new ProductDTO());
+    boolean isModified = false;
+
+    if (createProductRequest.getProductName() != null &&
+            !Objects.equals(product.getProductName(), createProductRequest.getProductName())) {
+        productDTO.setProductName(createProductRequest.getProductName());
+        isModified = true;
     }
+
+    if (createProductRequest.getProductDescription() != null &&
+            !Objects.equals(product.getProductDescription(), createProductRequest.getProductDescription())) {
+        productDTO.setProductDescription(createProductRequest.getProductDescription());
+        isModified = true;
+    }
+
+    if (createProductRequest.getStatus() != null &&
+            !Objects.equals(product.getStatus(), createProductRequest.getStatus())) {
+        productDTO.setStatus(createProductRequest.getStatus());
+        isModified = true;
+    }
+
+    if (createProductRequest.getCustomerId() != null &&
+            !Objects.equals(product.getCustomerId(), createProductRequest.getCustomerId())) {
+        productDTO.setCustomerId(createProductRequest.getCustomerId());
+        isModified = true;
+    }
+
+    if (createProductRequest.getOrganizationId() != null &&
+            !Objects.equals(product.getOrganizationId(), createProductRequest.getOrganizationId())) {
+        productDTO.setOrganizationId(createProductRequest.getOrganizationId());
+        isModified = true;
+    }
+
+    if (createProductRequest.getDivisionId() != null &&
+            !Objects.equals(product.getDivisionId(), createProductRequest.getDivisionId())) {
+        productDTO.setDivisionId(createProductRequest.getDivisionId());
+        isModified = true;
+    }
+
+    if (createProductRequest.getProductType() != null &&
+            !Objects.equals(product.getProductType(), createProductRequest.getProductType())) {
+        productDTO.setProductType(createProductRequest.getProductType());
+        isModified = true;
+    }
+    if (createProductRequest.getFileName() != null &&
+            !Objects.equals(product.getFileName(), createProductRequest.getFileName())) {
+        productDTO.setFileName(createProductRequest.getFileName());
+        isModified = true;
+    }
+
+    if (createProductRequest.getCustomerName() != null &&
+            !Objects.equals(product.getCustomerName(), createProductRequest.getCustomerName())) {
+        productDTO.setCustomerName(createProductRequest.getCustomerName());
+        isModified = true;
+    }
+
+    if (createProductRequest.getApiEndpoint() != null &&
+            !Objects.equals(product.getApiEndpoint(), createProductRequest.getApiEndpoint())) {
+        productDTO.setApiEndpoint(createProductRequest.getApiEndpoint());
+        isModified = true;
+    }
+
+    if (createProductRequest.getDocumentation() != null &&
+            !Objects.equals(product.getDocumentation(), createProductRequest.getDocumentation())) {
+        productDTO.setDocumentation(createProductRequest.getDocumentation());
+        isModified = true;
+    }
+
+
+    String fileLocation = null;
+    String documentFileLocation = null;
+
+    try {
+        if (productDTO.getCustomerName() != null) {
+            if (file != null) {
+                fileLocation = s3Service.uploadFile(file, createProductRequest.getCustomerName());
+            }
+            if (documentFile != null) {
+                documentFileLocation = s3Service.uploadFile(documentFile, createProductRequest.getCustomerName());
+            }
+        }
+    } catch (IOException e) {
+        throw new RuntimeException(e);
+    }
+
+    if (fileLocation != null && !fileLocation.isEmpty()) {
+        productDTO.setProductFileLocation(fileLocation);
+        isModified = true;
+    }
+
+    if (documentFileLocation != null && !documentFileLocation.isEmpty()) {
+        productDTO.setDocumentationFileLocation(documentFileLocation);
+        isModified = true;
+    }
+
+    if (isModified) {
+        productMapper.updateProduct(productDTO, product);
+        productRepository.save(product);
+    }
+
+    return product.getProductId();
+}
+
+
 
     @Override
     public void delete(final Long productId) {

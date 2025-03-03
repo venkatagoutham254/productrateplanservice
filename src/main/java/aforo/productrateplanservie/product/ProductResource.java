@@ -118,13 +118,41 @@ public class ProductResource {
             @ApiResponse(responseCode = "400", description = "Invalid input data",
                     content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
-    @PutMapping("/{productId}")
-    public ResponseEntity<EntityModel<SimpleValue<Long>>> updateProduct(
-            @PathVariable(name = "productId") final Long productId,
-            @RequestBody final CreateProductRequest createProductRequest) {
-        productService.update(productId, createProductRequest);
-        return ResponseEntity.ok(productAssembler.toSimpleModel(productId));
-    }
+//     @PutMapping("/{productId}")
+//     public ResponseEntity<EntityModel<SimpleValue<Long>>> updateProduct(
+//             @PathVariable(name = "productId") final Long productId,
+//             @RequestBody final CreateProductRequest createProductRequest) {
+//         productService.update(productId, createProductRequest);
+//         return ResponseEntity.ok(productAssembler.toSimpleModel(productId));
+//     }
+@PutMapping(value = "/productFile/{productId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+public ResponseEntity<EntityModel<SimpleValue<Long>>> updateProduct(
+        @PathVariable("productId") Long productId,
+        @RequestPart(value = "request") final @Valid String requestJson,
+        @RequestPart(value = "file", required = false) MultipartFile file,
+        @RequestPart(value = "documentFile", required = false) MultipartFile documentFile) throws JsonProcessingException {
+
+            // log.info("Received update request for productId: {}", productId);
+            // log.info("Received requestJson: {}", requestJson);
+        
+            // if (file != null) {
+            //     log.info("Received product file: {}", file.getOriginalFilename());
+            // } else {
+            //     log.warn("No product file received.");
+            // }
+        
+            // if (documentFile != null) {
+            //     log.info("Received documentation file: {}", documentFile.getOriginalFilename());
+            // } else {
+            //     log.warn("No documentation file received.");
+            // }
+
+    ObjectMapper objectMapper = new ObjectMapper();
+    CreateProductRequest updateRequest = objectMapper.readValue(requestJson, CreateProductRequest.class);
+
+    final Long updatedProductId = productService.update(productId, updateRequest, file, documentFile);
+    return new ResponseEntity<>(productAssembler.toSimpleModel(updatedProductId), HttpStatus.OK);
+}
 
     @Operation(summary = "Delete Product", description = "Deletes an existing Product by ID")
     @ApiResponses(value = {

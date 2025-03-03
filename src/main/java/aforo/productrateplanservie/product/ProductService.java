@@ -12,7 +12,7 @@ public interface ProductService {
     // Long create(CreateProductRequest createProductRequest);
     Long create(CreateProductRequest createProductRequest, MultipartFile file, MultipartFile documentFile);
     
-    void update(Long productId, CreateProductRequest createProductRequest);
+    Long update(Long productId, CreateProductRequest createProductRequest, MultipartFile file, MultipartFile documentFile);
     
     void delete(Long productId);
     
