@@ -1,0 +1,81 @@
+spring:
+  profiles:
+    active: postgres # Set the active profile here: 'mysql' or 'postgres'
+
+  # Common configurations
+  datasource:
+    url: jdbc:mysql://localhost:3312/productrateplanservice
+    username: root
+    password: P4ssword!
+    hikari:
+      driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    database-platform: org.hibernate.dialect.MySQLDialect
+  liquibase:
+    enabled: true
+    change-log: classpath:/domain/changelog-master.yml
+  servlet:
+    multipart:
+          max-file-size: 10MB
+          max-request-size: 10MB
+
+# AWS configuration
+aws:
+  access:
+    key:
+      id: ${AWS_ACCESS_KEY_ID}
+  secret:
+    access:
+      key: ${AWS_SECRET_ACCESS_KEY}
+  region: us-east-1
+  s3:
+    bucket: productfiles-aforo
+
+server:
+  port: 8084
+
+customer:
+  service:
+    url: http://44.203.171.98:8082
+
+---
+# PostgreSQL-specific configurations
+spring:
+  config:
+    activate:
+      on-profile: postgres
+  datasource:
+    url: jdbc:postgresql://productrateplanservice.cx2owwes8uyb.us-east-1.rds.amazonaws.com:5432/productrateplanservice
+    hikari:
+      driver-class-name: org.postgresql.Driver
+    username: root
+    password: P4ssword!
+  jpa:
+    hibernate:
+      ddl-auto: update
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+  liquibase:
+    enabled: true
+    change-log: classpath:/domain/changelog-master.yml
+
+---
+# MySQL-specific configurations
+spring:
+  config:
+    activate:
+      on-profile: mysql
+  datasource:
+    url: jdbc:mysql://localhost:3312/productrateplanservice
+    hikari:
+      driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: P4ssword!
+  jpa:
+    hibernate:
+      ddl-auto: update
+    database-platform: org.hibernate.dialect.MySQLDialect
+  liquibase:
+    enabled: true
+    change-log: classpath:/domain/changelog-master.yml
