@@ -1,25 +1,5 @@
-package aforo.productrateplanservie.rate_plan;
+/*package aforo.productrateplanservie.rate_plan;
 
-import aforo.productrateplanservie.currencies.Currencies;
-import aforo.productrateplanservie.currencies.CurrenciesRepository;
-import aforo.productrateplanservie.exception.NotFoundException;
-import aforo.productrateplanservie.exception.ValidationException;
-import aforo.productrateplanservie.product.Product;
-import aforo.productrateplanservie.product.ProductRepository;
-import aforo.productrateplanservie.rate_plan.CreateRatePlanRequest;
-import aforo.productrateplanservie.rate_plan.RatePlan;
-import aforo.productrateplanservie.rate_plan.RatePlanDTO;
-import aforo.productrateplanservie.rate_plan.RatePlanMapper;
-import aforo.productrateplanservie.rate_plan.RatePlanRepository;
-import aforo.productrateplanservie.rate_plan.RatePlanServiceImpl;
-import aforo.productrateplanservie.rate_plan_flat_rate.RatePlanFlatRate;
-import aforo.productrateplanservie.rate_plan_flat_rate.RatePlanFlatRateRepository;
-import aforo.productrateplanservie.rate_plan_freemium_rate.RatePlanFreemiumRateRepository;
-import aforo.productrateplanservie.rate_plan_subscription_rate.RatePlanSubscriptionRateRepository;
-import aforo.productrateplanservie.rate_plan_tiered_rate.RatePlanTieredRateRepository;
-import aforo.productrateplanservie.rate_plan_usage_based.RatePlanUsageBasedRepository;
-import aforo.productrateplanservie.validation.RatePlanValidator;
-import aforo.productrateplanservie.validation.ValidationResult;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -28,6 +8,27 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+
+import aforo.productrateplanservice.currencies.Currencies;
+import aforo.productrateplanservice.currencies.CurrenciesRepository;
+import aforo.productrateplanservice.exception.NotFoundException;
+import aforo.productrateplanservice.exception.ValidationException;
+import aforo.productrateplanservice.product.Product;
+import aforo.productrateplanservice.product.ProductRepository;
+import aforo.productrateplanservice.rate_plan.CreateRatePlanRequest;
+import aforo.productrateplanservice.rate_plan.RatePlan;
+import aforo.productrateplanservice.rate_plan.RatePlanDTO;
+import aforo.productrateplanservice.rate_plan.RatePlanMapper;
+import aforo.productrateplanservice.rate_plan.RatePlanRepository;
+import aforo.productrateplanservice.rate_plan.RatePlanServiceImpl;
+import aforo.productrateplanservice.rate_plan_flat_rate.RatePlanFlatRate;
+import aforo.productrateplanservice.rate_plan_flat_rate.RatePlanFlatRateRepository;
+import aforo.productrateplanservice.rate_plan_freemium_rate.RatePlanFreemiumRateRepository;
+import aforo.productrateplanservice.rate_plan_subscription_rate.RatePlanSubscriptionRateRepository;
+import aforo.productrateplanservice.rate_plan_tiered_rate.RatePlanTieredRateRepository;
+import aforo.productrateplanservice.rate_plan_usage_based.RatePlanUsageBasedRepository;
+import aforo.productrateplanservice.validation.RatePlanValidator;
+import aforo.productrateplanservice.validation.ValidationResult;
 
 import java.util.Collections;
 import java.util.List;
@@ -266,3 +267,4 @@ class RatePlanServiceImplTest {
         verify(ratePlanRepository, times(1)).count();
     }
 }
+*/

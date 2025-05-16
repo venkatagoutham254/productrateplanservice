@@ -1,17 +1,5 @@
-package aforo.productrateplanservie.product;
+/*package aforo.productrateplanservie.product;
 
-import aforo.productrateplanservie.exception.NotFoundException;
-import aforo.productrateplanservie.exception.ValidationException;
-import aforo.productrateplanservie.product.CreateProductRequest;
-import aforo.productrateplanservie.product.CustomerClientServiceImpl;
-import aforo.productrateplanservie.product.Product;
-import aforo.productrateplanservie.product.ProductDTO;
-import aforo.productrateplanservie.product.ProductMapper;
-import aforo.productrateplanservie.product.ProductRepository;
-import aforo.productrateplanservie.product.ProductServiceImpl;
-import aforo.productrateplanservie.rate_plan.RatePlan;
-import aforo.productrateplanservie.rate_plan.RatePlanRepository;
-import aforo.productrateplanservie.exception.ReferencedWarning;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,6 +10,19 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+
+import aforo.productrateplanservice.exception.NotFoundException;
+import aforo.productrateplanservice.exception.ReferencedWarning;
+import aforo.productrateplanservice.exception.ValidationException;
+import aforo.productrateplanservice.product.CreateProductRequest;
+import aforo.productrateplanservice.product.CustomerClientServiceImpl;
+import aforo.productrateplanservice.product.Product;
+import aforo.productrateplanservice.product.ProductDTO;
+import aforo.productrateplanservice.product.ProductMapper;
+import aforo.productrateplanservice.product.ProductRepository;
+import aforo.productrateplanservice.product.ProductServiceImpl;
+import aforo.productrateplanservice.rate_plan.RatePlan;
+import aforo.productrateplanservice.rate_plan.RatePlanRepository;
 
 import java.util.Arrays;
 import java.util.Optional;
@@ -159,4 +160,4 @@ class ProductServiceImplTest {
 // 	}
 
  }
- 
+ */

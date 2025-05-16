@@ -1,8 +1,5 @@
 package aforo.productrateplanservie.rate_plan_flat_rate;
 
-import aforo.productrateplanservie.exception.ReferencedException;
-import aforo.productrateplanservie.exception.ReferencedWarning;
-import aforo.productrateplanservie.model.SimpleValue;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -16,6 +13,16 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
+import aforo.productrateplanservice.exception.ReferencedException;
+import aforo.productrateplanservice.exception.ReferencedWarning;
+import aforo.productrateplanservice.model.SimpleValue;
+import aforo.productrateplanservice.rate_plan_flat_rate.CreateRatePlanFlatRateRequest;
+import aforo.productrateplanservice.rate_plan_flat_rate.RatePlanFlatRateAssembler;
+import aforo.productrateplanservice.rate_plan_flat_rate.RatePlanFlatRateDTO;
+import aforo.productrateplanservice.rate_plan_flat_rate.RatePlanFlatRateResource;
+import aforo.productrateplanservice.rate_plan_flat_rate.RatePlanFlatRateService;
+import aforo.productrateplanservice.rate_plan_flat_rate.UpdateRatePlanFlatRateRequest;
 
 import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;

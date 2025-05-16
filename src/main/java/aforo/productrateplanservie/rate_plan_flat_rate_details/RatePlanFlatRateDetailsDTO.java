@@ -1,9 +1,0 @@
-package aforo.productrateplanservie.rate_plan_flat_rate_details;
-import lombok.Data;
-import java.math.BigDecimal;
-@Data
-public class RatePlanFlatRateDetailsDTO {
-    private Long id;
-    private BigDecimal unitRate;
-    private BigDecimal maxLimit;
-}

@@ -1,6 +1,5 @@
 package aforo.productrateplanservie.rate_plan_freemium_rate;
 
-import aforo.productrateplanservie.model.SimpleValue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -13,6 +12,14 @@ import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.http.ResponseEntity;
+
+import aforo.productrateplanservice.model.SimpleValue;
+import aforo.productrateplanservice.rate_plan_freemium_rate.CreateRatePlanFreemiumRateRequest;
+import aforo.productrateplanservice.rate_plan_freemium_rate.RatePlanFreemiumRateAssembler;
+import aforo.productrateplanservice.rate_plan_freemium_rate.RatePlanFreemiumRateDTO;
+import aforo.productrateplanservice.rate_plan_freemium_rate.RatePlanFreemiumRateResource;
+import aforo.productrateplanservice.rate_plan_freemium_rate.RatePlanFreemiumRateService;
+import aforo.productrateplanservice.rate_plan_freemium_rate.UpdateRatePlanFreemiumRateRequest;
 
 import java.util.List;
 

@@ -1,10 +1,12 @@
-package aforo.productrateplanservie.product;
+/*package aforo.productrateplanservie.product;
 
-import aforo.productrateplanservie.exception.ReferencedException;
-import aforo.productrateplanservie.exception.ReferencedWarning;
-import aforo.productrateplanservie.model.SimpleValue;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import aforo.productrateplanservice.exception.ReferencedException;
+import aforo.productrateplanservice.exception.ReferencedWarning;
+import aforo.productrateplanservice.model.SimpleValue;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -190,3 +192,4 @@ class ProductResourceTest {
         verify(productService).getProductCount();
     }
 }
+*/

@@ -4,45 +4,6 @@ databaseChangeLog:
       author: bootify.io
       changes:
         - createTable:
-            tableName: aforo_product
-            columns:
-              - column:
-                  name: product_id
-                  type: bigint
-                  autoIncrement: true
-                  startWith: 10000
-                  constraints:
-                    primaryKey: true
-                    nullable: false
-              - column:
-                  name: product_name
-                  type: varchar(100)
-
-
-                  constraints:
-                    nullable: false
-              - column:
-                  name: product_description
-                  type: text
-
-              - column:
-                  name: status
-                  type: varchar(100)
-
-
-                  constraints:
-                    nullable: false
-              - column:
-                  name: date_created
-                  type: timestamp
-                  constraints:
-                    nullable: false
-              - column:
-                  name: last_updated
-                  type: timestamp
-                  constraints:
-                    nullable: false
-        - createTable:
             tableName: aforo_currencies
             columns:
               - column:
@@ -78,6 +39,258 @@ databaseChangeLog:
                   type: timestamp
                   constraints:
                     nullable: false
+
+        - createTable:
+            tableName: aforo_product
+            columns:
+              - column:
+                  name: product_id
+                  type: bigint
+                  autoIncrement: true
+                  startWith: 10000
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: product_name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: product_type
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: version
+                  type: varchar(50)
+              - column:
+                  name: product_description
+                  type: text
+              - column:
+                  name: tags
+                  type: json
+              - column:
+                  name: category
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: visibility
+                  type: boolean
+                  constraints:
+                    nullable: false
+              - column:
+                  name: status
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: internal_sku_code
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: uom
+                  type: varchar(50)
+              - column:
+                  name: effective_start_date
+                  type: datetime
+                  constraints:
+                    nullable: false
+              - column:
+                  name: effective_end_date
+                  type: datetime
+              - column:
+                  name: is_billable
+                  type: boolean
+                  constraints:
+                    nullable: false
+              - column:
+                  name: linked_rate_plans
+                  type: json
+              - column:
+                  name: labels
+                  type: json
+              - column:
+                  name: audit_log_id
+                  type: bigint
+              - column:
+                  name: created_at
+                  type: timestamp
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: updated_at
+                  type: timestamp
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+
+        - createTable:
+            tableName: aforo_product_api
+            columns:
+              - column:
+                  name: product_id
+                  type: bigint
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: endpoint_url
+                  type: varchar(2048)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: auth_type
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: payload_size_metric
+                  type: varchar(50)
+              - column:
+                  name: rate_limit_policy
+                  type: varchar(255)
+              - column:
+                  name: metering_granularity
+                  type: varchar(50)
+              - column:
+                  name: grouping
+                  type: varchar(50)
+              - column:
+                  name: caching_flag
+                  type: boolean
+                  defaultValueBoolean: false
+              - column:
+                  name: latency_class
+                  type: varchar(50)
+
+        - createTable:
+            tableName: aforo_product_flatfile
+            columns:
+              - column:
+                  name: product_id
+                  type: bigint
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: format
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: size
+                  type: varchar(50)
+              - column:
+                  name: delivery_frequency
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: access_method
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: retention_policy
+                  type: varchar(255)
+              - column:
+                  name: file_naming_convention
+                  type: varchar(255)
+              - column:
+                  name: compression_format
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
+        - createTable:
+            tableName: aforo_product_sqlresult
+            columns:
+              - column:
+                  name: product_id
+                  type: bigint
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: query_template
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: db_type
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: result_size
+                  type: varchar(50)
+              - column:
+                  name: freshness
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: execution_frequency
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: expected_row_range
+                  type: varchar(50)
+              - column:
+                  name: is_cached
+                  type: boolean
+              - column:
+                  name: join_complexity
+                  type: varchar(50)
+        - createTable:
+            tableName: aforo_product_llmtoken
+            columns:
+              - column:
+                  name: product_id
+                  type: bigint
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: token_provider
+                  type: varchar(50)
+                  constraints:
+                      nullable: false
+              - column:
+                  name: model_name
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: token_unit_cost
+                  type: decimal(10,5)
+              - column:
+                  name: calculation_method
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: quota
+                  type: int
+              - column:
+                  name: prompt_template
+                  type: text
+              - column:
+                  name: inference_priority
+                  type: varchar(50)
+              - column:
+                  name: compute_tier
+                  type: varchar(50)
+
+# All the rest of your existing rate plan tables remain unchanged...
+# Paste your full changelog after this block (everything from aforo_currencies, aforo_rate_plan, etc.)
+# I will omit them here since you've already shared them and confirmed no changes are needed for those.
+
         - createTable:
             tableName: aforo_rate_plan
             columns:
@@ -629,6 +842,38 @@ databaseChangeLog:
                   type: timestamp
                   constraints:
                     nullable: false
+        - addForeignKeyConstraint:
+            constraintName: fk_product_api_product_id
+            baseTableName: aforo_product_api
+            baseColumnNames: product_id
+            referencedTableName: aforo_product
+            referencedColumnNames: product_id
+            onDelete: CASCADE
+            onUpdate: NO ACTION
+        - addForeignKeyConstraint:
+            constraintName: fk_product_flatfile_product_id
+            baseTableName: aforo_product_flatfile
+            baseColumnNames: product_id
+            referencedTableName: aforo_product
+            referencedColumnNames: product_id
+            onDelete: CASCADE
+            onUpdate: NO ACTION
+        - addForeignKeyConstraint:
+            constraintName: fk_product_sqlresult_product_id
+            baseTableName: aforo_product_sqlresult
+            baseColumnNames: product_id
+            referencedTableName: aforo_product
+            referencedColumnNames: product_id
+            onDelete: CASCADE
+            onUpdate: NO ACTION
+        - addForeignKeyConstraint:
+            constraintName: fk_product_llmtoken_product_id
+            baseTableName: aforo_product_llmtoken
+            baseColumnNames: product_id
+            referencedTableName: aforo_product
+            referencedColumnNames: product_id
+            onDelete: CASCADE
+            onUpdate: NO ACTION
         - addForeignKeyConstraint:
             constraintName: fk_rate_plan_product_id
             baseTableName: aforo_rate_plan

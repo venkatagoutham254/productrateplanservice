@@ -1,0 +1,36 @@
+package aforo.productrateplanservice.rate_plan_flat_rate;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.IanaLinkRelations;
+import org.springframework.hateoas.server.SimpleRepresentationModelAssembler;
+import org.springframework.stereotype.Component;
+
+import aforo.productrateplanservice.model.SimpleValue;
+import aforo.productrateplanservice.rate_plan.RatePlanResource;
+
+@Component
+public class RatePlanFlatRateAssembler implements SimpleRepresentationModelAssembler<RatePlanFlatRateDTO> {
+
+    @Override
+    public void addLinks(final EntityModel<RatePlanFlatRateDTO> entityModel) {
+        entityModel.add(linkTo(methodOn(RatePlanFlatRateResource.class).getRatePlanFlatRate(entityModel.getContent().getRatePlanFlatRateId())).withSelfRel());
+        entityModel.add(linkTo(methodOn(RatePlanFlatRateResource.class).getAllRatePlanFlatRates(null, null)).withRel(IanaLinkRelations.COLLECTION));
+        entityModel.add(linkTo(methodOn(RatePlanResource.class).getRatePlan(entityModel.getContent().getRatePlanId())).withRel("ratePlan"));
+    }
+
+    @Override
+    public void addLinks(final CollectionModel<EntityModel<RatePlanFlatRateDTO>> collectionModel) {
+        collectionModel.add(linkTo(methodOn(RatePlanFlatRateResource.class).getAllRatePlanFlatRates(null, null)).withSelfRel());
+    }
+
+    public EntityModel<SimpleValue<Long>> toSimpleModel(final Long ratePlanFlatRateId) {
+        final EntityModel<SimpleValue<Long>> simpleModel = SimpleValue.entityModelOf(ratePlanFlatRateId);
+        simpleModel.add(linkTo(methodOn(RatePlanFlatRateResource.class).getRatePlanFlatRate(ratePlanFlatRateId)).withSelfRel());
+        return simpleModel;
+    }
+
+}

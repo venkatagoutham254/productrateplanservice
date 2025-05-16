@@ -1,8 +1,5 @@
 package aforo.productrateplanservie.currencies;
 
-import aforo.productrateplanservie.exception.ReferencedException;
-import aforo.productrateplanservie.exception.ReferencedWarning;
-import aforo.productrateplanservie.model.SimpleValue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -15,6 +12,15 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
+import aforo.productrateplanservice.currencies.CreateCurrenciesRequest;
+import aforo.productrateplanservice.currencies.CurrenciesAssembler;
+import aforo.productrateplanservice.currencies.CurrenciesDTO;
+import aforo.productrateplanservice.currencies.CurrenciesResource;
+import aforo.productrateplanservice.currencies.CurrenciesService;
+import aforo.productrateplanservice.exception.ReferencedException;
+import aforo.productrateplanservice.exception.ReferencedWarning;
+import aforo.productrateplanservice.model.SimpleValue;
 
 import java.util.Collections;
 

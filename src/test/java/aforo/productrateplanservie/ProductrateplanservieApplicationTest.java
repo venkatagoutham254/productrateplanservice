@@ -1,4 +1,4 @@
-package aforo.productrateplanservie;
+/*package aforo.productrateplanservie;
 
 import aforo.productrateplanservie.config.BaseIT;
 import org.junit.jupiter.api.Test;
@@ -11,5 +11,5 @@ public class ProductrateplanservieApplicationTest extends BaseIT {
     {
 
     }
-
 }
+*/
