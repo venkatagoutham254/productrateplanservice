@@ -15,10 +15,4 @@ public interface ProductService {
     List<ProductDTO> getAllProducts();
     ProductDTO updateProduct(Long productId, CreateProductRequest request);
     void deleteProduct(Long productId);
-
-
-    void createProductAPI(CreateProductAPIRequest request);
-void createProductFlatFile(CreateProductFlatFileRequest request);
-void createProductSQLResult(CreateProductSQLResultRequest request);
-void createProductLLMToken(CreateProductLLMTokenRequest request);
 }
