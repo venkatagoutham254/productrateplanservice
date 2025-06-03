@@ -882,6 +882,360 @@ databaseChangeLog:
             referencedColumnNames: product_id
             onDelete: CASCADE
             onUpdate: NO ACTION
+        - createTable:
+            tableName: rate_plan_setup_fee
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: rate_plan_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: one_time_fee
+                  type: DECIMAL(12,4)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: application_timing
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: invoice_description
+                  type: VARCHAR(255)
+              - column:
+                  name: is_active
+                  type: BOOLEAN
+              - column:
+                  name: is_deleted
+                  type: BOOLEAN
+              - column:
+                  name: version
+                  type: INTEGER
+              - column:
+                  name: created_by
+                  type: VARCHAR(100)
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+              - column:
+                  name: updated_by
+                  type: VARCHAR(100)
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP
+
+        - addForeignKeyConstraint:
+            constraintName: fk_rateplan_setup_fee
+            baseTableName: rate_plan_setup_fee
+            baseColumnNames: rate_plan_id
+            referencedTableName: aforo_rate_plan
+            referencedColumnNames: rate_plan_id
+
+        - createTable:
+            tableName: rate_plan_overage_charges
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: rate_plan_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: overage_fee
+                  type: DECIMAL(12,4)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: included_units
+                  type: INTEGER
+                  constraints:
+                    nullable: false
+              - column:
+                  name: charge_per_unit
+                  type: DECIMAL(12,4)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: is_active
+                  type: BOOLEAN
+              - column:
+                  name: is_deleted
+                  type: BOOLEAN
+              - column:
+                  name: version
+                  type: INTEGER
+              - column:
+                  name: created_by
+                  type: VARCHAR(100)
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+              - column:
+                  name: updated_by
+                  type: VARCHAR(100)
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP
+
+        - addForeignKeyConstraint:
+            constraintName: fk_rateplan_overage
+            baseTableName: rate_plan_overage_charges
+            baseColumnNames: rate_plan_id
+            referencedTableName: aforo_rate_plan
+            referencedColumnNames: rate_plan_id
+
+        - createTable:
+            tableName: rate_plan_discount
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: rate_plan_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: discount_type
+                  type: VARCHAR(20)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: discount_value
+                  type: DECIMAL(12,4)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: VARCHAR(255)
+              - column:
+                  name: start_date
+                  type: DATE
+                  constraints:
+                    nullable: false
+              - column:
+                  name: end_date
+                  type: DATE
+                  constraints:
+                    nullable: false
+              - column:
+                  name: is_active
+                  type: BOOLEAN
+              - column:
+                  name: is_deleted
+                  type: BOOLEAN
+              - column:
+                  name: version
+                  type: INTEGER
+              - column:
+                  name: created_by
+                  type: VARCHAR(100)
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+              - column:
+                  name: updated_by
+                  type: VARCHAR(100)
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP
+
+        - addForeignKeyConstraint:
+            constraintName: fk_rateplan_discount
+            baseTableName: rate_plan_discount
+            baseColumnNames: rate_plan_id
+            referencedTableName: aforo_rate_plan
+            referencedColumnNames: rate_plan_id
+
+        - createTable:
+            tableName: rate_plan_freemium
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: rate_plan_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: freemium_type
+                  type: VARCHAR(20)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: freemium_value
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: VARCHAR(255)
+              - column:
+                  name: is_active
+                  type: BOOLEAN
+              - column:
+                  name: is_deleted
+                  type: BOOLEAN
+              - column:
+                  name: version
+                  type: INTEGER
+              - column:
+                  name: created_by
+                  type: VARCHAR(100)
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+              - column:
+                  name: updated_by
+                  type: VARCHAR(100)
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP
+
+        - addForeignKeyConstraint:
+            constraintName: fk_rateplan_freemium
+            baseTableName: rate_plan_freemium
+            baseColumnNames: rate_plan_id
+            referencedTableName: aforo_rate_plan
+            referencedColumnNames: rate_plan_id
+
+        - createTable:
+            tableName: rate_plan_minimum_commitment
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: rate_plan_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: commitment_period_months
+                  type: INTEGER
+                  constraints:
+                    nullable: false
+              - column:
+                  name: minimum_amount
+                  type: DECIMAL(12,4)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: VARCHAR(255)
+              - column:
+                  name: is_active
+                  type: BOOLEAN
+              - column:
+                  name: is_deleted
+                  type: BOOLEAN
+              - column:
+                  name: version
+                  type: INTEGER
+              - column:
+                  name: created_by
+                  type: VARCHAR(100)
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+              - column:
+                  name: updated_by
+                  type: VARCHAR(100)
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP
+
+        - addForeignKeyConstraint:
+            constraintName: fk_rateplan_minimum
+            baseTableName: rate_plan_minimum_commitment
+            baseColumnNames: rate_plan_id
+            referencedTableName: aforo_rate_plan
+            referencedColumnNames: rate_plan_id
+
+        - createTable:
+            tableName: rate_plan_reset_period
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: rate_plan_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: reset_frequency
+                  type: VARCHAR(20)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: reset_day
+                  type: INTEGER
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: VARCHAR(255)
+              - column:
+                  name: is_active
+                  type: BOOLEAN
+              - column:
+                  name: is_deleted
+                  type: BOOLEAN
+              - column:
+                  name: version
+                  type: INTEGER
+              - column:
+                  name: created_by
+                  type: VARCHAR(100)
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+              - column:
+                  name: updated_by
+                  type: VARCHAR(100)
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP
+
+        - addForeignKeyConstraint:
+            constraintName: fk_rateplan_reset
+            baseTableName: rate_plan_reset_period
+            baseColumnNames: rate_plan_id
+            referencedTableName: aforo_rate_plan
+            referencedColumnNames: rate_plan_id
+
         - addForeignKeyConstraint:
             constraintName: fk_rate_plan_currency_id
             baseTableName: aforo_rate_plan
