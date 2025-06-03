@@ -22,7 +22,7 @@ spring:
           max-request-size: 10MB
 
 server:
-  port: 8084
+  port: 8080
 
 customer:
   service:

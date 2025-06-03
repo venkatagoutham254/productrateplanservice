@@ -27,6 +27,22 @@ services:
       - db-network
     restart: always
 
+  # Application Service
+  app:
+    build: .
+    container_name: productrateplanservice
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/productrateplanservice
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=P4ssword!
+    depends_on:
+      - postgres
+    networks:
+      - db-network
+    restart: always
+
 networks:
   db-network:
     driver: bridge
