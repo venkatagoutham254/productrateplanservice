@@ -4,7 +4,7 @@ package aforo.productrateplanservice.product.assembler;
 import aforo.productrateplanservice.product.dto.ProductDTO;
 import aforo.productrateplanservice.product.entity.Product;
 import org.springframework.stereotype.Component;
-
+// ProductAssembler.java
 @Component
 public class ProductAssembler {
 
@@ -14,7 +14,7 @@ public class ProductAssembler {
                 .productName(product.getProductName())
                 .productType(product.getProductType())
                 .version(product.getVersion())
-                .description(product.getDescription())
+                .productDescription(product.getProductDescription()) // updated field
                 .tags(product.getTags())
                 .category(product.getCategory())
                 .visibility(product.isVisibility())
@@ -32,3 +32,4 @@ public class ProductAssembler {
                 .build();
     }
 }
+

@@ -1,31 +1,32 @@
 package aforo.productrateplanservice;
+
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import aforo.productrateplanservice.currencies.CurrenciesResource;
 import aforo.productrateplanservice.product.resource.ProductResource;
 import aforo.productrateplanservice.rate_plan.RatePlanResource;
-import aforo.productrateplanservice.rate_plan_flat_rate.RatePlanFlatRateResource;
-import aforo.productrateplanservice.rate_plan_freemium_rate.RatePlanFreemiumRateResource;
-import aforo.productrateplanservice.rate_plan_subscription_rate.RatePlanSubscriptionRateResource;
-import aforo.productrateplanservice.rate_plan_tiered_rate.RatePlanTieredRateResource;
-import aforo.productrateplanservice.rate_plan_usage_based.RatePlanUsageBasedResource;
+import aforo.productrateplanservice.discount.DiscountController;
+import aforo.productrateplanservice.freemium.FreemiumController;
+import aforo.productrateplanservice.minimumcommitment.MinimumCommitmentController;
+import aforo.productrateplanservice.overagecharges.OverageChargeController;
+import aforo.productrateplanservice.resetperiod.ResetPeriodController;
+import aforo.productrateplanservice.setupfee.RatePlanSetupFeeController;
 
 @RestController
 public class HomeResource {
-	@GetMapping("/")
-	public RepresentationModel<?> index() {
-		return RepresentationModel.of(null)
-				.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(ProductResource.class).getAllProducts()).withRel("products"))
-				.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(CurrenciesResource.class).getAllCurrenciess(null, null)).withRel("currencieses"))
-				.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(RatePlanResource.class).getAllRatePlans(null, null)).withRel("ratePlans"))
-				.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(RatePlanUsageBasedResource.class).getAllRatePlanUsageBaseds(null, null)).withRel("ratePlanUsageBaseds"))
-				.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(RatePlanTieredRateResource.class).getAllRatePlanTieredRates(null, null)).withRel("ratePlanTieredRates"))
-				.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(RatePlanFlatRateResource.class).getAllRatePlanFlatRates(null, null)).withRel("ratePlanFlatRates"))
-				.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(RatePlanSubscriptionRateResource.class).getAllRatePlanSubscriptionRates(null, null)).withRel("ratePlanSubscriptionRates"))
-				.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(RatePlanFreemiumRateResource.class).getAllRatePlanFreemiumRates(null, null)).withRel("ratePlanFreemiumRates"));
-	}
 
+    @GetMapping("/")
+public RepresentationModel<?> index() {
+    return RepresentationModel.of(null)
+        .add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(ProductResource.class).getAllProducts()).withRel("products"))
+        .add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(RatePlanResource.class).getAll()).withRel("ratePlans"))
+        .add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(RatePlanSetupFeeController.class).getAll()).withRel("setupFees"))
+        .add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(OverageChargeController.class).getAll()).withRel("overageCharges"))
+        .add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(DiscountController.class).getAll()).withRel("discounts"))
+        .add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(FreemiumController.class).getAll()).withRel("freemiums"))
+        .add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(MinimumCommitmentController.class).getAll()).withRel("minimumCommitments"))
+        .add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(ResetPeriodController.class).getAll()).withRel("resetPeriods"));
+}
 }

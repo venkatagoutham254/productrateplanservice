@@ -1,3 +1,5 @@
 databaseChangeLog:
-  - includeAll:
-      path: classpath*:/changelogs
+  - include:
+      file: changelogs/2024-10-05_13-00.yml
+  - include:
+      file: changelogs/2025-06-04-pricing-models.yml

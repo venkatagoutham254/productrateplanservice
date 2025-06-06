@@ -10,9 +10,14 @@ import aforo.productrateplanservice.product.enums.ProductStatus;
 import aforo.productrateplanservice.product.enums.ProductType;  
 import aforo.productrateplanservice.product.util.JsonMapConverter;
 import aforo.productrateplanservice.product.util.JsonListConverter;
-
+// Product.java
 @Entity
-@Table(name = "aforo_product")
+@Table(
+    name = "aforo_product",
+    uniqueConstraints = {
+        @UniqueConstraint(name = "uc_product_name_trimmed", columnNames = {"product_name"})
+    }
+)
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -23,7 +28,7 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long productId;
 
-    @Column(nullable = false)
+    @Column(name = "product_name", nullable = false, unique = true)
     private String productName;
 
     @Enumerated(EnumType.STRING)
@@ -32,8 +37,8 @@ public class Product {
 
     private String version;
 
-    @Column(columnDefinition = "TEXT")
-    private String description;
+    @Column(name = "product_description", columnDefinition = "TEXT")
+    private String productDescription;
 
     @Convert(converter = JsonMapConverter.class)
     private Map<String, Object> tags;
@@ -81,18 +86,17 @@ public class Product {
         this.createdAt = now;
         this.updatedAt = now;
     }
-    
+
     @PreUpdate
     public void preUpdate() {
         this.updatedAt = LocalDateTime.now();
     }
 
-    // Add this manually if you're using Lombok's @Data or @Getter/@Setter
-public boolean isBillable() {
-    return isBillable;
-}
-public void setBillable(boolean billable) {
-    this.isBillable = billable;
+    public boolean isBillable() {
+        return isBillable;
+    }
 
-}
+    public void setBillable(boolean billable) {
+        this.isBillable = billable;
+    }
 }

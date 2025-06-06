@@ -5,28 +5,34 @@ import lombok.Data;
 
 import java.time.LocalDateTime;
 
-import aforo.productrateplanservice.util.enums.RatePlanType;
-import aforo.productrateplanservice.util.enums.Status;
+import aforo.productrateplanservice.product.enums.RatePlanType;
+import aforo.productrateplanservice.product.enums.RatePlanStatus;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import jakarta.validation.constraints.NotBlank;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class CreateRatePlanRequest {
-    @NotNull(message = "Rate plan name is required")
+
+    @NotNull
+    private Long productId;
+
+    @NotBlank
+    private String productName;
+
+    @NotBlank
     private String ratePlanName;
 
     private String description;
 
-    @NotNull(message = "Rate plan type is required")
+    @NotNull
     private RatePlanType ratePlanType;
 
-    @NotNull(message = "Status is required")
-    private Status status;
-
-    @NotNull(message = "currencyId is required")
-    private Long currencyId;
-
-    @NotNull(message = "startDate is required")
-    private LocalDateTime startDate;
-
-    @NotNull(message = "endDate is required")
-    private LocalDateTime endDate;
+    @NotNull
+    private RatePlanStatus status;
 }

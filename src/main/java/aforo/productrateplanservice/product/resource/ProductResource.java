@@ -10,6 +10,11 @@ import aforo.productrateplanservice.product.request.CreateProductFlatFileRequest
 import aforo.productrateplanservice.product.request.CreateProductLLMTokenRequest;
 import aforo.productrateplanservice.product.request.CreateProductRequest;
 import aforo.productrateplanservice.product.request.CreateProductSQLResultRequest;
+import aforo.productrateplanservice.product.request.UpdateProductAPIRequest;
+import aforo.productrateplanservice.product.request.UpdateProductFlatFileRequest;
+import aforo.productrateplanservice.product.request.UpdateProductLLMTokenRequest;
+import aforo.productrateplanservice.product.request.UpdateProductRequest;
+import aforo.productrateplanservice.product.request.UpdateProductSQLResultRequest;
 import aforo.productrateplanservice.product.service.ProductService;
 import aforo.productrateplanservice.product.service.ProductAPIService;
 import aforo.productrateplanservice.product.service.ProductFlatFileService;
@@ -47,10 +52,11 @@ public class ProductResource {
         return ResponseEntity.ok(productService.getAllProducts());
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<ProductDTO> updateProduct(@PathVariable Long id, @RequestBody CreateProductRequest request) {
-        return ResponseEntity.ok(productService.updateProduct(id, request));
-    }
+   @PutMapping("/{id}")
+public ResponseEntity<ProductDTO> updateProduct(@PathVariable Long id, @RequestBody UpdateProductRequest request) {
+    return ResponseEntity.ok(productService.updateProduct(id, request));
+}
+
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
@@ -75,9 +81,12 @@ public ResponseEntity<List<ProductAPI>> getAllProductAPIs() {
 }
 
 @PutMapping("/api/{id}")
-public ResponseEntity<ProductAPI> updateProductAPI(@PathVariable Long id, @RequestBody CreateProductAPIRequest request) {
+public ResponseEntity<ProductAPI> updateProductAPI(
+        @PathVariable Long id,
+        @RequestBody UpdateProductAPIRequest request) {
     return ResponseEntity.ok(productAPIService.update(id, request));
 }
+
 
 @DeleteMapping("/api/{id}")
 public ResponseEntity<Void> deleteProductAPI(@PathVariable Long id) {
@@ -102,7 +111,9 @@ public ResponseEntity<List<ProductFlatFile>> getAllProductFlatFiles() {
 }
 
 @PutMapping("/flatfile/{id}")
-public ResponseEntity<ProductFlatFile> updateProductFlatFile(@PathVariable Long id, @RequestBody CreateProductFlatFileRequest request) {
+public ResponseEntity<ProductFlatFile> updateProductFlatFile(
+        @PathVariable Long id,
+        @RequestBody UpdateProductFlatFileRequest request) {
     return ResponseEntity.ok(productFlatFileService.update(id, request));
 }
 
@@ -132,9 +143,12 @@ public ResponseEntity<List<ProductSQLResult>> getAllProductSQLResults() {
 }
 
 @PutMapping("/sql-result/{id}")
-public ResponseEntity<ProductSQLResult> updateProductSQLResult(@PathVariable Long id, @RequestBody CreateProductSQLResultRequest request) {
+public ResponseEntity<ProductSQLResult> updateProductSQLResult(
+        @PathVariable Long id,
+        @RequestBody UpdateProductSQLResultRequest request) {
     return ResponseEntity.ok(productSQLResultService.update(id, request));
 }
+
 
 @DeleteMapping("/sql-result/{id}")
 public ResponseEntity<Void> deleteProductSQLResult(@PathVariable Long id) {
@@ -159,9 +173,12 @@ public ResponseEntity<List<ProductLLMToken>> getAllProductLLMTokens() {
 }
 
 @PutMapping("/llm-token/{id}")
-public ResponseEntity<ProductLLMToken> updateProductLLMToken(@PathVariable Long id, @RequestBody CreateProductLLMTokenRequest request) {
+public ResponseEntity<ProductLLMToken> updateProductLLMToken(
+        @PathVariable Long id,
+        @RequestBody UpdateProductLLMTokenRequest request) {
     return ResponseEntity.ok(productLLMTokenService.update(id, request));
 }
+
 
 @DeleteMapping("/llm-token/{id}")
 public ResponseEntity<Void> deleteProductLLMToken(@PathVariable Long id) {

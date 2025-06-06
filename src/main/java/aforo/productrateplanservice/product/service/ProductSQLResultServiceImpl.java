@@ -6,6 +6,7 @@ import aforo.productrateplanservice.product.enums.ProductType;
 import aforo.productrateplanservice.product.repository.ProductRepository;
 import aforo.productrateplanservice.product.repository.ProductSQLResultRepository;
 import aforo.productrateplanservice.product.request.CreateProductSQLResultRequest;
+import aforo.productrateplanservice.product.request.UpdateProductSQLResultRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -57,25 +58,21 @@ public class ProductSQLResultServiceImpl implements ProductSQLResultService {
     }
 
     @Override
-    public ProductSQLResult update(Long id, CreateProductSQLResultRequest request) {
-        ProductSQLResult existing = productSQLResultRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("SQL Result Product not found with ID: " + id));
+public ProductSQLResult update(Long id, UpdateProductSQLResultRequest request) {
+    ProductSQLResult existing = productSQLResultRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("SQL Result not found"));
 
-        Product product = productRepository.findById(request.getProductId())
-                .orElseThrow(() -> new RuntimeException("Product not found"));
-        validateProductType(product, ProductType.SQLResult);
+    if (request.getQueryTemplate() != null) existing.setQueryTemplate(request.getQueryTemplate());
+    if (request.getDbType() != null) existing.setDbType(request.getDbType());
+    if (request.getResultSize() != null) existing.setResultSize(request.getResultSize());
+    if (request.getFreshness() != null) existing.setFreshness(request.getFreshness());
+    if (request.getExecutionFrequency() != null) existing.setExecutionFrequency(request.getExecutionFrequency());
+    if (request.getExpectedRowRange() != null) existing.setExpectedRowRange(request.getExpectedRowRange());
+    if (request.getIsCached() != null) existing.setCached(request.getIsCached());
+    if (request.getJoinComplexity() != null) existing.setJoinComplexity(request.getJoinComplexity());
 
-        existing.setQueryTemplate(request.getQueryTemplate());
-        existing.setDbType(request.getDbType());
-        existing.setResultSize(request.getResultSize());
-        existing.setFreshness(request.getFreshness());
-        existing.setExecutionFrequency(request.getExecutionFrequency());
-        existing.setExpectedRowRange(request.getExpectedRowRange());
-        existing.setCached(request.isCached());
-        existing.setJoinComplexity(request.getJoinComplexity());
-
-        return productSQLResultRepository.save(existing);
-    }
+    return productSQLResultRepository.save(existing);
+}
 
     @Override
     public void delete(Long id) {
