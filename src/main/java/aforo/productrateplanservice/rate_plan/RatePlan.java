@@ -12,85 +12,51 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import aforo.productrateplanservice.currencies.Currencies;
 import aforo.productrateplanservice.product.entity.Product;
-import aforo.productrateplanservice.rate_plan_flat_rate.RatePlanFlatRate;
-import aforo.productrateplanservice.rate_plan_freemium_rate.RatePlanFreemiumRate;
-import aforo.productrateplanservice.rate_plan_subscription_rate.RatePlanSubscriptionRate;
-import aforo.productrateplanservice.rate_plan_tiered_rate.RatePlanTieredRate;
-import aforo.productrateplanservice.rate_plan_usage_based.RatePlanUsageBased;
-import aforo.productrateplanservice.util.enums.RatePlanType;
-import aforo.productrateplanservice.util.enums.Status;
-@Data
+import aforo.productrateplanservice.product.enums.RatePlanType;
+import aforo.productrateplanservice.product.enums.RatePlanStatus;
+import java.time.LocalDateTime;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 
 @Entity
-@EntityListeners(AuditingEntityListener.class)
-@Table(name="aforo_rate_plan")
+@Table(name = "aforo_rate_plan", uniqueConstraints = {
+    @UniqueConstraint(columnNames = "rate_plan_name")
+})
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class RatePlan {
 
     @Id
-    @Column(nullable = false, updatable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long ratePlanId;
 
-    @Column(nullable = false, length = 100)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_id", nullable = false)
+    private Product product;
+
+    @Column(name = "rate_plan_name", nullable = false, unique = true)
     private String ratePlanName;
 
-    @Column(name = "\"description\"")
+    @Column(columnDefinition = "TEXT")
     private String description;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private RatePlanType ratePlanType;
 
-    @Column(nullable = false)
-    private LocalDate startDate;
-
-    @Column(nullable = false)
-    private LocalDate endDate;
-
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Status status;
+    private RatePlanStatus status;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_id", nullable = false)
-    private Product product;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "currency_id", nullable = false)
-    private Currencies currency;
-
-    @OneToMany(mappedBy = "ratePlan",cascade = CascadeType.REMOVE)
-    private Set<RatePlanUsageBased> ratePlanRatePlanUsageBaseds;
-
-    @OneToMany(mappedBy = "ratePlan",cascade = CascadeType.ALL)
-    private Set<RatePlanTieredRate> ratePlanRatePlanTieredRates;
-
-    @OneToMany(mappedBy = "ratePlan",cascade = CascadeType.REMOVE)
-    private Set<RatePlanFlatRate> ratePlanRatePlanFlatRates;
-
-    @OneToMany(mappedBy = "ratePlan",cascade = CascadeType.REMOVE)
-    private Set<RatePlanSubscriptionRate> ratePlanRatePlanSubscriptionRates;
-
-    @OneToMany(mappedBy = "ratePlan",cascade = CascadeType.REMOVE)
-    private Set<RatePlanFreemiumRate> ratePlanRatePlanFreemiumRates;
-
-
-    @CreatedDate
     @Column(nullable = false, updatable = false)
-    private OffsetDateTime dateCreated;
+    private LocalDateTime createdAt;
 
-    @LastModifiedDate
-    @Column(nullable = false)
-    private OffsetDateTime lastUpdated;
-
-   public RatePlan(Long ratePlanId)
-   {
-       this.ratePlanId=ratePlanId;
-   }
-
-    public RatePlan() {
-
+    @PrePersist
+    public void prePersist() {
+        this.createdAt = LocalDateTime.now();
     }
 }

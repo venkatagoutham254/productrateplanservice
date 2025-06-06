@@ -4,127 +4,88 @@ databaseChangeLog:
       author: bootify.io
       changes:
         - createTable:
-            tableName: aforo_currencies
-            columns:
-              - column:
-                  name: currency_id
-                  type: bigint
-                  autoIncrement: true
-                  startWith: 10000
-                  constraints:
-                    primaryKey: true
-                    nullable: false
-              - column:
-                  name: currency_code
-                  type: varchar(3)
-                  constraints:
-                    nullable: false
-              - column:
-                  name: currency_name
-                  type: varchar(50)
-                  constraints:
-                    nullable: false
-              - column:
-                  name: is_active
-                  type: boolean
-                  constraints:
-                    nullable: false
-              - column:
-                  name: date_created
-                  type: timestamp
-                  constraints:
-                    nullable: false
-              - column:
-                  name: last_updated
-                  type: timestamp
-                  constraints:
-                    nullable: false
-
-        - createTable:
             tableName: aforo_product
             columns:
               - column:
                   name: product_id
-                  type: bigint
+                  type: BIGINT
                   autoIncrement: true
-                  startWith: 10000
                   constraints:
                     primaryKey: true
                     nullable: false
               - column:
                   name: product_name
-                  type: varchar(255)
+                  type: VARCHAR(255)
                   constraints:
                     nullable: false
               - column:
                   name: product_type
-                  type: varchar(50)
+                  type: VARCHAR(50)
                   constraints:
                     nullable: false
               - column:
                   name: version
-                  type: varchar(50)
+                  type: VARCHAR(50)
               - column:
                   name: product_description
-                  type: text
+                  type: TEXT
               - column:
                   name: tags
-                  type: json
+                  type: JSON
               - column:
                   name: category
-                  type: varchar(50)
+                  type: VARCHAR(50)
                   constraints:
                     nullable: false
               - column:
                   name: visibility
-                  type: boolean
+                  type: BOOLEAN
                   constraints:
                     nullable: false
               - column:
                   name: status
-                  type: varchar(50)
+                  type: VARCHAR(50)
                   constraints:
                     nullable: false
               - column:
                   name: internal_sku_code
-                  type: varchar(100)
+                  type: VARCHAR(100)
                   constraints:
                     nullable: false
               - column:
                   name: uom
-                  type: varchar(50)
+                  type: VARCHAR(50)
               - column:
                   name: effective_start_date
-                  type: datetime
+                  type: DATETIME
                   constraints:
                     nullable: false
               - column:
                   name: effective_end_date
-                  type: datetime
+                  type: DATETIME
               - column:
                   name: is_billable
-                  type: boolean
+                  type: BOOLEAN
                   constraints:
                     nullable: false
               - column:
                   name: linked_rate_plans
-                  type: json
+                  type: JSON
               - column:
                   name: labels
-                  type: json
+                  type: JSON
               - column:
                   name: audit_log_id
-                  type: bigint
+                  type: BIGINT
               - column:
                   name: created_at
-                  type: timestamp
+                  type: TIMESTAMP
                   defaultValueComputed: CURRENT_TIMESTAMP
                   constraints:
                     nullable: false
-
               - column:
                   name: updated_at
-                  type: timestamp
+                  type: TIMESTAMP
                   defaultValueComputed: CURRENT_TIMESTAMP
                   constraints:
                     nullable: false
@@ -291,557 +252,7 @@ databaseChangeLog:
 # Paste your full changelog after this block (everything from aforo_currencies, aforo_rate_plan, etc.)
 # I will omit them here since you've already shared them and confirmed no changes are needed for those.
 
-        - createTable:
-            tableName: aforo_rate_plan
-            columns:
-              - column:
-                  name: rate_plan_id
-                  type: bigint
-                  autoIncrement: true
-                  startWith: 10000
-                  constraints:
-                    primaryKey: true
-                    nullable: false
-              - column:
-                  name: rate_plan_name
-                  type: varchar(100)
 
-
-                  constraints:
-                    nullable: false
-              - column:
-                  name: description
-                  type: text
-
-              - column:
-                  name: rate_plan_type
-                  type: varchar(100)
-
-
-                  constraints:
-                    nullable: false
-              - column:
-                  name: start_date
-                  type: date
-                  constraints:
-                    nullable: false
-              - column:
-                  name: end_date
-                  type: date
-                  constraints:
-                    nullable: false
-              - column:
-                  name: status
-                  type: varchar(100)
-
-
-                  constraints:
-                    nullable: false
-              - column:
-                  name: product_id
-                  type: bigint
-                  constraints:
-                    nullable: false
-              - column:
-                  name: currency_id
-                  type: bigint
-                  constraints:
-                    nullable: false
-              - column:
-                  name: date_created
-                  type: timestamp
-                  constraints:
-                    nullable: false
-              - column:
-                  name: last_updated
-                  type: timestamp
-                  constraints:
-                    nullable: false
-        - createTable:
-            tableName: aforo_rate_plan_usage_based
-            columns:
-              - column:
-                  name: rate_plan_usage_rate_id
-                  type: bigint
-                  autoIncrement: true
-                  startWith: 10000
-                  constraints:
-                    primaryKey: true
-                    nullable: false
-              - column:
-                  name: rate_plan_usage_description
-                  type: varchar(100)
-
-
-                  constraints:
-                    nullable: false
-              - column:
-                  name: description
-                  type: text
-
-              - column:
-                  name: unit_type
-                  type: varchar(100)
-
-
-                  constraints:
-                    nullable: false
-              - column:
-                  name: unit_measurement
-                  type: varchar(100)
-
-
-                  constraints:
-                    nullable: false
-              - column:
-                  name: unit_calculation
-                  type: varchar(100)
-
-
-                  constraints:
-                    nullable: false
-              - column:
-                  name: rate_plan_id
-                  type: bigint
-                  constraints:
-                    nullable: false
-              - column:
-                  name: date_created
-                  type: timestamp
-                  constraints:
-                    nullable: false
-              - column:
-                  name: last_updated
-                  type: timestamp
-                  constraints:
-                    nullable: false
-        - createTable:
-            tableName: aforo_rate_plan_usage_based_rates
-            columns:
-              - column:
-                  name: id
-                  type: bigint
-                  autoIncrement: true
-                  startWith: 10000
-                  constraints:
-                    primaryKey: true
-                    nullable: false
-              - column:
-                  name: unit_rate
-                  type: numeric(10, 2)
-                  constraints:
-                    nullable: false
-              - column:
-                  name: rate_plan_usage_rate_id
-                  type: bigint
-                  constraints:
-                    nullable: false
-              - column:
-                  name: date_created
-                  type: timestamp
-                  constraints:
-                    nullable: false
-              - column:
-                  name: last_updated
-                  type: timestamp
-                  constraints:
-                    nullable: false
-        - createTable:
-            tableName: aforo_rate_plan_tiered_rate
-            columns:
-              - column:
-                  name: rate_plan_tiered_rate_id
-                  type: bigint
-                  autoIncrement: true
-                  startWith: 10000
-                  constraints:
-                    primaryKey: true
-                    nullable: false
-              - column:
-                  name: rate_plan_tiered_description
-                  type: varchar(100)
-
-
-                  constraints:
-                    nullable: false
-              - column:
-                  name: description
-                  type: text
-
-              - column:
-                  name: unit_type
-                  type: varchar(100)
-
-
-                  constraints:
-                    nullable: false
-              - column:
-                  name: unit_measurement
-                  type: varchar(100)
-
-
-                  constraints:
-                    nullable: false
-              - column:
-                  name: unit_calculation
-                  type: varchar(100)
-
-
-                  constraints:
-                    nullable: false
-              - column:
-                  name: rate_plan_id
-                  type: bigint
-                  constraints:
-                    nullable: false
-              - column:
-                  name: date_created
-                  type: timestamp
-                  constraints:
-                    nullable: false
-              - column:
-                  name: last_updated
-                  type: timestamp
-                  constraints:
-                    nullable: false
-        - createTable:
-            tableName: aforo_rate_plan_tiered_rate_details
-            columns:
-              - column:
-                  name: tier_number
-                  type: bigint
-                  autoIncrement: true
-                  startWith: 10000
-                  constraints:
-                    primaryKey: true
-                    nullable: false
-              - column:
-                  name: tier_start
-                  type: numeric(10, 2)
-                  constraints:
-                    nullable: false
-              - column:
-                  name: tier_rate
-                  type: numeric(10, 2)
-                  constraints:
-                    nullable: false
-              - column:
-                  name: tier_end
-                  type: numeric(10, 2)
-                  constraints:
-                    nullable: false
-              - column:
-                  name: rate_plan_tiered_rate_id
-                  type: bigint
-                  constraints:
-                    nullable: false
-              - column:
-                  name: date_created
-                  type: timestamp
-                  constraints:
-                    nullable: false
-              - column:
-                  name: last_updated
-                  type: timestamp
-                  constraints:
-                    nullable: false
-        - createTable:
-            tableName: aforo_rate_plan_flat_rate
-            columns:
-              - column:
-                  name: rate_plan_flat_rate_id
-                  type: bigint
-                  autoIncrement: true
-                  startWith: 10000
-                  constraints:
-                    primaryKey: true
-                    nullable: false
-              - column:
-                  name: rate_plan_flat_description
-                  type: varchar(100)
-
-
-                  constraints:
-                    nullable: false
-              - column:
-                  name: description
-                  type: text
-
-              - column:
-                  name: unit_type
-                  type: varchar(100)
-
-
-                  constraints:
-                    nullable: false
-              - column:
-                  name: unit_measurement
-                  type: varchar(100)
-
-
-                  constraints:
-                    nullable: false
-              - column:
-                  name: flat_rate_unit_calculation
-                  type: varchar(100)
-
-
-                  constraints:
-                    nullable: false
-              - column:
-                  name: max_limit_frequency
-                  type: varchar(100)
-
-
-                  constraints:
-                    nullable: false
-              - column:
-                  name: rate_plan_id
-                  type: bigint
-                  constraints:
-                    nullable: false
-              - column:
-                  name: date_created
-                  type: timestamp
-                  constraints:
-                    nullable: false
-              - column:
-                  name: last_updated
-                  type: timestamp
-                  constraints:
-                    nullable: false
-        - createTable:
-            tableName: aforo_rate_plan_flat_rate_details
-            columns:
-              - column:
-                  name: id
-                  type: bigint
-                  autoIncrement: true
-                  startWith: 10000
-                  constraints:
-                    primaryKey: true
-                    nullable: false
-              - column:
-                  name: unit_rate
-                  type: numeric(10, 2)
-                  constraints:
-                    nullable: false
-              - column:
-                  name: max_limit
-                  type: numeric(10, 2)
-                  constraints:
-                    nullable: false
-              - column:
-                  name: rate_plan_flat_rate_id
-                  type: bigint
-                  constraints:
-                    nullable: false
-              - column:
-                  name: date_created
-                  type: timestamp
-                  constraints:
-                    nullable: false
-              - column:
-                  name: last_updated
-                  type: timestamp
-                  constraints:
-                    nullable: false
-        - createTable:
-            tableName: aforo_rate_plan_subscription_rate
-            columns:
-              - column:
-                  name: rate_plan_subscription_rate_id
-                  type: bigint
-                  autoIncrement: true
-                  startWith: 10000
-                  constraints:
-                    primaryKey: true
-                    nullable: false
-              - column:
-                  name: rate_plan_subscription_description
-                  type: varchar(100)
-
-
-                  constraints:
-                    nullable: false
-              - column:
-                  name: description
-                  type: text
-
-              - column:
-                  name: unit_type
-                  type: varchar(100)
-
-
-                  constraints:
-                    nullable: false
-              - column:
-                  name: unit_measurement
-                  type: varchar(100)
-
-
-                  constraints:
-                    nullable: false
-              - column:
-                  name: unit_billing_frequency
-                  type: varchar(100)
-
-
-                  constraints:
-                    nullable: false
-              - column:
-                  name: unit_price_fixed_frequency
-                  type: varchar(100)
-
-
-                  constraints:
-                    nullable: false
-              - column:
-                  name: rate_plan_id
-                  type: bigint
-                  constraints:
-                    nullable: false
-              - column:
-                  name: date_created
-                  type: timestamp
-                  constraints:
-                    nullable: false
-              - column:
-                  name: last_updated
-                  type: timestamp
-                  constraints:
-                    nullable: false
-        - createTable:
-            tableName: aforo_rate_plan_subscription_rate_details
-            columns:
-              - column:
-                  name: id
-                  type: bigint
-                  autoIncrement: true
-                  startWith: 10000
-                  constraints:
-                    primaryKey: true
-                    nullable: false
-              - column:
-                  name: unit_price_fixed
-                  type: numeric(10, 2)
-                  constraints:
-                    nullable: false
-              - column:
-                  name: subscription_max_unit_quantity
-                  type: numeric(10, 2)
-                  constraints:
-                    nullable: false
-              - column:
-                  name: rate_plan_subscription_rate_id
-                  type: bigint
-                  constraints:
-                    nullable: false
-              - column:
-                  name: date_created
-                  type: timestamp
-                  constraints:
-                    nullable: false
-              - column:
-                  name: last_updated
-                  type: timestamp
-                  constraints:
-                    nullable: false
-        - createTable:
-            tableName: aforo_rate_plan_freemium_rate
-            columns:
-              - column:
-                  name: rate_plan_freemium_rate_id
-                  type: bigint
-                  autoIncrement: true
-                  startWith: 10000
-                  constraints:
-                    primaryKey: true
-                    nullable: false
-              - column:
-                  name: freemium_rate_description
-                  type: varchar(100)
-
-                  constraints:
-                    nullable: false
-              - column:
-                  name: description
-                  type: text
-
-              - column:
-                  name: unit_type
-                  type: varchar(100)
-
-
-                  constraints:
-                    nullable: false
-              - column:
-                  name: unit_measurement
-                  type: varchar(100)
-
-
-                  constraints:
-                    nullable: false
-              - column:
-                  name: unit_billing_frequency
-                  type: varchar(100)
-
-
-                  constraints:
-                    nullable: false
-              - column:
-                  name: unit_free_price_fixed_frequency
-                  type: varchar(100)
-
-
-                  constraints:
-                    nullable: false
-              - column:
-                  name: rate_plan_id
-                  type: bigint
-                  constraints:
-                    nullable: false
-              - column:
-                  name: date_created
-                  type: timestamp
-                  constraints:
-                    nullable: false
-              - column:
-                  name: last_updated
-                  type: timestamp
-                  constraints:
-                    nullable: false
-        - createTable:
-            tableName: aforo_rate_plan_freemium_rate_details
-            columns:
-              - column:
-                  name: id
-                  type: bigint
-                  autoIncrement: true
-                  startWith: 10000
-                  constraints:
-                    primaryKey: true
-                    nullable: false
-              - column:
-                  name: freemium_max_unit_quantity
-                  type: numeric(10, 2)
-                  constraints:
-                    nullable: false
-              - column:
-                  name: rate_plan_freemium_rate_id
-                  type: bigint
-                  constraints:
-                    nullable: false
-              - column:
-                  name: date_created
-                  type: timestamp
-                  constraints:
-                    nullable: false
-              - column:
-                  name: last_updated
-                  type: timestamp
-                  constraints:
-                    nullable: false
         - addForeignKeyConstraint:
             constraintName: fk_product_api_product_id
             baseTableName: aforo_product_api
@@ -874,6 +285,50 @@ databaseChangeLog:
             referencedColumnNames: product_id
             onDelete: CASCADE
             onUpdate: NO ACTION
+        - createTable:
+            tableName: aforo_rate_plan
+            columns:
+              - column:
+                  name: rate_plan_id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: rate_plan_name
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: product_name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: TEXT
+              - column:
+                  name: rate_plan_type
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: status
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: product_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
         - addForeignKeyConstraint:
             constraintName: fk_rate_plan_product_id
             baseTableName: aforo_rate_plan
@@ -1235,92 +690,3 @@ databaseChangeLog:
             baseColumnNames: rate_plan_id
             referencedTableName: aforo_rate_plan
             referencedColumnNames: rate_plan_id
-
-        - addForeignKeyConstraint:
-            constraintName: fk_rate_plan_currency_id
-            baseTableName: aforo_rate_plan
-            baseColumnNames: currency_id
-            referencedTableName: aforo_currencies
-            referencedColumnNames: currency_id
-            onDelete: CASCADE
-            onUpdate: NO ACTION
-        - addForeignKeyConstraint:
-            constraintName: fk_rate_plan_usage_based_rate_plan_id
-            baseTableName: aforo_rate_plan_usage_based
-            baseColumnNames: rate_plan_id
-            referencedTableName: aforo_rate_plan
-            referencedColumnNames: rate_plan_id
-            onDelete: CASCADE
-            onUpdate: NO ACTION
-        - addForeignKeyConstraint:
-            constraintName: fk_rate_plan_usage_based_rates_rate_plan_usage_rate_id
-            baseTableName: aforo_rate_plan_usage_based_rates
-            baseColumnNames: rate_plan_usage_rate_id
-            referencedTableName: aforo_rate_plan_usage_based
-            referencedColumnNames: rate_plan_usage_rate_id
-            onDelete: CASCADE
-            onUpdate: NO ACTION
-        - addForeignKeyConstraint:
-            constraintName: fk_rate_plan_tiered_rate_rate_plan_id
-            baseTableName: aforo_rate_plan_tiered_rate
-            baseColumnNames: rate_plan_id
-            referencedTableName: aforo_rate_plan
-            referencedColumnNames: rate_plan_id
-            onDelete: CASCADE
-            onUpdate: NO ACTION
-        - addForeignKeyConstraint:
-            constraintName: fk_rate_plan_tiered_rate_details_rate_plan_tiered_rate_id
-            baseTableName: aforo_rate_plan_tiered_rate_details
-            baseColumnNames: rate_plan_tiered_rate_id
-            referencedTableName: aforo_rate_plan_tiered_rate
-            referencedColumnNames: rate_plan_tiered_rate_id
-            onDelete: CASCADE
-            onUpdate: NO ACTION
-        - addForeignKeyConstraint:
-            constraintName: fk_rate_plan_flat_rate_rate_plan_id
-            baseTableName: aforo_rate_plan_flat_rate
-            baseColumnNames: rate_plan_id
-            referencedTableName: aforo_rate_plan
-            referencedColumnNames: rate_plan_id
-            onDelete: CASCADE
-            onUpdate: NO ACTION
-        - addForeignKeyConstraint:
-            constraintName: fk_rate_plan_flat_rate_details_rate_plan_flat_rate_id
-            baseTableName: aforo_rate_plan_flat_rate_details
-            baseColumnNames: rate_plan_flat_rate_id
-            referencedTableName: aforo_rate_plan_flat_rate
-            referencedColumnNames: rate_plan_flat_rate_id
-            onDelete: CASCADE
-            onUpdate: NO ACTION
-        - addForeignKeyConstraint:
-            constraintName: fk_rate_plan_subscription_rate_rate_plan_id
-            baseTableName: aforo_rate_plan_subscription_rate
-            baseColumnNames: rate_plan_id
-            referencedTableName: aforo_rate_plan
-            referencedColumnNames: rate_plan_id
-            onDelete: CASCADE
-            onUpdate: NO ACTION
-        - addForeignKeyConstraint:
-            constraintName: fk_rate_plan_subs_rate_details_rate_plan_subs_rate_id
-            baseTableName: aforo_rate_plan_subscription_rate_details
-            baseColumnNames: rate_plan_subscription_rate_id
-            referencedTableName: aforo_rate_plan_subscription_rate
-            referencedColumnNames: rate_plan_subscription_rate_id
-            onDelete: CASCADE
-            onUpdate: NO ACTION
-        - addForeignKeyConstraint:
-            constraintName: fk_rate_plan_freemium_rate_rate_plan_id
-            baseTableName: aforo_rate_plan_freemium_rate
-            baseColumnNames: rate_plan_id
-            referencedTableName: aforo_rate_plan
-            referencedColumnNames: rate_plan_id
-            onDelete: CASCADE
-            onUpdate: NO ACTION
-        - addForeignKeyConstraint:
-            constraintName: fk_rate_plan_freemium_rate_details_rate_plan_freemium_rate_id
-            baseTableName: aforo_rate_plan_freemium_rate_details
-            baseColumnNames: rate_plan_freemium_rate_id
-            referencedTableName: aforo_rate_plan_freemium_rate
-            referencedColumnNames: rate_plan_freemium_rate_id
-            onDelete: CASCADE
-            onUpdate: NO ACTION

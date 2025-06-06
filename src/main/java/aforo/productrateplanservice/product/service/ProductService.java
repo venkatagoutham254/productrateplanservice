@@ -6,6 +6,7 @@ import aforo.productrateplanservice.product.request.CreateProductFlatFileRequest
 import aforo.productrateplanservice.product.request.CreateProductLLMTokenRequest;
 import aforo.productrateplanservice.product.request.CreateProductRequest;
 import aforo.productrateplanservice.product.request.CreateProductSQLResultRequest;
+import aforo.productrateplanservice.product.request.UpdateProductRequest;
 
 import java.util.List;
 
@@ -13,6 +14,7 @@ public interface ProductService {
     ProductDTO createProduct(CreateProductRequest request);
     ProductDTO getProductById(Long productId);
     List<ProductDTO> getAllProducts();
-    ProductDTO updateProduct(Long productId, CreateProductRequest request);
     void deleteProduct(Long productId);
+    ProductDTO updateProduct(Long id, UpdateProductRequest request);
+
 }

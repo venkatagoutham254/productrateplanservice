@@ -6,6 +6,7 @@ import aforo.productrateplanservice.product.enums.ProductType;
 import aforo.productrateplanservice.product.repository.ProductFlatFileRepository;
 import aforo.productrateplanservice.product.repository.ProductRepository;
 import aforo.productrateplanservice.product.request.CreateProductFlatFileRequest;
+import aforo.productrateplanservice.product.request.UpdateProductFlatFileRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -56,24 +57,21 @@ public class ProductFlatFileServiceImpl implements ProductFlatFileService {
     }
 
     @Override
-    public ProductFlatFile update(Long id, CreateProductFlatFileRequest request) {
-        ProductFlatFile existing = productFlatFileRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Flat File Product not found with ID: " + id));
+public ProductFlatFile update(Long id, UpdateProductFlatFileRequest request) {
+    ProductFlatFile existing = productFlatFileRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("FlatFile not found"));
 
-        Product product = productRepository.findById(request.getProductId())
-                .orElseThrow(() -> new RuntimeException("Product not found"));
-        validateProductType(product, ProductType.FlatFile);
+    if (request.getFormat() != null) existing.setFormat(request.getFormat());
+    if (request.getSize() != null) existing.setSize(request.getSize());
+    if (request.getDeliveryFrequency() != null) existing.setDeliveryFrequency(request.getDeliveryFrequency());
+    if (request.getAccessMethod() != null) existing.setAccessMethod(request.getAccessMethod());
+    if (request.getRetentionPolicy() != null) existing.setRetentionPolicy(request.getRetentionPolicy());
+    if (request.getFileNamingConvention() != null) existing.setFileNamingConvention(request.getFileNamingConvention());
+    if (request.getCompressionFormat() != null) existing.setCompressionFormat(request.getCompressionFormat());
 
-        existing.setFormat(request.getFormat());
-        existing.setSize(request.getSize());
-        existing.setDeliveryFrequency(request.getDeliveryFrequency());
-        existing.setAccessMethod(request.getAccessMethod());
-        existing.setRetentionPolicy(request.getRetentionPolicy());
-        existing.setFileNamingConvention(request.getFileNamingConvention());
-        existing.setCompressionFormat(request.getCompressionFormat());
+    return productFlatFileRepository.save(existing);
+}
 
-        return productFlatFileRepository.save(existing);
-    }
 
     @Override
     public void delete(Long id) {

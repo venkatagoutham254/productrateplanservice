@@ -9,7 +9,7 @@ import java.util.Map;
 import aforo.productrateplanservice.product.enums.ProductCategory;
 import aforo.productrateplanservice.product.enums.ProductStatus;
 import aforo.productrateplanservice.product.enums.ProductType;
-
+// ProductDTO.java
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -19,7 +19,7 @@ public class ProductDTO {
     private String productName;
     private ProductType productType;
     private String version;
-    private String description;
+    private String productDescription; // Changed field name
     private Map<String, Object> tags;
     private ProductCategory category;
     private boolean visibility;

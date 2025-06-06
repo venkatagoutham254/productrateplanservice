@@ -1,210 +1,113 @@
 package aforo.productrateplanservice.rate_plan;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import aforo.productrateplanservice.currencies.Currencies;
-import aforo.productrateplanservice.currencies.CurrenciesRepository;
 import aforo.productrateplanservice.exception.NotFoundException;
 import aforo.productrateplanservice.exception.ValidationException;
+import aforo.productrateplanservice.product.entity.Product;
 import aforo.productrateplanservice.product.repository.ProductRepository;
-import aforo.productrateplanservice.rate_plan_flat_rate.RatePlanFlatRate;
-import aforo.productrateplanservice.rate_plan_flat_rate.RatePlanFlatRateRepository;
-import aforo.productrateplanservice.rate_plan_freemium_rate.RatePlanFreemiumRate;
-import aforo.productrateplanservice.rate_plan_freemium_rate.RatePlanFreemiumRateRepository;
-import aforo.productrateplanservice.rate_plan_subscription_rate.RatePlanSubscriptionRate;
-import aforo.productrateplanservice.rate_plan_subscription_rate.RatePlanSubscriptionRateRepository;
-import aforo.productrateplanservice.rate_plan_tiered_rate.RatePlanTieredRate;
-import aforo.productrateplanservice.rate_plan_tiered_rate.RatePlanTieredRateRepository;
-import aforo.productrateplanservice.rate_plan_usage_based.RatePlanUsageBased;
-import aforo.productrateplanservice.rate_plan_usage_based.RatePlanUsageBasedRepository;
-import aforo.productrateplanservice.validation.RatePlanValidator;
-import aforo.productrateplanservice.validation.ValidationResult;
-
+import aforo.productrateplanservice.product.enums.RatePlanType;
+import java.util.EnumSet;
 import java.util.Objects;
 import java.util.Optional;
-
+import java.util.stream.Collectors;
+import java.util.List;
 @Service
+@RequiredArgsConstructor
 public class RatePlanServiceImpl implements RatePlanService {
 
     private final RatePlanRepository ratePlanRepository;
     private final ProductRepository productRepository;
-    private final CurrenciesRepository currenciesRepository;
-    private final RatePlanMapper ratePlanMapper;
-    private final RatePlanUsageBasedRepository ratePlanUsageBasedRepository;
-    private final RatePlanTieredRateRepository ratePlanTieredRateRepository;
-    private final RatePlanFlatRateRepository ratePlanFlatRateRepository;
-    private final RatePlanSubscriptionRateRepository ratePlanSubscriptionRateRepository;
-    private final RatePlanFreemiumRateRepository ratePlanFreemiumRateRepository;
-    private final RatePlanValidator ratePlanValidator;
+    private final RatePlanAssembler ratePlanAssembler;
 
-    public RatePlanServiceImpl(final RatePlanRepository ratePlanRepository, final ProductRepository productRepository,
-                               final CurrenciesRepository currenciesRepository, final RatePlanMapper ratePlanMapper,
-                               final RatePlanUsageBasedRepository ratePlanUsageBasedRepository,
-                               final RatePlanTieredRateRepository ratePlanTieredRateRepository,
-                               final RatePlanFlatRateRepository ratePlanFlatRateRepository,
-                               final RatePlanSubscriptionRateRepository ratePlanSubscriptionRateRepository,
-                               final RatePlanFreemiumRateRepository ratePlanFreemiumRateRepository,
-                               final RatePlanValidator ratePlanValidator) {
-        this.ratePlanRepository = ratePlanRepository;
-        this.productRepository = productRepository;
-        this.currenciesRepository = currenciesRepository;
-        this.ratePlanMapper = ratePlanMapper;
-        this.ratePlanUsageBasedRepository = ratePlanUsageBasedRepository;
-        this.ratePlanTieredRateRepository = ratePlanTieredRateRepository;
-        this.ratePlanFlatRateRepository = ratePlanFlatRateRepository;
-        this.ratePlanSubscriptionRateRepository = ratePlanSubscriptionRateRepository;
-        this.ratePlanFreemiumRateRepository = ratePlanFreemiumRateRepository;
-        this.ratePlanValidator = ratePlanValidator;
+    @Override
+    public RatePlanDTO createRatePlan(CreateRatePlanRequest request) {
+        if (ratePlanRepository.existsByRatePlanNameIgnoreCaseTrimmed(request.getRatePlanName())) {
+            throw new ValidationException("Rate plan name must be unique.");
+        }
+
+        if (!EnumSet.of(
+                RatePlanType.FLAT_FEE,
+                RatePlanType.VOLUME_BASED,
+                RatePlanType.TIERED_PRICING,
+                RatePlanType.STAIR_STEP_PRICING
+        ).contains(request.getRatePlanType())) {
+            throw new ValidationException("Invalid rate plan type.");
+        }
+
+        Product product = productRepository.findById(request.getProductId())
+                .orElseThrow(() -> new NotFoundException("Product ID not found"));
+
+        if (!product.getProductName().trim().equalsIgnoreCase(request.getProductName().trim())) {
+            throw new ValidationException("Product ID and product name do not match.");
+        }
+
+        RatePlan ratePlan = RatePlan.builder()
+                .product(product)
+                .ratePlanName(request.getRatePlanName().trim())
+                .description(request.getDescription())
+                .ratePlanType(request.getRatePlanType())
+                .status(request.getStatus())
+                .build();
+
+        RatePlan saved = ratePlanRepository.save(ratePlan);
+        return ratePlanAssembler.toDTO(saved);
+    }
+@Override
+@Transactional
+public RatePlanDTO updateRatePlan(Long id, UpdateRatePlanRequest request) {
+    RatePlan ratePlan = ratePlanRepository.findById(id)
+            .orElseThrow(() -> new NotFoundException("Rate plan not found"));
+
+    if (request.getRatePlanName() != null &&
+        !request.getRatePlanName().trim().equalsIgnoreCase(ratePlan.getRatePlanName().trim())) {
+        if (ratePlanRepository.existsByRatePlanNameIgnoreCaseTrimmed(request.getRatePlanName())) {
+            throw new ValidationException("Rate plan name must be unique.");
+        }
+        ratePlan.setRatePlanName(request.getRatePlanName().trim());
+    }
+
+    if (request.getProductId() != null && request.getProductName() != null) {
+        Product product = productRepository.findById(request.getProductId())
+                .orElseThrow(() -> new NotFoundException("Product ID not found"));
+
+        if (!product.getProductName().trim().equalsIgnoreCase(request.getProductName().trim())) {
+            throw new ValidationException("Product ID and Product Name do not match.");
+        }
+        ratePlan.setProduct(product);
+    }
+
+    if (request.getDescription() != null) ratePlan.setDescription(request.getDescription());
+    if (request.getRatePlanType() != null) ratePlan.setRatePlanType(request.getRatePlanType());
+    if (request.getStatus() != null) ratePlan.setStatus(request.getStatus());
+
+    RatePlan updated = ratePlanRepository.save(ratePlan);
+    return ratePlanAssembler.toDTO(updated);
+}
+
+    @Override
+    public RatePlanDTO getRatePlanById(Long id) {
+        RatePlan ratePlan = ratePlanRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Rate plan not found"));
+        return ratePlanAssembler.toDTO(ratePlan);
     }
 
     @Override
-    public Page<RatePlanDTO> findAll(final String filter, final Pageable pageable) {
-        Page<RatePlan> page;
-        if (filter != null) {
-            Long longFilter = null;
-            try {
-                longFilter = Long.parseLong(filter);
-            } catch (final NumberFormatException numberFormatException) {
-                // keep null - no parseable input
-            }
-            page = ratePlanRepository.findAllByRatePlanId(longFilter, pageable);
-        } else {
-            page = ratePlanRepository.findAll(pageable);
-        }
-
-        return new PageImpl<>(
-                page.getContent().stream()
-                        .map(ratePlan -> ratePlanMapper.updateRatePlanDTO(ratePlan, new RatePlanDTO())).toList(),
-                pageable, page.getTotalElements());
+    public List<RatePlanDTO> getAllRatePlans() {
+        return ratePlanRepository.findAll().stream()
+                .map(ratePlanAssembler::toDTO)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public Page<RatePlanDTO> getRatePlansByProductId(Long productId, String filter, Pageable pageable) {
-        Page<RatePlan> page;
-
-        if (filter != null && !filter.isEmpty()) {
-            Long longFilter = null;
-            try {
-                longFilter = Long.parseLong(filter);
-            } catch (NumberFormatException e) {
-                // Keep null if parsing fails
-            }
-            page = ratePlanRepository.findByProductIdAndRatePlanId(productId, longFilter, pageable);
-        } else {
-            page = ratePlanRepository.findByProductId(productId, pageable);
-        }
-
-        return new PageImpl<>(
-                page.getContent().stream()
-                        .map(ratePlan -> ratePlanMapper.updateRatePlanDTO(ratePlan, new RatePlanDTO()))
-                        .toList(),
-                pageable, page.getTotalElements());
-    }
-
-    @Override
-    public RatePlanDTO get(final Long ratePlanId) {
-
-        return ratePlanRepository.findById(ratePlanId)
-                .map(ratePlan -> ratePlanMapper.updateRatePlanDTO(ratePlan, new RatePlanDTO()))
-                .orElseThrow(NotFoundException::new);
-    }
-
-    @Override
-    public Long create(Long productId,  final CreateRatePlanRequest createRatePlanRequest) {
-
-
-        productRepository.findById(productId).orElseThrow(() -> new NotFoundException("productId not found with ID: " + productId));
-        final ValidationResult validationResult = ratePlanValidator.validate(createRatePlanRequest);
-
-        if (!validationResult.isValid()) {
-            throw new ValidationException("Invalid rate plan request: " +
-                    String.join(", ", validationResult.getErrors()));
-        }
-
-        final RatePlan ratePlan = new RatePlan();
-        RatePlanDTO ratePlanDTO = ratePlanMapper.createRatePlanRequestToRatePlanDTO(createRatePlanRequest);
-        ratePlanDTO.setProductId(productId);
-
-        ratePlanMapper.updateRatePlan(ratePlanDTO, ratePlan, productRepository, currenciesRepository);
-
-        return (Long) ratePlanRepository.save(ratePlan).getRatePlanId();
-    }
-
-    @Transactional
-    @Override
-    public void update(final Long ratePlanId, final CreateRatePlanRequest createRatePlanRequest) {
-        final RatePlan ratePlan = ratePlanRepository.findById(ratePlanId).orElseThrow(() -> new NotFoundException("ratePlanId not found with ID: " + ratePlanId));
-
-        RatePlanDTO ratePlanDTO = ratePlanMapper.updateRatePlanDTO(ratePlan, new RatePlanDTO());
-        boolean isModified = false;
-
-        if (createRatePlanRequest.getRatePlanName() != null && !createRatePlanRequest.getRatePlanName().trim().isEmpty() &&
-                !Objects.equals(ratePlan.getRatePlanName(), createRatePlanRequest.getRatePlanName())) {
-            ratePlanDTO.setRatePlanName(createRatePlanRequest.getRatePlanName());
-            isModified = true;
-        }
-
-        if (createRatePlanRequest.getDescription() != null && !createRatePlanRequest.getDescription().trim().isEmpty() &&
-                !Objects.equals(ratePlan.getDescription(), createRatePlanRequest.getDescription())) {
-            ratePlanDTO.setDescription(createRatePlanRequest.getDescription());
-            isModified = true;
-        }
-
-        if (createRatePlanRequest.getRatePlanType() != null &&
-                !Objects.equals(ratePlan.getRatePlanType(), createRatePlanRequest.getRatePlanType())) {
-            ratePlanDTO.setRatePlanType(createRatePlanRequest.getRatePlanType());
-            isModified = true;
-        }
-
-        if (createRatePlanRequest.getStatus() != null &&
-                !Objects.equals(ratePlan.getStatus(), createRatePlanRequest.getStatus())) {
-            ratePlanDTO.setStatus(createRatePlanRequest.getStatus());
-            isModified = true;
-        }
-
-        if (createRatePlanRequest.getCurrencyId() != null) {
-            currenciesRepository.findById(createRatePlanRequest.getCurrencyId())
-                    .orElseThrow(() -> new ValidationException("Invalid currency ID: " + createRatePlanRequest.getCurrencyId()));
-
-            if (!Objects.equals(ratePlan.getCurrency().getCurrencyId(), createRatePlanRequest.getCurrencyId())) {
-                ratePlanDTO.setCurrencyId(createRatePlanRequest.getCurrencyId());
-                isModified = true;
-            }
-        }
-
-        if (isModified) {
-            ratePlanMapper.updateRatePlan(ratePlanDTO, ratePlan, productRepository, currenciesRepository);
-            ratePlanRepository.save(ratePlan);
-        }
-    }
-
-    @Override
-    @Transactional
-    public void delete(final Long ratePlanId) {
-        final RatePlan ratePlan = ratePlanRepository.findById(ratePlanId).orElseThrow(() -> new NotFoundException("ratePlanId not found with ID: " + ratePlanId));
-        ratePlanRepository.deleteById(ratePlanId);
-    }
-
-    @Override
-    public Optional<Long> getSelectedRatePlanTypeId(Long ratePlanId, String ratePlanType) {
-        return ratePlanRepository.findById(ratePlanId)
-                .flatMap(ratePlan -> switch (ratePlanType) {
-                    case "FLAT_RATE" -> ratePlanFlatRateRepository.findFirstByRatePlan(ratePlan).map(RatePlanFlatRate::getRatePlanFlatRateId);
-                    case "FREEMIUM" -> ratePlanFreemiumRateRepository.findFirstByRatePlan(ratePlan).map(RatePlanFreemiumRate::getRatePlanFreemiumRateId);
-                    case "SUBSCRIPTION" -> ratePlanSubscriptionRateRepository.findFirstByRatePlan(ratePlan).map(RatePlanSubscriptionRate::getRatePlanSubscriptionRateId);
-                    case "TIERED" -> ratePlanTieredRateRepository.findFirstByRatePlan(ratePlan).map(RatePlanTieredRate::getRatePlanTieredRateId);
-                    case "USAGE_BASED" -> ratePlanUsageBasedRepository.findFirstByRatePlan(ratePlan).map(RatePlanUsageBased::getRatePlanUsageRateId);
-                    default -> Optional.empty();
-                });
-    }
-
-    @Override
-    public long getRatePlanCount() {
-        return ratePlanRepository.count();
+    public void deleteRatePlan(Long id) {
+        ratePlanRepository.deleteById(id);
     }
 }

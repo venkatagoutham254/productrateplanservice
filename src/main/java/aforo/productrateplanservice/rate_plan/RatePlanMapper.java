@@ -2,44 +2,43 @@ package aforo.productrateplanservice.rate_plan;
 
 import org.mapstruct.*;
 
-import aforo.productrateplanservice.currencies.Currencies;
-import aforo.productrateplanservice.currencies.CurrenciesRepository;
-import aforo.productrateplanservice.exception.NotFoundException;
 import aforo.productrateplanservice.product.entity.Product;
 import aforo.productrateplanservice.product.repository.ProductRepository;
+import aforo.productrateplanservice.rate_plan.RatePlanDTO;
+import aforo.productrateplanservice.rate_plan.RatePlan;
+import aforo.productrateplanservice.rate_plan.CreateRatePlanRequest;
+import aforo.productrateplanservice.exception.NotFoundException;
 
-@Mapper(componentModel = MappingConstants.ComponentModel.SPRING, unmappedTargetPolicy = ReportingPolicy.IGNORE)
+@Mapper(
+    componentModel = MappingConstants.ComponentModel.SPRING,
+    unmappedTargetPolicy = ReportingPolicy.IGNORE
+)
 public interface RatePlanMapper {
 
-	RatePlanDTO createRatePlanRequestToRatePlanDTO(CreateRatePlanRequest createRatePlanRequest);
+    RatePlanDTO createRatePlanRequestToRatePlanDTO(CreateRatePlanRequest request);
 
-	@Mapping(target = "productId", source = "product.productId")
-	@Mapping(target = "currencyId", source = "currency.currencyId")
-	RatePlanDTO updateRatePlanDTO(RatePlan ratePlan, @MappingTarget RatePlanDTO ratePlanDTO);
+    @Mapping(target = "productId", source = "product.productId")
+    @Mapping(target = "productName", source = "product.productName")
+    RatePlanDTO toRatePlanDTO(RatePlan ratePlan);
 
-	@AfterMapping
-	default void afterUpdateRatePlanDTO(RatePlan ratePlan, @MappingTarget RatePlanDTO ratePlanDTO) {
-		ratePlanDTO.setProductId(ratePlan.getProduct() == null ? null : ratePlan.getProduct().getProductId());
-		ratePlanDTO.setCurrencyId(ratePlan.getCurrency() == null ? null : ratePlan.getCurrency().getCurrencyId());
-	}
+    @Mapping(target = "ratePlanId", ignore = true)
+    @Mapping(target = "product", ignore = true) // we will set this manually
+    RatePlan updateRatePlanFromDTO(
+        RatePlanDTO dto,
+        @MappingTarget RatePlan ratePlan,
+        @Context ProductRepository productRepository
+    );
 
-	@Mapping(target = "ratePlanId", ignore = true)
-	@Mapping(target = "product", ignore = true)
-	@Mapping(target = "currency", ignore = true)
-	RatePlan updateRatePlan(RatePlanDTO ratePlanDTO, @MappingTarget RatePlan ratePlan,
-			@Context ProductRepository productRepository, @Context CurrenciesRepository currenciesRepository);
-
-	@AfterMapping
-	default void afterUpdateRatePlan(RatePlanDTO ratePlanDTO, @MappingTarget RatePlan ratePlan,
-			@Context ProductRepository productRepository, @Context CurrenciesRepository currenciesRepository) {
-		final Product product = ratePlanDTO.getProductId() == null ? null
-				: productRepository.findById(ratePlanDTO.getProductId())
-						.orElseThrow(() -> new NotFoundException("Product not found"));
-		ratePlan.setProduct(product); // Set the entire Product object
-
-		final Currencies currency = ratePlanDTO.getCurrencyId() == null ? null
-				: currenciesRepository.findById(ratePlanDTO.getCurrencyId())
-						.orElseThrow(() -> new NotFoundException("Currency not found"));
-		ratePlan.setCurrency(currency); // Set the entire Currencies object
-	}
+    @AfterMapping
+    default void afterUpdateRatePlanFromDTO(
+        RatePlanDTO dto,
+        @MappingTarget RatePlan ratePlan,
+        @Context ProductRepository productRepository
+    ) {
+        if (dto.getProductId() != null) {
+            Product product = productRepository.findById(dto.getProductId())
+                    .orElseThrow(() -> new NotFoundException("Product not found with ID: " + dto.getProductId()));
+            ratePlan.setProduct(product);
+        }
+    }
 }

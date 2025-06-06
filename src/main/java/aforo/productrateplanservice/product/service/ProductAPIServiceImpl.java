@@ -6,6 +6,7 @@ import aforo.productrateplanservice.product.enums.ProductType;
 import aforo.productrateplanservice.product.repository.ProductAPIRepository;
 import aforo.productrateplanservice.product.repository.ProductRepository;
 import aforo.productrateplanservice.product.request.CreateProductAPIRequest;
+import aforo.productrateplanservice.product.request.UpdateProductAPIRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -56,26 +57,27 @@ public class ProductAPIServiceImpl implements ProductAPIService {
         return productAPIRepository.findAll();
     }
 
-    @Override
-    public ProductAPI update(Long productId, CreateProductAPIRequest request) {
-        ProductAPI existing = productAPIRepository.findById(productId)
-                .orElseThrow(() -> new RuntimeException("Product API not found with ID: " + productId));
+   @Override
+public ProductAPI update(Long id, UpdateProductAPIRequest request) {
+    ProductAPI existing = productAPIRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Product API not found"));
 
-        Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new RuntimeException("Product not found"));
-        validateProductType(product, ProductType.API);
+    Product product = productRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Product not found"));
+    validateProductType(product, ProductType.API);
 
-        existing.setEndpointUrl(request.getEndpointUrl());
-        existing.setAuthType(request.getAuthType());
-        existing.setPayloadSizeMetric(request.getPayloadSizeMetric());
-        existing.setRateLimitPolicy(request.getRateLimitPolicy());
-        existing.setMeteringGranularity(request.getMeteringGranularity());
-        existing.setGrouping(request.getGrouping());
-        existing.setCachingFlag(request.isCachingFlag());
-        existing.setLatencyClass(request.getLatencyClass());
+    if (request.getEndpointUrl() != null) existing.setEndpointUrl(request.getEndpointUrl());
+    if (request.getAuthType() != null) existing.setAuthType(request.getAuthType());
+    if (request.getPayloadSizeMetric() != null) existing.setPayloadSizeMetric(request.getPayloadSizeMetric());
+    if (request.getRateLimitPolicy() != null) existing.setRateLimitPolicy(request.getRateLimitPolicy());
+    if (request.getMeteringGranularity() != null) existing.setMeteringGranularity(request.getMeteringGranularity());
+    if (request.getGrouping() != null) existing.setGrouping(request.getGrouping());
+    if (request.getLatencyClass() != null) existing.setLatencyClass(request.getLatencyClass());
+    if (request.getCachingFlag() != null) existing.setCachingFlag(request.getCachingFlag());
 
-        return productAPIRepository.save(existing);
-    }
+    return productAPIRepository.save(existing);
+}
+
 
     @Override
     public void delete(Long productId) {

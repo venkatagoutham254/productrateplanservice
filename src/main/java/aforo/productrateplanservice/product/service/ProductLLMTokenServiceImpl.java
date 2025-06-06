@@ -6,6 +6,7 @@ import aforo.productrateplanservice.product.enums.ProductType;
 import aforo.productrateplanservice.product.repository.ProductLLMTokenRepository;
 import aforo.productrateplanservice.product.repository.ProductRepository;
 import aforo.productrateplanservice.product.request.CreateProductLLMTokenRequest;
+import aforo.productrateplanservice.product.request.UpdateProductLLMTokenRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -56,26 +57,23 @@ public class ProductLLMTokenServiceImpl implements ProductLLMTokenService {
         return productLLMTokenRepository.findAll();
     }
 
-    @Override
-    public ProductLLMToken update(Long id, CreateProductLLMTokenRequest request) {
-        ProductLLMToken existing = productLLMTokenRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("LLM Token Product not found with ID: " + id));
+   @Override
+public ProductLLMToken update(Long id, UpdateProductLLMTokenRequest request) {
+    ProductLLMToken existing = productLLMTokenRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("LLM Token not found"));
 
-        Product product = productRepository.findById(request.getProductId())
-                .orElseThrow(() -> new RuntimeException("Product not found"));
-        validateProductType(product, ProductType.LLMToken);
+    if (request.getTokenProvider() != null) existing.setTokenProvider(request.getTokenProvider());
+    if (request.getModelName() != null) existing.setModelName(request.getModelName());
+    if (request.getTokenUnitCost() != null) existing.setTokenUnitCost(request.getTokenUnitCost());
+    if (request.getCalculationMethod() != null) existing.setCalculationMethod(request.getCalculationMethod());
+    if (request.getQuota() != null) existing.setQuota(request.getQuota());
+    if (request.getPromptTemplate() != null) existing.setPromptTemplate(request.getPromptTemplate());
+    if (request.getInferencePriority() != null) existing.setInferencePriority(request.getInferencePriority());
+    if (request.getComputeTier() != null) existing.setComputeTier(request.getComputeTier());
 
-        existing.setTokenProvider(request.getTokenProvider());
-        existing.setModelName(request.getModelName());
-        existing.setTokenUnitCost(request.getTokenUnitCost());
-        existing.setCalculationMethod(request.getCalculationMethod());
-        existing.setQuota(request.getQuota());
-        existing.setPromptTemplate(request.getPromptTemplate());
-        existing.setInferencePriority(request.getInferencePriority());
-        existing.setComputeTier(request.getComputeTier());
+    return productLLMTokenRepository.save(existing);
+}
 
-        return productLLMTokenRepository.save(existing);
-    }
 
     @Override
     public void delete(Long id) {
